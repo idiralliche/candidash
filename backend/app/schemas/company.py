@@ -9,12 +9,12 @@ from pydantic import BaseModel, ConfigDict, Field
 class CompanyBase(BaseModel):
     """Base schema with common fields for Company."""
     name: str = Field(..., min_length=1, max_length=255, description="Company name")
-    industry: Optional[str] = Field(None, max_length=100, description="Industry sector")
-    size: Optional[str] = Field(None, max_length=50, description="Company size (e.g., 1-10, 11-50, 51-200)")
+    siret: Optional[str] = Field(None, min_length=14, max_length=14, description="French business ID (SIRET)")
     website: Optional[str] = Field(None, max_length=255, description="Company website URL")
-    linkedin: Optional[str] = Field(None, max_length=255, description="LinkedIn company page URL")
-    address: Optional[str] = Field(None, description="Company address")
+    headquarters: Optional[str] = Field(None, description="Company headquarters address")
     is_intermediary: bool = Field(default=False, description="Whether this company is an intermediary (ESN, agency)")
+    company_type: Optional[str] = Field(None, max_length=100, description="Type: ESN, startup, enterprise, SME, etc.")
+    industry: Optional[str] = Field(None, max_length=100, description="Industry: Healthcare, automotive, etc.")
     notes: Optional[str] = Field(None, description="Additional notes about the company")
 
 
@@ -29,12 +29,12 @@ class CompanyUpdate(BaseModel):
     All fields are optional to support partial updates.
     """
     name: Optional[str] = Field(None, min_length=1, max_length=255)
-    industry: Optional[str] = Field(None, max_length=100)
-    size: Optional[str] = Field(None, max_length=50)
+    siret: Optional[str] = Field(None, min_length=14, max_length=14)
     website: Optional[str] = Field(None, max_length=255)
-    linkedin: Optional[str] = Field(None, max_length=255)
-    address: Optional[str] = None
+    headquarters: Optional[str] = None
     is_intermediary: Optional[bool] = None
+    company_type: Optional[str] = Field(None, max_length=100)
+    industry: Optional[str] = Field(None, max_length=100)
     notes: Optional[str] = None
 
 
