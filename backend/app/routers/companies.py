@@ -46,12 +46,12 @@ def create_company(company: CompanyCreate, db: Session = Depends(get_db)):
     Create a new company.
 
     - **name**: Company name (required)
-    - **industry**: Industry sector (optional)
-    - **size**: Company size (optional)
+    - **siret**: French business ID - 14 digits (optional)
     - **website**: Company website URL (optional)
-    - **linkedin**: LinkedIn company page URL (optional)
-    - **address**: Company address (optional)
-    - **is_intermediary**: Whether this is an intermediary company (default: false)
+    - **headquarters**: Company headquarters address (optional)
+    - **is_intermediary**: Whether this is an intermediary company like ESN or agency (default: false)
+    - **company_type**: Type of company: ESN, startup, enterprise, SME, etc. (optional)
+    - **industry**: Industry sector: Healthcare, automotive, technology, etc. (optional)
     - **notes**: Additional notes (optional)
     """
     db_company = CompanyModel(**company.model_dump())
@@ -93,6 +93,9 @@ def delete_company(company_id: int, db: Session = Depends(get_db)):
     Delete a company.
 
     - **company_id**: The ID of the company to delete
+
+    Note: This will cascade delete all associated products.
+    Opportunities and contacts will have their company_id set to NULL.
     """
     db_company = db.query(CompanyModel).filter(CompanyModel.id == company_id).first()
     if not db_company:
