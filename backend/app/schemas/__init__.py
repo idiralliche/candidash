@@ -13,6 +13,12 @@ from app.schemas.document import (
     DocumentUpdate,
     DocumentInDB,
 )
+from app.schemas.contact import (
+    Contact,
+    ContactCreate,
+    ContactUpdate,
+    ContactInDB,
+)
 
 __all__ = [
     "Company",
@@ -23,4 +29,8 @@ __all__ = [
     "DocumentCreate",
     "DocumentUpdate",
     "DocumentInDB",
+    "Contact",
+    "ContactCreate",
+    "ContactUpdate",
+    "ContactInDB",
 ]
