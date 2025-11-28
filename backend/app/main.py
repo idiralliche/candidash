@@ -2,7 +2,7 @@
 Main FastAPI application.
 """
 from fastapi import FastAPI
-from app.routers import companies_router, documents_router, contacts_router
+from app.routers import companies_router, documents_router, contacts_router, products_router
 
 app = FastAPI(
     title="CandiDash API",
@@ -21,3 +21,4 @@ def health_check():
 app.include_router(companies_router, prefix="/api/v1")
 app.include_router(documents_router, prefix="/api/v1")
 app.include_router(contacts_router, prefix="/api/v1")
+app.include_router(products_router, prefix="/api/v1")
