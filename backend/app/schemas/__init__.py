@@ -25,6 +25,12 @@ from app.schemas.product import (
     ProductUpdate,
     ProductInDB,
 )
+from app.schemas.opportunity import (
+    Opportunity,
+    OpportunityCreate,
+    OpportunityUpdate,
+    OpportunityInDB,
+)
 
 __all__ = [
     "Company",
@@ -43,4 +49,8 @@ __all__ = [
     "ProductCreate",
     "ProductUpdate",
     "ProductInDB",
+    "Opportunity",
+    "OpportunityCreate",
+    "OpportunityUpdate",
+    "OpportunityInDB",
 ]
