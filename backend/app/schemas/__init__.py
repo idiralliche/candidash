@@ -7,10 +7,20 @@ from app.schemas.company import (
     CompanyUpdate,
     CompanyInDB,
 )
+from app.schemas.document import (
+    Document,
+    DocumentCreate,
+    DocumentUpdate,
+    DocumentInDB,
+)
 
 __all__ = [
     "Company",
     "CompanyCreate",
     "CompanyUpdate",
     "CompanyInDB",
+    "Document",
+    "DocumentCreate",
+    "DocumentUpdate",
+    "DocumentInDB",
 ]
