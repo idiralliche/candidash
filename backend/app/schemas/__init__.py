@@ -19,6 +19,12 @@ from app.schemas.contact import (
     ContactUpdate,
     ContactInDB,
 )
+from app.schemas.product import (
+    Product,
+    ProductCreate,
+    ProductUpdate,
+    ProductInDB,
+)
 
 __all__ = [
     "Company",
@@ -33,4 +39,8 @@ __all__ = [
     "ContactCreate",
     "ContactUpdate",
     "ContactInDB",
+    "Product",
+    "ProductCreate",
+    "ProductUpdate",
+    "ProductInDB",
 ]
