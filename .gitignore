@@ -56,3 +56,6 @@ alembic/versions/*.pyc
 .pytest_cache/
 htmlcov/
 .coverage
+
+# Secrets (Ajouté pour la nouvelle gestion Docker)
+secrets/
