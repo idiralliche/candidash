@@ -1,0 +1,59 @@
+services:
+  # 1. Ephemeral Test Database (Fresh start every time)
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: candidash_test_db
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    networks:
+      - test_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d candidash_test_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Backend (SUT - System Under Test)
+  # Builds the image and runs it
+  backend:
+    image: candidash-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      ENV: test
+      # Force config to point to internal test DB
+      DATABASE_URL: postgresql://test_user:test_password@db:5432/candidash_test_db
+      DOCUMENTS_PATH: /app/documents
+      POSTGRES_HOST: db
+      POSTGRES_DB: candidash_test_db
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - test_net
+    # Wait for DB -> Migrate -> Start Server (No Reload)
+    command: >
+      /bin/bash -c "./scripts/wait-for-db.sh db 5432 && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  # 3. Test Runner
+  # Reuses the same image to run the python script
+  tester:
+    image: candidash-backend:latest
+    environment:
+      # Target the 'backend' service
+      CANDIDASH_API_URL: http://backend:8000/api/v1
+    depends_on:
+      - backend
+    networks:
+      - test_net
+    # Override default command to run tests instead of server
+    command: ["python3", "tests/test_integration.py"]
+
+networks:
+  test_net:
+    driver: bridge
+    internal: true # Total isolation
