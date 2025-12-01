@@ -1,131 +1,144 @@
 # CandiDash
 
-Dockerized web application to manage and track job applications.
+Dockerized web application to manage and track job applications (personal ATS).
 
-## Tech Stack
+## 🏗️ Tech Stack
 
 - **Backend**: FastAPI + Python 3.11
 - **Database**: PostgreSQL 15
 - **ORM**: SQLAlchemy 2.0
 - **Migrations**: Alembic
 - **Containerization**: Docker + Docker Compose
+- **Testing**: Pytest + Isolated Docker containers
 
-## Installation and Startup
+## 🚀 Installation and Startup
 
 ### Prerequisites
 
 - Docker
 - Docker Compose
 
-### First Installation
+### Initial Installation
 
-1. Clone the repository
+Clone the repository:
 
 ```bash
 git clone <your-repo>
 cd candidash
 ```
 
-2. Create backend environment file
+Start the development environment:
+
+The application comes with "batteries included" default values for immediate development.
 
 ```bash
-cp backend/.env.example backend/.env
+# Builds the image and starts services (with Hot-Reload enabled)
+docker compose up --build
 ```
 
-3. Start services
+Database migrations are automatically applied on startup.
+
+### Secrets Management (Security)
+
+By default, the project uses development credentials (`candidash_user` / `candidash_password`).
+
+To use secure passwords without modifying the code, pass them as environment variables at startup:
 
 ```bash
-docker compose up -d
+POSTGRES_USER=admin POSTGRES_PASSWORD=my_super_secret POSTGRES_DB=candidash_db docker compose up --build
 ```
 
-4. Initialize database (first time only)
+## 🧪 Tests and Quality (CI)
+
+The project features an isolated testing infrastructure that never touches your development database.
+
+### Run the full test suite
+
+A single script manages the entire lifecycle (Cleanup → Build → Test → Cleanup).
 
 ```bash
-# Connect to backend container
-docker compose exec backend bash
-
-# Initialize Alembic
-alembic init alembic
-
-# Create first migration
-alembic revision --autogenerate -m "Initial migration"
-
-# Apply migrations
-alembic upgrade head
+./run_tests.sh
 ```
 
-### Daily Usage
+This performs the following:
 
-```bash
-# Start application
-docker compose up -d
+- Creates an isolated Docker network (`test_net`)
+- Starts a fresh, empty PostgreSQL database
+- Starts the backend connected to this test database
+- Executes the E2E scenario script (`tests/test_integration.py`)
 
-# View logs
-docker compose logs -f backend
-
-# Stop application
-docker compose down
-
-# Stop and remove volumes (⚠️ data loss)
-docker compose down -v
-```
-
-## Service Access
-
-- **Backend API**: http://localhost:8000
-- **Swagger Documentation**: http://localhost:8000/api/v1/docs
-- **ReDoc**: http://localhost:8000/api/v1/redoc
-- **PostgreSQL**: localhost:5432
-
-## Project Structure
+## 📂 Project Structure
 
 ```
 candidash/
-├── backend/              # FastAPI backend code
-│   ├── app/
-│   │   ├── models/      # SQLAlchemy models
-│   │   ├── schemas/     # Pydantic schemas
-│   │   ├── routers/     # API routes
-│   │   └── services/    # Business logic
-│   ├── alembic/         # Database migrations
-│   └── tests/           # Unit tests
-├── frontend/            # Frontend code (coming soon)
-├── documents/           # Document storage
-└── compose.yaml          # Docker configuration
+├── backend/              # FastAPI backend source code
+│   ├── app/              # App logic (Models, Routers, Schemas)
+│   ├── alembic/          # Database migrations
+│   ├── scripts/          # Utility scripts (wait-for-db.sh)
+│   ├── tests/            # Integration and unit tests
+│   └── Dockerfile        # Single source of truth for the image
+├── frontend/             # Frontend source code (Coming soon)
+├── documents/            # Uploaded files storage (Docker Volume)
+├── compose.yaml          # Docker config for DEV (Hot-reload, Persistence)
+├── compose.test.yaml     # Docker config for TEST (Isolation, Ephemeral)
+└── run_tests.sh          # Entry point for CI/Local tests
 ```
 
-## Development
+## 💻 Development
 
-### Create a New Migration
+### Access Services
+
+- **Backend API**: http://localhost:8000
+- **Swagger Documentation**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+- **PostgreSQL**: localhost:5432
+
+### Useful Commands
+
+Create a new migration (after modifying models):
 
 ```bash
-docker compose exec backend alembic revision --autogenerate -m "Migration description"
+docker compose exec backend alembic revision --autogenerate -m "Change description"
+```
+
+Manually apply migrations:
+
+```bash
 docker compose exec backend alembic upgrade head
 ```
 
-### Access Python Shell
+Access Python Shell:
 
 ```bash
 docker compose exec backend python
 ```
 
-### Access PostgreSQL
+Access Database:
 
 ```bash
 docker compose exec db psql -U candidash_user -d candidash_db
 ```
 
-## API Documentation
+## ⚙️ Configuration (Environment Variables)
 
-Interactive API documentation is available at http://localhost:8000/api/v1/docs once the application is started.
+The following variables can be overridden via Docker Compose or the Shell environment:
 
-## Naming Conventions
+| Variable            | Description                   | Default (Dev)          |
+| ------------------- | ----------------------------- | ---------------------- |
+| `POSTGRES_USER`     | DB User                       | `candidash_user`       |
+| `POSTGRES_PASSWORD` | DB Password                   | `candidash_password`   |
+| `POSTGRES_DB`       | DB Name                       | `candidash_db`         |
+| `POSTGRES_HOST`     | DB Host                       | `db` (internal Docker) |
+| `DOCUMENTS_PATH`    | Internal storage path         | `/app/documents`       |
+| `ENV`               | Environment (dev, test, prod) | `dev`                  |
+
+## 📏 Naming Conventions
 
 - **Database/Models/API**: Everything in English
-- **User-facing content**: In French (UI labels, messages, etc.)
+- **User-facing content (UI)**: In French (Labels, error messages)
 - **Code**: English (variables, functions, classes)
 - **Comments**: French accepted for complex business logic
 
 ## License
 
-Personal project - Private use
+Personal project - Private use.
