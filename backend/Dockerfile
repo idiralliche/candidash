@@ -3,6 +3,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # System dependencies installation
+# Added postgresql-client for potential debugging and bash support
 RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
@@ -16,6 +17,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Application code copy
 COPY . .
+
+# Make the wait script executable
+RUN chmod +x scripts/wait-for-db.sh
 
 # Port exposure
 EXPOSE 8000
