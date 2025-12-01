@@ -1,0 +1,25 @@
+# http://editorconfig.org
+root = true
+
+# Defaults for ell files
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Python specific
+[*.py]
+indent_style = space
+indent_size = 4
+
+# Frontend / Web / Config specific
+[*.{json,yaml,yml,md,html,css,js,ts,jsx,tsx}]
+indent_style = space
+indent_size = 2
+
+# Makefile specific
+[Makefile]
+indent_style = tab
