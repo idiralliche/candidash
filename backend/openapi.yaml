@@ -1,0 +1,4169 @@
+openapi: 3.1.0
+info:
+  title: CandiDash API
+  description: Job application tracking system API
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Health check endpoint.
+      operationId: health_check_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/companies/:
+    get:
+      tags:
+      - companies
+      summary: Get Companies
+      description: 'Retrieve a list of companies with pagination.
+
+
+        - **skip**: Number of records to skip (for pagination)
+
+        - **limit**: Maximum number of records to return (max 100)'
+      operationId: get_companies_api_v1_companies__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Company'
+                title: Response Get Companies Api V1 Companies  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - companies
+      summary: Create Company
+      description: 'Create a new company.
+
+
+        - **name**: Company name (required)
+
+        - **siret**: French business ID - 14 digits (optional)
+
+        - **website**: Company website URL (optional)
+
+        - **headquarters**: Company headquarters address (optional)
+
+        - **is_intermediary**: Whether this is an intermediary company like ESN or
+        agency (default: false)
+
+        - **company_type**: Type of company: ESN, startup, enterprise, SME, etc. (optional)
+
+        - **industry**: Industry sector: Healthcare, automotive, technology, etc.
+        (optional)
+
+        - **notes**: Additional notes (optional)'
+      operationId: create_company_api_v1_companies__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/companies/{company_id}:
+    get:
+      tags:
+      - companies
+      summary: Get Company
+      description: 'Retrieve a specific company by ID.
+
+
+        - **company_id**: The ID of the company to retrieve'
+      operationId: get_company_api_v1_companies__company_id__get
+      parameters:
+      - name: company_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Company Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - companies
+      summary: Update Company
+      description: 'Update an existing company.
+
+
+        - **company_id**: The ID of the company to update
+
+        - All fields are optional - only provided fields will be updated'
+      operationId: update_company_api_v1_companies__company_id__put
+      parameters:
+      - name: company_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Company Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - companies
+      summary: Delete Company
+      description: 'Delete a company.
+
+
+        - **company_id**: The ID of the company to delete
+
+
+        Note: This will cascade delete all associated products.
+
+        Opportunities and contacts will have their company_id set to NULL.'
+      operationId: delete_company_api_v1_companies__company_id__delete
+      parameters:
+      - name: company_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Company Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/documents/:
+    get:
+      tags:
+      - documents
+      summary: Get Documents
+      description: 'Retrieve a list of documents with pagination and optional filtering.
+
+
+        - **skip**: Number of records to skip (for pagination)
+
+        - **limit**: Maximum number of records to return (max 100)
+
+        - **type**: Optional filter by document type (resume, cover_letter, portfolio,
+        etc.)'
+      operationId: get_documents_api_v1_documents__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Filter by document type
+          title: Type
+        description: Filter by document type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+                title: Response Get Documents Api V1 Documents  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - documents
+      summary: Create Document
+      description: 'Create a new document record.
+
+
+        - **name**: Document name (required)
+
+        - **type**: Document type - resume, cover_letter, portfolio, certificate,
+        job_posting, other (required)
+
+        - **format**: File format - pdf, docx, jpg, png, etc. (required)
+
+        - **path**: Storage path or URL (required)
+
+        - **description**: Free text description (optional)
+
+
+        Note: This endpoint creates a document record. File upload functionality should
+        be implemented separately.'
+      operationId: create_document_api_v1_documents__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/documents/{document_id}:
+    get:
+      tags:
+      - documents
+      summary: Get Document
+      description: 'Retrieve a specific document by ID.
+
+
+        - **document_id**: The ID of the document to retrieve'
+      operationId: get_document_api_v1_documents__document_id__get
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Document Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - documents
+      summary: Update Document
+      description: 'Update an existing document.
+
+
+        - **document_id**: The ID of the document to update
+
+        - All fields are optional - only provided fields will be updated'
+      operationId: update_document_api_v1_documents__document_id__put
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Document Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - documents
+      summary: Delete Document
+      description: 'Delete a document.
+
+
+        - **document_id**: The ID of the document to delete
+
+
+        Note: This deletes the document record. Physical file deletion should be handled
+        separately.'
+      operationId: delete_document_api_v1_documents__document_id__delete
+      parameters:
+      - name: document_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Document Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/contacts/:
+    get:
+      tags:
+      - contacts
+      summary: Get Contacts
+      description: 'Retrieve a list of contacts with pagination and optional filtering.
+
+
+        - **skip**: Number of records to skip (for pagination)
+
+        - **limit**: Maximum number of records to return (max 100)
+
+        - **company_id**: Optional filter by company ID
+
+        - **is_independent_recruiter**: Optional filter by independent recruiter status'
+      operationId: get_contacts_api_v1_contacts__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: company_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by company ID
+          title: Company Id
+        description: Filter by company ID
+      - name: is_independent_recruiter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Filter by independent recruiter status
+          title: Is Independent Recruiter
+        description: Filter by independent recruiter status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+                title: Response Get Contacts Api V1 Contacts  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - contacts
+      summary: Create Contact
+      description: 'Create a new contact.
+
+
+        - **last_name**: Contact''s last name (required)
+
+        - **first_name**: Contact''s first name (required)
+
+        - **position**: Job title or position (optional)
+
+        - **email**: Email address (optional)
+
+        - **phone**: Phone number (optional)
+
+        - **linkedin**: LinkedIn profile URL (optional)
+
+        - **relationship_notes**: How you know this person - e.g., "Contacted on LinkedIn",
+        "Former colleague" (optional)
+
+        - **is_independent_recruiter**: Whether this is an independent recruiter (default:
+        false)
+
+        - **notes**: Additional notes (optional)
+
+        - **company_id**: Associated company ID (optional)'
+      operationId: create_contact_api_v1_contacts__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/contacts/{contact_id}:
+    get:
+      tags:
+      - contacts
+      summary: Get Contact
+      description: 'Retrieve a specific contact by ID.
+
+
+        - **contact_id**: The ID of the contact to retrieve'
+      operationId: get_contact_api_v1_contacts__contact_id__get
+      parameters:
+      - name: contact_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contact Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - contacts
+      summary: Update Contact
+      description: 'Update an existing contact.
+
+
+        - **contact_id**: The ID of the contact to update
+
+        - All fields are optional - only provided fields will be updated'
+      operationId: update_contact_api_v1_contacts__contact_id__put
+      parameters:
+      - name: contact_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contact Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - contacts
+      summary: Delete Contact
+      description: 'Delete a contact.
+
+
+        - **contact_id**: The ID of the contact to delete'
+      operationId: delete_contact_api_v1_contacts__contact_id__delete
+      parameters:
+      - name: contact_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Contact Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/products/:
+    get:
+      tags:
+      - products
+      summary: Get Products
+      description: 'Retrieve a list of products with pagination and optional filtering.
+
+
+        - **skip**: Number of records to skip (for pagination)
+
+        - **limit**: Maximum number of records to return (max 100)
+
+        - **company_id**: Optional filter by company ID'
+      operationId: get_products_api_v1_products__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: company_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by company ID
+          title: Company Id
+        description: Filter by company ID
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+                title: Response Get Products Api V1 Products  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - products
+      summary: Create Product
+      description: 'Create a new product.
+
+
+        - **name**: Product or service name (required)
+
+        - **description**: Detailed description (optional)
+
+        - **company_id**: Associated company ID (required)
+
+        - **website**: Product specific website URL (optional)
+
+        - **technologies_used**: Stack or technologies used (optional)'
+      operationId: create_product_api_v1_products__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/products/{product_id}:
+    get:
+      tags:
+      - products
+      summary: Get Product
+      description: 'Retrieve a specific product by ID.
+
+
+        - **product_id**: The ID of the product to retrieve'
+      operationId: get_product_api_v1_products__product_id__get
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - products
+      summary: Update Product
+      description: 'Update an existing product.
+
+
+        - **product_id**: The ID of the product to update
+
+        - All fields are optional - only provided fields will be updated'
+      operationId: update_product_api_v1_products__product_id__put
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - products
+      summary: Delete Product
+      description: 'Delete a product.
+
+
+        - **product_id**: The ID of the product to delete'
+      operationId: delete_product_api_v1_products__product_id__delete
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/opportunities/:
+    get:
+      tags:
+      - opportunities
+      summary: Get Opportunities
+      description: 'Retrieve a list of opportunities with pagination and optional
+        filtering.
+
+
+        - **skip**: Number of records to skip (for pagination)
+
+        - **limit**: Maximum number of records to return (max 100)
+
+        - **company_id**: Optional filter by company ID
+
+        - **application_type**: Optional filter by type (job_posting, spontaneous,
+        etc.)
+
+        - **contract_type**: Optional filter by contract (permanent, fixed_term, etc.)'
+      operationId: get_opportunities_api_v1_opportunities__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: company_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by company ID
+          title: Company Id
+        description: Filter by company ID
+      - name: application_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ApplicationType'
+          - type: 'null'
+          description: Filter by application type
+          title: Application Type
+        description: Filter by application type
+      - name: contract_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ContractType'
+          - type: 'null'
+          description: Filter by contract type
+          title: Contract Type
+        description: Filter by contract type
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Opportunity'
+                title: Response Get Opportunities Api V1 Opportunities  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - opportunities
+      summary: Create Opportunity
+      description: 'Create a new opportunity.
+
+
+        - **job_title**: Job title (required)
+
+        - **application_type**: Type of application (required)
+
+        - **position_type**: Role type (required)
+
+        - **contract_type**: Type of contract (required)
+
+        - **company_id**: Associated company ID (optional)
+
+        - ... and other optional details'
+      operationId: create_opportunity_api_v1_opportunities__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opportunity'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/opportunities/{opportunity_id}:
+    get:
+      tags:
+      - opportunities
+      summary: Get Opportunity
+      description: 'Retrieve a specific opportunity by ID.
+
+
+        - **opportunity_id**: The ID of the opportunity to retrieve'
+      operationId: get_opportunity_api_v1_opportunities__opportunity_id__get
+      parameters:
+      - name: opportunity_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Opportunity Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opportunity'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - opportunities
+      summary: Update Opportunity
+      description: 'Update an existing opportunity.
+
+
+        - **opportunity_id**: The ID of the opportunity to update
+
+        - All fields are optional - only provided fields will be updated'
+      operationId: update_opportunity_api_v1_opportunities__opportunity_id__put
+      parameters:
+      - name: opportunity_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Opportunity Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opportunity'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - opportunities
+      summary: Delete Opportunity
+      description: 'Delete an opportunity.
+
+
+        - **opportunity_id**: The ID of the opportunity to delete'
+      operationId: delete_opportunity_api_v1_opportunities__opportunity_id__delete
+      parameters:
+      - name: opportunity_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Opportunity Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/applications/:
+    get:
+      tags:
+      - applications
+      summary: Get Applications
+      description: 'Retrieve a list of applications with pagination and optional filtering.
+
+
+        - **skip**: Number of records to skip (for pagination)
+
+        - **limit**: Maximum number of records to return (max 100)
+
+        - **opportunity_id**: Optional filter by opportunity
+
+        - **status**: Optional filter by status (pending, rejected, accepted, etc.)
+
+        - **is_archived**: Optional filter by archive status'
+      operationId: get_applications_api_v1_applications__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: opportunity_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by opportunity ID
+          title: Opportunity Id
+        description: Filter by opportunity ID
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ApplicationStatus'
+          - type: 'null'
+          description: Filter by application status
+          title: Status
+        description: Filter by application status
+      - name: is_archived
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Filter by archive status
+          title: Is Archived
+        description: Filter by archive status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+                title: Response Get Applications Api V1 Applications  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - applications
+      summary: Create Application
+      description: 'Create a new application.
+
+
+        - **opportunity_id**: ID of the opportunity (required)
+
+        - **application_date**: Date of application (required)
+
+        - **status**: Status (default: pending)
+
+        - **resume_used_id**: ID of resume document (optional)
+
+        - **cover_letter_id**: ID of cover letter document (optional)'
+      operationId: create_application_api_v1_applications__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/applications/{application_id}:
+    get:
+      tags:
+      - applications
+      summary: Get Application
+      description: 'Retrieve a specific application by ID.
+
+
+        - **application_id**: The ID of the application to retrieve'
+      operationId: get_application_api_v1_applications__application_id__get
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Application Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - applications
+      summary: Update Application
+      description: 'Update an existing application.
+
+
+        - **application_id**: The ID of the application to update
+
+        - All fields are optional'
+      operationId: update_application_api_v1_applications__application_id__put
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Application Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - applications
+      summary: Delete Application
+      description: 'Delete an application.
+
+
+        - **application_id**: The ID of the application to delete'
+      operationId: delete_application_api_v1_applications__application_id__delete
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Application Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/scheduled-events/:
+    get:
+      tags:
+      - scheduled_events
+      summary: Get Scheduled Events
+      description: 'Retrieve a list of scheduled events with pagination and optional
+        filtering.
+
+
+        - **skip**: Number of records to skip (for pagination)
+
+        - **limit**: Maximum number of records to return (max 100)
+
+        - **status**: Optional filter by event status (pending, confirmed, etc.)'
+      operationId: get_scheduled_events_api_v1_scheduled_events__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/EventStatus'
+          - type: 'null'
+          description: Filter by event status
+          title: Status
+        description: Filter by event status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledEvent'
+                title: Response Get Scheduled Events Api V1 Scheduled Events  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - scheduled_events
+      summary: Create Scheduled Event
+      description: 'Create a new scheduled event.
+
+
+        - **title**: Event title (required)
+
+        - **scheduled_date**: Date and time (required)
+
+        - **status**: Status (default: pending)
+
+        - ... and other optional details'
+      operationId: create_scheduled_event_api_v1_scheduled_events__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledEventCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledEvent'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/scheduled-events/{event_id}:
+    get:
+      tags:
+      - scheduled_events
+      summary: Get Scheduled Event
+      description: 'Retrieve a specific scheduled event by ID.
+
+
+        - **event_id**: The ID of the event to retrieve'
+      operationId: get_scheduled_event_api_v1_scheduled_events__event_id__get
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledEvent'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - scheduled_events
+      summary: Update Scheduled Event
+      description: 'Update an existing scheduled event.
+
+
+        - **event_id**: The ID of the event to update
+
+        - All fields are optional'
+      operationId: update_scheduled_event_api_v1_scheduled_events__event_id__put
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledEventUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledEvent'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - scheduled_events
+      summary: Delete Scheduled Event
+      description: 'Delete a scheduled event.
+
+
+        - **event_id**: The ID of the event to delete'
+      operationId: delete_scheduled_event_api_v1_scheduled_events__event_id__delete
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/actions/:
+    get:
+      tags:
+      - actions
+      summary: Get Actions
+      description: 'Retrieve a list of actions with pagination and optional filtering.
+
+
+        - **skip**: Number of records to skip (for pagination)
+
+        - **limit**: Maximum number of records to return (max 100)
+
+        - **application_id**: Optional filter by application
+
+        - **is_completed**: Optional filter by completion status'
+      operationId: get_actions_api_v1_actions__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: application_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by application ID
+          title: Application Id
+        description: Filter by application ID
+      - name: is_completed
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Filter by completion status
+          title: Is Completed
+        description: Filter by completion status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Action'
+                title: Response Get Actions Api V1 Actions  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - actions
+      summary: Create Action
+      description: 'Create a new action.
+
+
+        - **application_id**: ID of the application (required)
+
+        - **type**: Type of action (required)
+
+        - **scheduled_event_id**: ID of associated event (optional)
+
+        - **parent_action_id**: ID of parent action (optional)'
+      operationId: create_action_api_v1_actions__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActionCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Action'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/actions/{action_id}:
+    get:
+      tags:
+      - actions
+      summary: Get Action
+      description: 'Retrieve a specific action by ID.
+
+
+        - **action_id**: The ID of the action to retrieve'
+      operationId: get_action_api_v1_actions__action_id__get
+      parameters:
+      - name: action_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Action Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Action'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - actions
+      summary: Update Action
+      description: 'Update an existing action.
+
+
+        - **action_id**: The ID of the action to update
+
+        - All fields are optional'
+      operationId: update_action_api_v1_actions__action_id__put
+      parameters:
+      - name: action_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Action Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActionUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Action'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - actions
+      summary: Delete Action
+      description: 'Delete an action.
+
+
+        - **action_id**: The ID of the action to delete'
+      operationId: delete_action_api_v1_actions__action_id__delete
+      parameters:
+      - name: action_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Action Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/opportunity-contacts/:
+    get:
+      tags:
+      - opportunity_contacts
+      summary: Get Opportunity Contacts
+      description: 'Retrieve a list of opportunity-contact associations with pagination
+        and filtering.
+
+
+        - **skip**: Number of records to skip
+
+        - **limit**: Maximum number of records to return
+
+        - **opportunity_id**: Optional filter by opportunity
+
+        - **contact_id**: Optional filter by contact
+
+        - **is_primary_contact**: Optional filter by primary status'
+      operationId: get_opportunity_contacts_api_v1_opportunity_contacts__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: opportunity_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by opportunity ID
+          title: Opportunity Id
+        description: Filter by opportunity ID
+      - name: contact_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by contact ID
+          title: Contact Id
+        description: Filter by contact ID
+      - name: is_primary_contact
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Filter by primary contact status
+          title: Is Primary Contact
+        description: Filter by primary contact status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OpportunityContact'
+                title: Response Get Opportunity Contacts Api V1 Opportunity Contacts  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - opportunity_contacts
+      summary: Create Opportunity Contact
+      description: 'Create a new link between an opportunity and a contact.
+
+
+        - **opportunity_id**: ID of the opportunity (required)
+
+        - **contact_id**: ID of the contact (required)
+
+        - **is_primary_contact**: Primary contact flag (default: false)
+
+        - **contact_role**: Role description (optional)'
+      operationId: create_opportunity_contact_api_v1_opportunity_contacts__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityContactCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityContact'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/opportunity-contacts/{association_id}:
+    get:
+      tags:
+      - opportunity_contacts
+      summary: Get Opportunity Contact
+      description: 'Retrieve a specific association by ID.
+
+
+        - **association_id**: The ID of the association to retrieve'
+      operationId: get_opportunity_contact_api_v1_opportunity_contacts__association_id__get
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityContact'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - opportunity_contacts
+      summary: Update Opportunity Contact
+      description: 'Update an existing association.
+
+
+        - **association_id**: The ID of the association to update
+
+        - All fields are optional'
+      operationId: update_opportunity_contact_api_v1_opportunity_contacts__association_id__put
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityContactUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityContact'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - opportunity_contacts
+      summary: Delete Opportunity Contact
+      description: 'Delete an association.
+
+
+        - **association_id**: The ID of the association to delete'
+      operationId: delete_opportunity_contact_api_v1_opportunity_contacts__association_id__delete
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/opportunity-products/:
+    get:
+      tags:
+      - opportunity_products
+      summary: Get Opportunity Products
+      description: 'Retrieve a list of opportunity-product associations with pagination
+        and filtering.
+
+
+        - **skip**: Number of records to skip
+
+        - **limit**: Maximum number of records to return
+
+        - **opportunity_id**: Optional filter by opportunity
+
+        - **product_id**: Optional filter by product'
+      operationId: get_opportunity_products_api_v1_opportunity_products__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: opportunity_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by opportunity ID
+          title: Opportunity Id
+        description: Filter by opportunity ID
+      - name: product_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by product ID
+          title: Product Id
+        description: Filter by product ID
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OpportunityProduct'
+                title: Response Get Opportunity Products Api V1 Opportunity Products  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - opportunity_products
+      summary: Create Opportunity Product
+      description: 'Create a new link between an opportunity and a product.
+
+
+        - **opportunity_id**: ID of the opportunity (required)
+
+        - **product_id**: ID of the product (required)'
+      operationId: create_opportunity_product_api_v1_opportunity_products__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityProductCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityProduct'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/opportunity-products/{association_id}:
+    get:
+      tags:
+      - opportunity_products
+      summary: Get Opportunity Product
+      description: 'Retrieve a specific association by ID.
+
+
+        - **association_id**: The ID of the association to retrieve'
+      operationId: get_opportunity_product_api_v1_opportunity_products__association_id__get
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityProduct'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - opportunity_products
+      summary: Update Opportunity Product
+      description: 'Update an existing association.
+
+
+        - **association_id**: The ID of the association to update
+
+        - All fields are optional'
+      operationId: update_opportunity_product_api_v1_opportunity_products__association_id__put
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityProductUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityProduct'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - opportunity_products
+      summary: Delete Opportunity Product
+      description: 'Delete an association.
+
+
+        - **association_id**: The ID of the association to delete'
+      operationId: delete_opportunity_product_api_v1_opportunity_products__association_id__delete
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/document-associations/:
+    get:
+      tags:
+      - document_associations
+      summary: Get Document Associations
+      description: 'Retrieve a list of document associations with pagination and filtering.
+
+
+        - **skip**: Number of records to skip
+
+        - **limit**: Maximum number of records to return
+
+        - **document_id**: Optional filter by document
+
+        - **entity_type**: Optional filter by entity type
+
+        - **entity_id**: Optional filter by entity ID'
+      operationId: get_document_associations_api_v1_document_associations__get
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of records to return
+          default: 100
+          title: Limit
+        description: Maximum number of records to return
+      - name: document_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by document ID
+          title: Document Id
+        description: Filter by document ID
+      - name: entity_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/EntityType'
+          - type: 'null'
+          description: Filter by entity type
+          title: Entity Type
+        description: Filter by entity type
+      - name: entity_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by entity ID
+          title: Entity Id
+        description: Filter by entity ID
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentAssociation'
+                title: Response Get Document Associations Api V1 Document Associations  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - document_associations
+      summary: Create Document Association
+      description: 'Create a new link between a document and any entity.
+
+
+        - **document_id**: ID of the document (required)
+
+        - **entity_type**: Type of entity (application, opportunity, company, contact)
+
+        - **entity_id**: ID of the entity (required)'
+      operationId: create_document_association_api_v1_document_associations__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentAssociationCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAssociation'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/document-associations/{association_id}:
+    get:
+      tags:
+      - document_associations
+      summary: Get Document Association
+      description: 'Retrieve a specific association by ID.
+
+
+        - **association_id**: The ID of the association to retrieve'
+      operationId: get_document_association_api_v1_document_associations__association_id__get
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAssociation'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - document_associations
+      summary: Update Document Association
+      description: 'Update an existing association.
+
+
+        - **association_id**: The ID of the association to update
+
+        - All fields are optional'
+      operationId: update_document_association_api_v1_document_associations__association_id__put
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentAssociationUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAssociation'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - document_associations
+      summary: Delete Document Association
+      description: 'Delete an association.
+
+
+        - **association_id**: The ID of the association to delete'
+      operationId: delete_document_association_api_v1_document_associations__association_id__delete
+      parameters:
+      - name: association_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Association Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Action:
+      properties:
+        type:
+          type: string
+          maxLength: 50
+          minLength: 1
+          title: Type
+          description: Type of action (follow_up, note, etc.)
+        completed_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completed Date
+          description: Date when action was completed
+        is_completed:
+          type: boolean
+          title: Is Completed
+          description: Completion status
+          default: false
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Details or notes about the action
+        parent_action_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Parent Action Id
+          description: ID of parent action for threading
+        scheduled_event_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Scheduled Event Id
+          description: ID of associated scheduled event
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        application_id:
+          type: integer
+          title: Application Id
+          description: ID of the related application
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+      type: object
+      required:
+      - type
+      - id
+      - application_id
+      - created_at
+      title: Action
+      description: 'Schema for reading an action (GET).
+
+        Includes all fields including generated ones (id, timestamps).'
+    ActionCreate:
+      properties:
+        type:
+          type: string
+          maxLength: 50
+          minLength: 1
+          title: Type
+          description: Type of action (follow_up, note, etc.)
+        completed_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completed Date
+          description: Date when action was completed
+        is_completed:
+          type: boolean
+          title: Is Completed
+          description: Completion status
+          default: false
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Details or notes about the action
+        parent_action_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Parent Action Id
+          description: ID of parent action for threading
+        scheduled_event_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Scheduled Event Id
+          description: ID of associated scheduled event
+        application_id:
+          type: integer
+          title: Application Id
+          description: ID of the related application
+      type: object
+      required:
+      - type
+      - application_id
+      title: ActionCreate
+      description: Schema for creating a new action (POST).
+    ActionUpdate:
+      properties:
+        type:
+          anyOf:
+          - type: string
+            maxLength: 50
+            minLength: 1
+          - type: 'null'
+          title: Type
+        completed_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completed Date
+        is_completed:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Completed
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        parent_action_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Parent Action Id
+        scheduled_event_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Scheduled Event Id
+        application_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Application Id
+      type: object
+      title: ActionUpdate
+      description: 'Schema for updating an action (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    Application:
+      properties:
+        application_date:
+          type: string
+          format: date
+          title: Application Date
+          description: Date when the application was sent
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationStatus'
+          description: Current status of the application
+          default: pending
+        salary_expectation:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Expectation
+          description: Expected gross annual salary
+        is_archived:
+          type: boolean
+          title: Is Archived
+          description: Whether the application is archived
+          default: false
+        resume_used_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Resume Used Id
+          description: ID of the resume (Document) used
+        cover_letter_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cover Letter Id
+          description: ID of the cover letter (Document) used
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        opportunity_id:
+          type: integer
+          title: Opportunity Id
+          description: ID of the related opportunity
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+          description: Last update timestamp
+      type: object
+      required:
+      - application_date
+      - id
+      - opportunity_id
+      - created_at
+      title: Application
+      description: 'Schema for reading an application (GET).
+
+        Includes all fields including generated ones (id, timestamps).'
+    ApplicationCreate:
+      properties:
+        application_date:
+          type: string
+          format: date
+          title: Application Date
+          description: Date when the application was sent
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationStatus'
+          description: Current status of the application
+          default: pending
+        salary_expectation:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Expectation
+          description: Expected gross annual salary
+        is_archived:
+          type: boolean
+          title: Is Archived
+          description: Whether the application is archived
+          default: false
+        resume_used_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Resume Used Id
+          description: ID of the resume (Document) used
+        cover_letter_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cover Letter Id
+          description: ID of the cover letter (Document) used
+        opportunity_id:
+          type: integer
+          title: Opportunity Id
+          description: ID of the related opportunity
+      type: object
+      required:
+      - application_date
+      - opportunity_id
+      title: ApplicationCreate
+      description: Schema for creating a new application (POST).
+    ApplicationStatus:
+      type: string
+      enum:
+      - pending
+      - follow_up_scheduled
+      - interview_scheduled
+      - rejected
+      - accepted
+      - obsolete
+      title: ApplicationStatus
+      description: Application status enumeration.
+    ApplicationType:
+      type: string
+      enum:
+      - job_posting
+      - spontaneous
+      - reached_out
+      title: ApplicationType
+      description: Type of application.
+    ApplicationUpdate:
+      properties:
+        application_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Application Date
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/ApplicationStatus'
+          - type: 'null'
+        salary_expectation:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Expectation
+        is_archived:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Archived
+        resume_used_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Resume Used Id
+        cover_letter_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cover Letter Id
+        opportunity_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Opportunity Id
+      type: object
+      title: ApplicationUpdate
+      description: 'Schema for updating an application (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    CommunicationMethod:
+      type: string
+      enum:
+      - video
+      - phone
+      - in_person
+      - email
+      - other
+      title: CommunicationMethod
+      description: Method of communication for the event.
+    Company:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          description: Company name
+        siret:
+          anyOf:
+          - type: string
+            maxLength: 14
+            minLength: 14
+          - type: 'null'
+          title: Siret
+          description: French business ID (SIRET)
+        website:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Website
+          description: Company website URL
+        headquarters:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Headquarters
+          description: Company headquarters address
+        is_intermediary:
+          type: boolean
+          title: Is Intermediary
+          description: Whether this company is an intermediary (ESN, agency)
+          default: false
+        company_type:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Company Type
+          description: 'Type: ESN, startup, enterprise, SME, etc.'
+        industry:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Industry
+          description: 'Industry: Healthcare, automotive, etc.'
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Additional notes about the company
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+          description: Last update timestamp
+      type: object
+      required:
+      - name
+      - id
+      - created_at
+      title: Company
+      description: 'Schema for reading a company (GET).
+
+
+        Includes all fields including generated ones (id, timestamps).'
+    CompanyCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          description: Company name
+        siret:
+          anyOf:
+          - type: string
+            maxLength: 14
+            minLength: 14
+          - type: 'null'
+          title: Siret
+          description: French business ID (SIRET)
+        website:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Website
+          description: Company website URL
+        headquarters:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Headquarters
+          description: Company headquarters address
+        is_intermediary:
+          type: boolean
+          title: Is Intermediary
+          description: Whether this company is an intermediary (ESN, agency)
+          default: false
+        company_type:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Company Type
+          description: 'Type: ESN, startup, enterprise, SME, etc.'
+        industry:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Industry
+          description: 'Industry: Healthcare, automotive, etc.'
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Additional notes about the company
+      type: object
+      required:
+      - name
+      title: CompanyCreate
+      description: Schema for creating a new company (POST).
+    CompanyUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Name
+        siret:
+          anyOf:
+          - type: string
+            maxLength: 14
+            minLength: 14
+          - type: 'null'
+          title: Siret
+        website:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Website
+        headquarters:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Headquarters
+        is_intermediary:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Intermediary
+        company_type:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Company Type
+        industry:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Industry
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      title: CompanyUpdate
+      description: 'Schema for updating a company (PUT/PATCH).
+
+
+        All fields are optional to support partial updates.'
+    Contact:
+      properties:
+        last_name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Last Name
+          description: Contact's last name
+        first_name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: First Name
+          description: Contact's first name
+        position:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Position
+          description: Job title/position
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+          description: Email address
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 20
+          - type: 'null'
+          title: Phone
+          description: Phone number (will be normalized to E.164)
+        linkedin:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Linkedin
+          description: LinkedIn profile URL (normalized to short format)
+        relationship_notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Relationship Notes
+          description: How you know this person
+        is_independent_recruiter:
+          type: boolean
+          title: Is Independent Recruiter
+          description: Whether this is an independent recruiter
+          default: false
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Additional notes
+        company_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Company Id
+          description: Associated company ID
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+          description: Last update timestamp
+      type: object
+      required:
+      - last_name
+      - first_name
+      - id
+      - created_at
+      title: Contact
+      description: 'Schema for reading a contact (GET).
+
+        Includes all fields including generated ones (id, timestamps).'
+    ContactCreate:
+      properties:
+        last_name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Last Name
+          description: Contact's last name
+        first_name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: First Name
+          description: Contact's first name
+        position:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Position
+          description: Job title/position
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+          description: Email address
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 20
+          - type: 'null'
+          title: Phone
+          description: Phone number (will be normalized to E.164)
+        linkedin:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Linkedin
+          description: LinkedIn profile URL (normalized to short format)
+        relationship_notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Relationship Notes
+          description: How you know this person
+        is_independent_recruiter:
+          type: boolean
+          title: Is Independent Recruiter
+          description: Whether this is an independent recruiter
+          default: false
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Additional notes
+        company_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Company Id
+          description: Associated company ID
+      type: object
+      required:
+      - last_name
+      - first_name
+      title: ContactCreate
+      description: Schema for creating a new contact (POST).
+    ContactUpdate:
+      properties:
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: Last Name
+        first_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: First Name
+        position:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Position
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 20
+          - type: 'null'
+          title: Phone
+        linkedin:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Linkedin
+        relationship_notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Relationship Notes
+        is_independent_recruiter:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Independent Recruiter
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        company_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Company Id
+      type: object
+      title: ContactUpdate
+      description: 'Schema for updating a contact (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    ContractType:
+      type: string
+      enum:
+      - permanent
+      - fixed_term
+      - freelance
+      - contractor
+      - internship
+      - apprenticeship
+      title: ContractType
+      description: Type of employment contract.
+    Document:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          description: Document name
+        type:
+          type: string
+          maxLength: 50
+          minLength: 1
+          title: Type
+          description: 'Document type: resume, cover_letter, portfolio, certificate,
+            job_posting, other'
+        format:
+          type: string
+          maxLength: 10
+          minLength: 1
+          title: Format
+          description: 'File format: pdf, docx, jpg, etc.'
+        path:
+          type: string
+          minLength: 1
+          title: Path
+          description: Storage path or URL
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Free text description
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+      type: object
+      required:
+      - name
+      - type
+      - format
+      - path
+      - id
+      - created_at
+      title: Document
+      description: 'Schema for reading a document (GET).
+
+
+        Includes all fields including generated ones (id, timestamp).'
+    DocumentAssociation:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        document_id:
+          type: integer
+          title: Document Id
+          description: ID of the document
+        entity_type:
+          allOf:
+          - $ref: '#/components/schemas/EntityType'
+          description: Type of the associated entity
+        entity_id:
+          type: integer
+          title: Entity Id
+          description: ID of the associated entity
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+      type: object
+      required:
+      - id
+      - document_id
+      - entity_type
+      - entity_id
+      - created_at
+      title: DocumentAssociation
+      description: 'Schema for reading a document association (GET).
+
+        Includes all fields including generated ones (id).'
+    DocumentAssociationCreate:
+      properties:
+        document_id:
+          type: integer
+          title: Document Id
+          description: ID of the document
+        entity_type:
+          allOf:
+          - $ref: '#/components/schemas/EntityType'
+          description: Type of the associated entity (application, opportunity, etc.)
+        entity_id:
+          type: integer
+          title: Entity Id
+          description: ID of the associated entity
+      type: object
+      required:
+      - document_id
+      - entity_type
+      - entity_id
+      title: DocumentAssociationCreate
+      description: Schema for creating a new document association (POST).
+    DocumentAssociationUpdate:
+      properties:
+        document_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Document Id
+        entity_type:
+          anyOf:
+          - $ref: '#/components/schemas/EntityType'
+          - type: 'null'
+        entity_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Entity Id
+      type: object
+      title: DocumentAssociationUpdate
+      description: 'Schema for updating a document association (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    DocumentCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          description: Document name
+        type:
+          type: string
+          maxLength: 50
+          minLength: 1
+          title: Type
+          description: 'Document type: resume, cover_letter, portfolio, certificate,
+            job_posting, other'
+        format:
+          type: string
+          maxLength: 10
+          minLength: 1
+          title: Format
+          description: 'File format: pdf, docx, jpg, etc.'
+        path:
+          type: string
+          minLength: 1
+          title: Path
+          description: Storage path or URL
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Free text description
+      type: object
+      required:
+      - name
+      - type
+      - format
+      - path
+      title: DocumentCreate
+      description: Schema for creating a new document (POST).
+    DocumentUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Name
+        type:
+          anyOf:
+          - type: string
+            maxLength: 50
+            minLength: 1
+          - type: 'null'
+          title: Type
+        format:
+          anyOf:
+          - type: string
+            maxLength: 10
+            minLength: 1
+          - type: 'null'
+          title: Format
+        path:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Path
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      title: DocumentUpdate
+      description: 'Schema for updating a document (PUT/PATCH).
+
+
+        All fields are optional to support partial updates.'
+    EntityType:
+      type: string
+      enum:
+      - application
+      - opportunity
+      - company
+      - contact
+      title: EntityType
+      description: Entity types that can have associated documents.
+    EventStatus:
+      type: string
+      enum:
+      - pending
+      - confirmed
+      - rescheduled
+      - cancelled
+      - completed
+      title: EventStatus
+      description: Status of scheduled event.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Opportunity:
+      properties:
+        job_title:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Job Title
+          description: Job title
+        application_type:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationType'
+          description: Type of application (posting, spontaneous, etc.)
+        company_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Company Id
+          description: Associated company ID
+        position_type:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Position Type
+          description: Role type (backend, frontend, etc.)
+        contract_type:
+          allOf:
+          - $ref: '#/components/schemas/ContractType'
+          description: Type of employment contract
+        location:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Location
+          description: City, Country or specific location
+        job_posting_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Posting Url
+          description: Link to original job posting
+        job_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Description
+          description: Summary or full text of the job description
+        required_skills:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Required Skills
+          description: List of required skills
+        technologies:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Technologies
+          description: Tech stack mentioned
+        salary_min:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Min
+          description: Minimum salary offered
+        salary_max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Max
+          description: Maximum salary offered
+        salary_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Salary Info
+          description: Additional salary details (benefits, equity, etc.)
+        remote_policy:
+          anyOf:
+          - $ref: '#/components/schemas/RemotePolicy'
+          - type: 'null'
+          description: Remote work policy
+        remote_details:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Remote Details
+          description: Specific details about remote policy
+        source:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Source
+          description: Source of the opportunity (LinkedIn, Indeed, etc.)
+        recruitment_process:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recruitment Process
+          description: Notes on the recruitment process steps
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+          description: Last update timestamp
+      type: object
+      required:
+      - job_title
+      - application_type
+      - position_type
+      - contract_type
+      - id
+      - created_at
+      title: Opportunity
+      description: 'Schema for reading an opportunity (GET).
+
+        Includes all fields including generated ones (id, timestamps).'
+    OpportunityContact:
+      properties:
+        is_primary_contact:
+          type: boolean
+          title: Is Primary Contact
+          description: Whether this is the primary contact for this opportunity
+          default: false
+        contact_role:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: Contact Role
+          description: Role of the contact in this specific opportunity (e.g. Recruiter,
+            Hiring Manager)
+        origin:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Origin
+          description: How this contact is related (e.g. direct approach, referral)
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Contextual notes for this association
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        opportunity_id:
+          type: integer
+          title: Opportunity Id
+          description: ID of the opportunity
+        contact_id:
+          type: integer
+          title: Contact Id
+          description: ID of the contact
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+      type: object
+      required:
+      - id
+      - opportunity_id
+      - contact_id
+      - created_at
+      title: OpportunityContact
+      description: 'Schema for reading an opportunity-contact association (GET).
+
+        Includes all fields including generated ones (id, timestamps).'
+    OpportunityContactCreate:
+      properties:
+        is_primary_contact:
+          type: boolean
+          title: Is Primary Contact
+          description: Whether this is the primary contact for this opportunity
+          default: false
+        contact_role:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: Contact Role
+          description: Role of the contact in this specific opportunity (e.g. Recruiter,
+            Hiring Manager)
+        origin:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Origin
+          description: How this contact is related (e.g. direct approach, referral)
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Contextual notes for this association
+        opportunity_id:
+          type: integer
+          title: Opportunity Id
+          description: ID of the opportunity
+        contact_id:
+          type: integer
+          title: Contact Id
+          description: ID of the contact
+      type: object
+      required:
+      - opportunity_id
+      - contact_id
+      title: OpportunityContactCreate
+      description: Schema for creating a new opportunity-contact association (POST).
+    OpportunityContactUpdate:
+      properties:
+        is_primary_contact:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Primary Contact
+        contact_role:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: Contact Role
+        origin:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Origin
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        opportunity_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Opportunity Id
+        contact_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Contact Id
+      type: object
+      title: OpportunityContactUpdate
+      description: 'Schema for updating an opportunity-contact association (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    OpportunityCreate:
+      properties:
+        job_title:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Job Title
+          description: Job title
+        application_type:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationType'
+          description: Type of application (posting, spontaneous, etc.)
+        company_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Company Id
+          description: Associated company ID
+        position_type:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Position Type
+          description: Role type (backend, frontend, etc.)
+        contract_type:
+          allOf:
+          - $ref: '#/components/schemas/ContractType'
+          description: Type of employment contract
+        location:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Location
+          description: City, Country or specific location
+        job_posting_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Posting Url
+          description: Link to original job posting
+        job_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Description
+          description: Summary or full text of the job description
+        required_skills:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Required Skills
+          description: List of required skills
+        technologies:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Technologies
+          description: Tech stack mentioned
+        salary_min:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Min
+          description: Minimum salary offered
+        salary_max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Max
+          description: Maximum salary offered
+        salary_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Salary Info
+          description: Additional salary details (benefits, equity, etc.)
+        remote_policy:
+          anyOf:
+          - $ref: '#/components/schemas/RemotePolicy'
+          - type: 'null'
+          description: Remote work policy
+        remote_details:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Remote Details
+          description: Specific details about remote policy
+        source:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Source
+          description: Source of the opportunity (LinkedIn, Indeed, etc.)
+        recruitment_process:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recruitment Process
+          description: Notes on the recruitment process steps
+      type: object
+      required:
+      - job_title
+      - application_type
+      - position_type
+      - contract_type
+      title: OpportunityCreate
+      description: Schema for creating a new opportunity (POST).
+    OpportunityProduct:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        opportunity_id:
+          type: integer
+          title: Opportunity Id
+          description: ID of the opportunity
+        product_id:
+          type: integer
+          title: Product Id
+          description: ID of the product
+      type: object
+      required:
+      - id
+      - opportunity_id
+      - product_id
+      title: OpportunityProduct
+      description: 'Schema for reading an opportunity-product association (GET).
+
+        Includes all fields including generated ones (id).'
+    OpportunityProductCreate:
+      properties:
+        opportunity_id:
+          type: integer
+          title: Opportunity Id
+          description: ID of the opportunity
+        product_id:
+          type: integer
+          title: Product Id
+          description: ID of the product
+      type: object
+      required:
+      - opportunity_id
+      - product_id
+      title: OpportunityProductCreate
+      description: Schema for creating a new opportunity-product association (POST).
+    OpportunityProductUpdate:
+      properties:
+        opportunity_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Opportunity Id
+        product_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Product Id
+      type: object
+      title: OpportunityProductUpdate
+      description: 'Schema for updating an opportunity-product association (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    OpportunityUpdate:
+      properties:
+        job_title:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Job Title
+        application_type:
+          anyOf:
+          - $ref: '#/components/schemas/ApplicationType'
+          - type: 'null'
+        company_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Company Id
+        position_type:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: Position Type
+        contract_type:
+          anyOf:
+          - $ref: '#/components/schemas/ContractType'
+          - type: 'null'
+        location:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Location
+        job_posting_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Posting Url
+        job_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Job Description
+        required_skills:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Required Skills
+        technologies:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Technologies
+        salary_min:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Min
+        salary_max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Salary Max
+        salary_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Salary Info
+        remote_policy:
+          anyOf:
+          - $ref: '#/components/schemas/RemotePolicy'
+          - type: 'null'
+        remote_details:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Remote Details
+        source:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Source
+        recruitment_process:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recruitment Process
+      type: object
+      title: OpportunityUpdate
+      description: 'Schema for updating an opportunity (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    Product:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          description: Product or service name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Detailed description of the product
+        company_id:
+          type: integer
+          title: Company Id
+          description: Associated company ID
+        website:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Website
+          description: Product specific website URL
+        technologies_used:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Technologies Used
+          description: Stack or technologies used in this product
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+      type: object
+      required:
+      - name
+      - company_id
+      - id
+      - created_at
+      title: Product
+      description: 'Schema for reading a product (GET).
+
+        Includes all fields including generated ones (id, timestamps).'
+    ProductCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          description: Product or service name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Detailed description of the product
+        company_id:
+          type: integer
+          title: Company Id
+          description: Associated company ID
+        website:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Website
+          description: Product specific website URL
+        technologies_used:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Technologies Used
+          description: Stack or technologies used in this product
+      type: object
+      required:
+      - name
+      - company_id
+      title: ProductCreate
+      description: Schema for creating a new product (POST).
+    ProductUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        company_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Company Id
+        website:
+          anyOf:
+          - type: string
+            maxLength: 255
+          - type: 'null'
+          title: Website
+        technologies_used:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Technologies Used
+      type: object
+      title: ProductUpdate
+      description: 'Schema for updating a product (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    RemotePolicy:
+      type: string
+      enum:
+      - on_site
+      - full_remote
+      - hybrid
+      - flexible
+      title: RemotePolicy
+      description: Remote work policy.
+    ScheduledEvent:
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Title
+          description: Event title (e.g., 'HR Interview')
+        event_type:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Event Type
+          description: Type of event (interview, call, meeting)
+        scheduled_date:
+          type: string
+          format: date-time
+          title: Scheduled Date
+          description: Date and time of the event
+        duration_minutes:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Duration Minutes
+          description: Duration in minutes
+        communication_method:
+          anyOf:
+          - $ref: '#/components/schemas/CommunicationMethod'
+          - type: 'null'
+          description: Method (video, phone, etc.)
+        event_link:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Event Link
+          description: URL for video call or meeting details
+        phone_number:
+          anyOf:
+          - type: string
+            maxLength: 20
+          - type: 'null'
+          title: Phone Number
+          description: Phone number if applicable
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+          description: Physical address or location info
+        instructions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instructions
+          description: Specific instructions for the candidate
+        status:
+          allOf:
+          - $ref: '#/components/schemas/EventStatus'
+          description: Current status of the event
+          default: pending
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Private notes about the event
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+          description: Last update timestamp
+      type: object
+      required:
+      - title
+      - scheduled_date
+      - id
+      - created_at
+      title: ScheduledEvent
+      description: 'Schema for reading a scheduled event (GET).
+
+        Includes all fields including generated ones (id, timestamps).'
+    ScheduledEventCreate:
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Title
+          description: Event title (e.g., 'HR Interview')
+        event_type:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Event Type
+          description: Type of event (interview, call, meeting)
+        scheduled_date:
+          type: string
+          format: date-time
+          title: Scheduled Date
+          description: Date and time of the event
+        duration_minutes:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Duration Minutes
+          description: Duration in minutes
+        communication_method:
+          anyOf:
+          - $ref: '#/components/schemas/CommunicationMethod'
+          - type: 'null'
+          description: Method (video, phone, etc.)
+        event_link:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Event Link
+          description: URL for video call or meeting details
+        phone_number:
+          anyOf:
+          - type: string
+            maxLength: 20
+          - type: 'null'
+          title: Phone Number
+          description: Phone number if applicable
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+          description: Physical address or location info
+        instructions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instructions
+          description: Specific instructions for the candidate
+        status:
+          allOf:
+          - $ref: '#/components/schemas/EventStatus'
+          description: Current status of the event
+          default: pending
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Private notes about the event
+      type: object
+      required:
+      - title
+      - scheduled_date
+      title: ScheduledEventCreate
+      description: Schema for creating a new scheduled event (POST).
+    ScheduledEventUpdate:
+      properties:
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Title
+        event_type:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Event Type
+        scheduled_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Scheduled Date
+        duration_minutes:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Duration Minutes
+        communication_method:
+          anyOf:
+          - $ref: '#/components/schemas/CommunicationMethod'
+          - type: 'null'
+        event_link:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Event Link
+        phone_number:
+          anyOf:
+          - type: string
+            maxLength: 20
+          - type: 'null'
+          title: Phone Number
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        instructions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Instructions
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/EventStatus'
+          - type: 'null'
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      title: ScheduledEventUpdate
+      description: 'Schema for updating a scheduled event (PUT/PATCH).
+
+        All fields are optional to support partial updates.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
