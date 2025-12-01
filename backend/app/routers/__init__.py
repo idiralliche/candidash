@@ -9,6 +9,7 @@ from app.routers.opportunities import router as opportunities_router
 from app.routers.applications import router as applications_router
 from app.routers.scheduled_events import router as scheduled_events_router
 from app.routers.actions import router as actions_router
+from app.routers.opportunity_contacts import router as opportunity_contacts_router
 
 __all__ = [
     "companies_router",
@@ -19,4 +20,5 @@ __all__ = [
     "applications_router",
     "scheduled_events_router",
     "actions_router",
+    "opportunity_contacts_router",
 ]
