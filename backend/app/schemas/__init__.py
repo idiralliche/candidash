@@ -49,6 +49,12 @@ from app.schemas.action import (
     ActionUpdate,
     ActionInDB,
 )
+from app.schemas.opportunity_contact import (
+    OpportunityContact,
+    OpportunityContactCreate,
+    OpportunityContactUpdate,
+    OpportunityContactInDB,
+)
 
 __all__ = [
     "Company",
@@ -83,4 +89,8 @@ __all__ = [
     "ActionCreate",
     "ActionUpdate",
     "ActionInDB",
+    "OpportunityContact",
+    "OpportunityContactCreate",
+    "OpportunityContactUpdate",
+    "OpportunityContactInDB",
 ]
