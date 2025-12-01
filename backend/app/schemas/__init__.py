@@ -55,6 +55,12 @@ from app.schemas.opportunity_contact import (
     OpportunityContactUpdate,
     OpportunityContactInDB,
 )
+from app.schemas.opportunity_product import (
+    OpportunityProduct,
+    OpportunityProductCreate,
+    OpportunityProductUpdate,
+    OpportunityProductInDB,
+)
 
 __all__ = [
     "Company",
@@ -93,4 +99,8 @@ __all__ = [
     "OpportunityContactCreate",
     "OpportunityContactUpdate",
     "OpportunityContactInDB",
+    "OpportunityProduct",
+    "OpportunityProductCreate",
+    "OpportunityProductUpdate",
+    "OpportunityProductInDB",
 ]
