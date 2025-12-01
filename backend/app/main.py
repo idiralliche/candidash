@@ -2,7 +2,7 @@
 Main FastAPI application.
 """
 from fastapi import FastAPI
-from app.routers import companies_router, documents_router, contacts_router, products_router, opportunities_router, applications_router, scheduled_events_router, actions_router, opportunity_contacts_router, opportunity_products_router
+from app.routers import companies_router, documents_router, contacts_router, products_router, opportunities_router, applications_router, scheduled_events_router, actions_router, opportunity_contacts_router, opportunity_products_router, document_associations_router
 
 app = FastAPI(
     title="CandiDash API",
@@ -28,3 +28,4 @@ app.include_router(scheduled_events_router, prefix="/api/v1")
 app.include_router(actions_router, prefix="/api/v1")
 app.include_router(opportunity_contacts_router, prefix="/api/v1")
 app.include_router(opportunity_products_router, prefix="/api/v1")
+app.include_router(document_associations_router, prefix="/api/v1")
