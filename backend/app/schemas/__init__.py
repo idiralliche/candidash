@@ -43,6 +43,12 @@ from app.schemas.scheduled_event import (
     ScheduledEventUpdate,
     ScheduledEventInDB,
 )
+from app.schemas.action import (
+    Action,
+    ActionCreate,
+    ActionUpdate,
+    ActionInDB,
+)
 
 __all__ = [
     "Company",
@@ -73,4 +79,8 @@ __all__ = [
     "ScheduledEventCreate",
     "ScheduledEventUpdate",
     "ScheduledEventInDB",
+    "Action",
+    "ActionCreate",
+    "ActionUpdate",
+    "ActionInDB",
 ]
