@@ -37,6 +37,12 @@ from app.schemas.application import (
     ApplicationUpdate,
     ApplicationInDB,
 )
+from app.schemas.scheduled_event import (
+    ScheduledEvent,
+    ScheduledEventCreate,
+    ScheduledEventUpdate,
+    ScheduledEventInDB,
+)
 
 __all__ = [
     "Company",
@@ -63,4 +69,8 @@ __all__ = [
     "ApplicationCreate",
     "ApplicationUpdate",
     "ApplicationInDB",
+    "ScheduledEvent",
+    "ScheduledEventCreate",
+    "ScheduledEventUpdate",
+    "ScheduledEventInDB",
 ]
