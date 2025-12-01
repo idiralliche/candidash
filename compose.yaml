@@ -1,12 +1,13 @@
 services:
-  # PostgreSQL Database
+  # Persistent Database for Development
   db:
     image: postgres:15-alpine
     container_name: candidash_db
+    restart: always
     environment:
-      POSTGRES_USER: candidash_user
-      POSTGRES_PASSWORD: candidash_password
-      POSTGRES_DB: candidash_db
+      POSTGRES_DB: ${POSTGRES_DB:-candidash_db}
+      POSTGRES_USER: ${POSTGRES_USER:-candidash_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-candidash_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -14,29 +15,35 @@ services:
     networks:
       - candidash-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U candidash_user -d candidash_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-candidash_user} -d ${POSTGRES_DB:-candidash_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # FastAPI Backend
+  # Backend in Development Mode
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: candidash-backend:latest
     container_name: candidash_backend
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
     volumes:
-      - ./backend:/app
-      - ./documents:/app/documents
+      - ./backend:/app # Hot Reload code
+      - ./documents:/app/documents # Persist uploaded documents
+    environment:
+      ENV: dev
+      # Dynamic URL construction
+      DATABASE_URL: postgresql://${POSTGRES_USER:-candidash_user}:${POSTGRES_PASSWORD:-candidash_password}@db:5432/${POSTGRES_DB:-candidash_db}
+      DOCUMENTS_PATH: /app/documents
     ports:
       - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql://candidash_user:candidash_password@db:5432/candidash_db
-      DOCUMENTS_PATH: /app/documents
     depends_on:
       db:
         condition: service_healthy
+    # Wait for DB -> Migrate -> Start Server with Reload
+    command: >
+      /bin/bash -c "./scripts/wait-for-db.sh db 5432 && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     networks:
       - candidash-network
 
