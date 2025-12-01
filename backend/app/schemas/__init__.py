@@ -61,6 +61,12 @@ from app.schemas.opportunity_product import (
     OpportunityProductUpdate,
     OpportunityProductInDB,
 )
+from app.schemas.document_association import (
+    DocumentAssociation,
+    DocumentAssociationCreate,
+    DocumentAssociationUpdate,
+    DocumentAssociationInDB,
+)
 
 __all__ = [
     "Company",
@@ -103,4 +109,8 @@ __all__ = [
     "OpportunityProductCreate",
     "OpportunityProductUpdate",
     "OpportunityProductInDB",
+    "DocumentAssociation",
+    "DocumentAssociationCreate",
+    "DocumentAssociationUpdate",
+    "DocumentAssociationInDB",
 ]
