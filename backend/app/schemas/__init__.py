@@ -31,6 +31,12 @@ from app.schemas.opportunity import (
     OpportunityUpdate,
     OpportunityInDB,
 )
+from app.schemas.application import (
+    Application,
+    ApplicationCreate,
+    ApplicationUpdate,
+    ApplicationInDB,
+)
 
 __all__ = [
     "Company",
@@ -53,4 +59,8 @@ __all__ = [
     "OpportunityCreate",
     "OpportunityUpdate",
     "OpportunityInDB",
+    "Application",
+    "ApplicationCreate",
+    "ApplicationUpdate",
+    "ApplicationInDB",
 ]
