@@ -1,7 +1,8 @@
 """
 Document model - represents a file (resume, cover letter, etc.).
 """
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -12,6 +13,7 @@ class Document(Base):
 
     Represents a file stored in the system (resume, cover letter, portfolio, etc.).
     Documents can be described and reused across multiple applications.
+    Each document belongs to a specific user (multi-tenancy).
     """
     __tablename__ = "documents"
 
@@ -21,7 +23,14 @@ class Document(Base):
     format = Column(String(10), nullable=False)  # pdf, docx, jpg, etc.
     path = Column(Text, nullable=False)  # Storage path or URL
     description = Column(Text, nullable=True)  # Free text description
+
+    # Multi-tenancy
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
+    # Relationships
+    owner = relationship("User")
+
     def __repr__(self):
-        return f"<Document(id={self.id}, name='{self.name}', type={self.type})>"
+        return f"<Document(id={self.id}, name='{self.name}', type={self.type}, owner_id={self.owner_id})>"
