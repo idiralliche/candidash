@@ -67,6 +67,11 @@ from app.schemas.document_association import (
     DocumentAssociationUpdate,
     DocumentAssociationInDB,
 )
+from app.schemas.token import (
+    Token,
+    TokenData,
+)
+
 
 __all__ = [
     "Company",
@@ -113,4 +118,6 @@ __all__ = [
     "DocumentAssociationCreate",
     "DocumentAssociationUpdate",
     "DocumentAssociationInDB",
+    "Token",
+    "TokenData",
 ]
