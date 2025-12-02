@@ -46,8 +46,8 @@ class Opportunity(Base):
     job_title = Column(String(255), nullable=False)
     application_type = Column(Enum(ApplicationType), nullable=False)
     company_id = Column(Integer, ForeignKey("companies.id", ondelete="SET NULL"), nullable=True)
-    position_type = Column(String(100), nullable=False)  # backend, frontend, devops, etc.
-    contract_type = Column(Enum(ContractType), nullable=False)
+    position_type = Column(String(100), nullable=True)  # backend, frontend, devops, etc.
+    contract_type = Column(Enum(ContractType), nullable=True)
     location = Column(String(255), nullable=True)
 
     # Job posting information

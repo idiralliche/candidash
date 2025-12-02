@@ -9,8 +9,8 @@ class OpportunityBase(BaseModel):
     job_title: str = Field(..., min_length=1, max_length=255, description="Job title")
     application_type: ApplicationType = Field(..., description="Type of application (posting, spontaneous, etc.)")
     company_id: Optional[int] = Field(None, description="Associated company ID")
-    position_type: str = Field(..., min_length=1, max_length=100, description="Role type (backend, frontend, etc.)")
-    contract_type: ContractType = Field(..., description="Type of employment contract")
+    position_type: Optional[str] = Field(None, max_length=100, description="Role type (backend, frontend, etc.)")
+    contract_type: Optional[ContractType] = Field(None, description="Type of employment contract")
     location: Optional[str] = Field(None, max_length=255, description="City, Country or specific location")
 
     # Job posting information
