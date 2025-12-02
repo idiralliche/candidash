@@ -39,6 +39,7 @@ class Opportunity(Base):
 
     Represents a job opportunity, either from a job posting or spontaneous application.
     Contains all details about the position, requirements, and work conditions.
+    Each opportunity belongs to a specific user (multi-tenancy).
     """
     __tablename__ = "opportunities"
 
@@ -71,14 +72,18 @@ class Opportunity(Base):
     source = Column(String(100), nullable=True)  # LinkedIn, Malt, Indeed, etc.
     recruitment_process = Column(Text, nullable=True)
 
+    # Multi-tenancy
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
     # Relationships
+    owner = relationship("User")
     company = relationship("Company", back_populates="opportunities")
     applications = relationship("Application", back_populates="opportunity", cascade="all, delete-orphan")
     opportunity_contacts = relationship("OpportunityContact", back_populates="opportunity", cascade="all, delete-orphan")
     opportunity_products = relationship("OpportunityProduct", back_populates="opportunity", cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f"<Opportunity(id={self.id}, job_title='{self.job_title}', type={self.application_type})>"
+        return f"<Opportunity(id={self.id}, job_title='{self.job_title}', type={self.application_type}, owner_id={self.owner_id})>"
