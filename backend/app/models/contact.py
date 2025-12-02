@@ -13,6 +13,7 @@ class Contact(Base):
 
     Represents a contact person from a company.
     Can be linked to multiple opportunities as primary or secondary contact.
+    Each contact belongs to a specific user (multi-tenancy).
     """
     __tablename__ = "contacts"
 
@@ -30,12 +31,17 @@ class Contact(Base):
 
     notes = Column(Text, nullable=True)
     company_id = Column(Integer, ForeignKey("companies.id", ondelete="SET NULL"), nullable=True)
+
+    # Multi-tenancy
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
     # Relationships
+    owner = relationship("User")
     company = relationship("Company", back_populates="contacts")
     opportunity_contacts = relationship("OpportunityContact", back_populates="contact")
 
     def __repr__(self):
-        return f"<Contact(id={self.id}, name='{self.first_name} {self.last_name}')>"
+        return f"<Contact(id={self.id}, name='{self.first_name} {self.last_name}', owner_id={self.owner_id})>"
