@@ -36,6 +36,8 @@ from app.schemas.application import (
     ApplicationCreate,
     ApplicationUpdate,
     ApplicationInDB,
+    ApplicationCreateWithoutOpportunityId,
+    ApplicationWithOpportunityCreate,
 )
 from app.schemas.scheduled_event import (
     ScheduledEvent,
@@ -104,6 +106,8 @@ __all__ = [
     "ApplicationCreate",
     "ApplicationUpdate",
     "ApplicationInDB",
+    "ApplicationCreateWithoutOpportunityId",
+    "ApplicationWithOpportunityCreate",
     "ScheduledEvent",
     "ScheduledEventCreate",
     "ScheduledEventUpdate",

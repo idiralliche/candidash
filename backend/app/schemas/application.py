@@ -3,6 +3,8 @@ from datetime import date, datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from app.models.application import ApplicationStatus
+from app.schemas.opportunity import OpportunityCreate
+
 
 class ApplicationBase(BaseModel):
     """Base schema with common fields for Application."""
@@ -17,6 +19,41 @@ class ApplicationBase(BaseModel):
 class ApplicationCreate(ApplicationBase):
     """Schema for creating a new application (POST)."""
     opportunity_id: int = Field(..., description="ID of the related opportunity")
+
+
+class ApplicationCreateWithoutOpportunityId(ApplicationBase):
+    """
+    Schema for creating an application without opportunity_id.
+    Used in composite endpoint where opportunity is created at the same time.
+    """
+    pass
+
+
+class ApplicationWithOpportunityCreate(BaseModel):
+    """
+    Composite schema for creating Application with its Opportunity in one call.
+
+    Used when the opportunity doesn't exist yet (new job application).
+    Frontend sends both opportunity details and application details,
+    backend creates them in a single transaction.
+
+    Example:
+    {
+        "opportunity": {
+            "job_title": "Senior Python Developer",
+            "application_type": "job_posting",
+            "company_id": 42,
+            ...
+        },
+        "application": {
+            "application_date": "2024-12-02",
+            "status": "pending",
+            "resume_used_id": 5
+        }
+    }
+    """
+    opportunity: OpportunityCreate = Field(..., description="Opportunity details to create")
+    application: ApplicationCreateWithoutOpportunityId = Field(..., description="Application details to create")
 
 
 class ApplicationUpdate(BaseModel):
