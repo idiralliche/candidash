@@ -1,7 +1,7 @@
 """
 ScheduledEvent model - represents a scheduled event (interview, meeting, call).
 """
-from sqlalchemy import Column, Integer, String, Text, DateTime, Enum
+from sqlalchemy import Column, Integer, String, Text, DateTime, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
@@ -33,6 +33,7 @@ class ScheduledEvent(Base):
     Represents a scheduled event like an interview, meeting, or call.
     Can be exported to calendar applications.
     Contains all practical information needed for the event.
+    Each scheduled event belongs to a specific user (multi-tenancy).
     """
     __tablename__ = "scheduled_events"
 
@@ -57,12 +58,15 @@ class ScheduledEvent(Base):
     # Notes
     notes = Column(Text, nullable=True)
 
+    # Multi-tenancy
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
     # Relationships
+    owner = relationship("User")
     actions = relationship("Action", back_populates="scheduled_event")
 
     def __repr__(self):
-        return f"<ScheduledEvent(id={self.id}, title='{self.title}', date={self.scheduled_date}, status={self.status})>"
-
+        return f"<ScheduledEvent(id={self.id}, title='{self.title}', date={self.scheduled_date}, status={self.status}, owner_id={self.owner_id})>"
