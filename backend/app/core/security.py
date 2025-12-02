@@ -1,4 +1,3 @@
-# backend/app/core/security.py
 """
 Security utilities for password hashing and JWT token management.
 """

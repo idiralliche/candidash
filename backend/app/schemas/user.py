@@ -1,4 +1,3 @@
-# backend/app/schemas/user.py
 """
 Pydantic schemas for User entity.
 """

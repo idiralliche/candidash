@@ -1,7 +1,7 @@
 """
 DocumentAssociation model - polymorphic association between documents and entities.
 """
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, Enum
 from sqlalchemy.sql import func
 import enum
 from app.database import Base

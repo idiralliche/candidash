@@ -1,4 +1,3 @@
-# backend/app/schemas/token.py
 """
 Pydantic schemas for authentication tokens.
 """

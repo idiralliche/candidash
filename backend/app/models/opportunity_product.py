@@ -1,7 +1,7 @@
 """
 OpportunityProduct model - links opportunities with products.
 """
-from sqlalchemy import Column, Integer, ForeignKey, Table
+from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
 
