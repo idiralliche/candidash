@@ -7,7 +7,14 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.application import Application as ApplicationModel
 from app.models.application import ApplicationStatus
-from app.schemas.application import Application, ApplicationCreate, ApplicationUpdate
+from app.models.opportunity import Opportunity as OpportunityModel
+from app.schemas.application import (
+    Application,
+    ApplicationCreate,
+    ApplicationUpdate,
+    ApplicationWithOpportunityCreate,
+)
+
 
 router = APIRouter(prefix="/applications", tags=["applications"])
 
@@ -100,6 +107,86 @@ def create_application(application: ApplicationCreate, db: Session = Depends(get
     db.commit()
     db.refresh(db_application)
     return db_application
+
+
+@router.post("/with-opportunity", response_model=Application, status_code=201)
+def create_application_with_opportunity(
+    data: ApplicationWithOpportunityCreate,
+    db: Session = Depends(get_db)
+):
+    """
+    Create a new application with its opportunity in a single transaction.
+
+    This endpoint is useful when creating a new job application where
+    the opportunity doesn't exist yet. Both opportunity and application
+    are created atomically.
+
+    - **opportunity**: Opportunity details (job_title, application_type, company_id, etc.)
+    - **application**: Application details (application_date, status, resume_used_id, etc.)
+
+    Returns the created application with its generated ID and opportunity_id.
+
+    Example payload:
+    ```
+    {
+        "opportunity": {
+            "job_title": "Senior Python Developer",
+            "application_type": "job_posting",
+            "company_id": 42,
+            "contract_type": "permanent"
+        },
+        "application": {
+            "application_date": "2024-12-02",
+            "status": "pending",
+            "resume_used_id": 5
+        }
+    }
+    ```
+    """
+    try:
+        # Validate foreign keys in application data (resume, cover letter)
+        validate_foreign_keys(
+            db,
+            resume_id=data.application.resume_used_id,
+            cover_letter_id=data.application.cover_letter_id
+        )
+
+        # Validate company_id if provided in opportunity
+        if data.opportunity.company_id is not None:
+            from app.models.company import Company
+            company = db.query(Company).filter(Company.id == data.opportunity.company_id).first()
+            if not company:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Company with id {data.opportunity.company_id} not found"
+                )
+
+        # Create Opportunity first
+        db_opportunity = OpportunityModel(**data.opportunity.model_dump())
+        db.add(db_opportunity)
+        db.flush()  # Get opportunity.id without committing yet
+
+        # Create Application with the generated opportunity_id
+        application_data = data.application.model_dump()
+        application_data['opportunity_id'] = db_opportunity.id
+        db_application = ApplicationModel(**application_data)
+        db.add(db_application)
+
+        # Commit both in a single transaction
+        db.commit()
+        db.refresh(db_application)
+
+        return db_application
+
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create application with opportunity: {str(e)}"
+        )
 
 
 @router.put("/{application_id}", response_model=Application)
