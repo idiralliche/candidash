@@ -4,13 +4,21 @@ Security utilities for password hashing and JWT token management.
 """
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Any, Union
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError, InvalidHashError
 from jose import jwt, JWTError
-from passlib.context import CryptContext
 from app.config import settings
 
 
-# Password hashing context configuration
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Argon2 password hasher with secure defaults
+# Parameters are tuned for web applications (balance security/performance)
+ph = PasswordHasher(
+    time_cost=2,        # Number of iterations (default: 2)
+    memory_cost=65536,  # Memory usage in KB (64MB, default: 65536)
+    parallelism=4,      # Number of parallel threads (default: 4)
+    hash_len=32,        # Length of the hash in bytes (default: 32)
+    salt_len=16         # Length of the salt in bytes (default: 16)
+)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -24,12 +32,16 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         True if password matches, False otherwise
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        ph.verify(hashed_password, plain_password)
+        return True
+    except (VerifyMismatchError, InvalidHashError):
+        return False
 
 
 def get_password_hash(password: str) -> str:
     """
-    Generate a secure hash from a plain password.
+    Generate a secure hash from a plain password using Argon2id.
 
     Args:
         password: The plain text password to hash
@@ -37,7 +49,7 @@ def get_password_hash(password: str) -> str:
     Returns:
         The hashed password string
     """
-    return pwd_context.hash(password)
+    return ph.hash(password)
 
 
 def create_access_token(subject: Union[str, Any], expires_delta: Optional[timedelta] = None) -> str:
