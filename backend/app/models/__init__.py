@@ -12,6 +12,7 @@ from app.models.product import Product
 from app.models.opportunity_contact import OpportunityContact
 from app.models.opportunity_product import OpportunityProduct
 from app.models.document_association import DocumentAssociation
+from app.models.user import User
 
 __all__ = [
     "Application",
@@ -25,4 +26,5 @@ __all__ = [
     "OpportunityContact",
     "OpportunityProduct",
     "DocumentAssociation",
+    "User",
 ]
