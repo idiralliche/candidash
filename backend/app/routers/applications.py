@@ -5,6 +5,8 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
+from app.core.dependencies import get_current_user
+from app.models.user import User
 from app.models.application import Application as ApplicationModel
 from app.models.application import ApplicationStatus
 from app.models.opportunity import Opportunity as OpportunityModel
@@ -112,6 +114,7 @@ def create_application(application: ApplicationCreate, db: Session = Depends(get
 @router.post("/with-opportunity", response_model=Application, status_code=201)
 def create_application_with_opportunity(
     data: ApplicationWithOpportunityCreate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -125,6 +128,7 @@ def create_application_with_opportunity(
     - **application**: Application details (application_date, status, resume_used_id, etc.)
 
     Returns the created application with its generated ID and opportunity_id.
+    The opportunity is automatically assigned to the authenticated user.
 
     Example payload:
     ```
@@ -151,18 +155,24 @@ def create_application_with_opportunity(
             cover_letter_id=data.application.cover_letter_id
         )
 
-        # Validate company_id if provided in opportunity
+        # Validate company_id if provided in opportunity and verify ownership
         if data.opportunity.company_id is not None:
             from app.models.company import Company
-            company = db.query(Company).filter(Company.id == data.opportunity.company_id).first()
+            company = db.query(Company).filter(
+                Company.id == data.opportunity.company_id,
+                Company.owner_id == current_user.id
+            ).first()
             if not company:
                 raise HTTPException(
                     status_code=404,
-                    detail=f"Company with id {data.opportunity.company_id} not found"
+                    detail=f"Company with id {data.opportunity.company_id} not found or does not belong to you"
                 )
 
-        # Create Opportunity first
-        db_opportunity = OpportunityModel(**data.opportunity.model_dump())
+        # Create Opportunity with owner_id
+        opportunity_data = data.opportunity.model_dump()
+        opportunity_data['owner_id'] = current_user.id  # ← AJOUTÉ
+
+        db_opportunity = OpportunityModel(**opportunity_data)
         db.add(db_opportunity)
         db.flush()  # Get opportunity.id without committing yet
 
