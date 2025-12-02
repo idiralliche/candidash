@@ -31,6 +31,8 @@ services:
     volumes:
       - ./backend:/app # Hot Reload code
       - ./documents:/app/documents # Persist uploaded documents
+    secrets:
+      - secret_key
     environment:
       ENV: dev
       # Dynamic URL construction
@@ -46,6 +48,10 @@ services:
       /bin/bash -c "./scripts/wait-for-db.sh db 5432 && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     networks:
       - candidash-network
+
+secrets:
+  secret_key:
+    file: ./secrets/secret_key.txt
 
 volumes:
   postgres_data:

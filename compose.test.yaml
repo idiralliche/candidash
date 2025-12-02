@@ -30,6 +30,7 @@ services:
       POSTGRES_DB: candidash_test_db
       POSTGRES_USER: test_user
       POSTGRES_PASSWORD: test_password
+      SECRET_KEY : test_secret_key
     depends_on:
       db:
         condition: service_healthy

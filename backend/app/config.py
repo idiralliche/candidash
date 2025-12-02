@@ -1,5 +1,22 @@
 from pydantic_settings import BaseSettings
 from typing import List
+from pathlib import Path
+
+
+def _read_secret(secret_name: str) -> str | None:
+    """
+    Read secret from Docker secrets mounted at /run/secrets/.
+
+    Args:
+        secret_name: Name of the secret file to read
+
+    Returns:
+        Content of the secret file (stripped), or None if file doesn't exist
+    """
+    secret_path = Path(f"/run/secrets/{secret_name}")
+    if secret_path.exists():
+        return secret_path.read_text().strip()
+    return None
 
 
 class Settings(BaseSettings):
@@ -7,6 +24,11 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     PROJECT_NAME: str = "CandiDash API"
     DEBUG: bool = True
+
+    # Security
+    SECRET_KEY: str = ""
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     # Database
     DATABASE_URL: str
@@ -19,6 +41,16 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:5173",
     ]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Read SECRET_KEY from Docker secret if available, fallback to env var
+        secret_key_from_file = _read_secret("secret_key")
+        if secret_key_from_file:
+            self.SECRET_KEY = secret_key_from_file
+        elif not self.SECRET_KEY:
+            raise ValueError("SECRET_KEY must be provided either via secret file or environment variable")
 
     class Config:
         env_file = ".env"
