@@ -11,11 +11,11 @@ class CompanyBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255, description="Company name")
     siret: Optional[str] = Field(None, min_length=14, max_length=14, description="French business ID (SIRET)")
     website: Optional[str] = Field(None, max_length=255, description="Company website URL")
-    headquarters: Optional[str] = Field(None, description="Company headquarters address")
+    headquarters: Optional[str] = Field(None, max_length=500, description="Company headquarters address")
     is_intermediary: bool = Field(default=False, description="Whether this company is an intermediary (ESN, agency)")
-    company_type: Optional[str] = Field(None, max_length=100, description="Type: ESN, startup, enterprise, SME, etc.")
-    industry: Optional[str] = Field(None, max_length=100, description="Industry: Healthcare, automotive, etc.")
-    notes: Optional[str] = Field(None, description="Additional notes about the company")
+    company_type: Optional[str] = Field(None, min_length=2, max_length=100, description="Type: ESN, startup, enterprise, SME, etc.")
+    industry: Optional[str] = Field(None, min_length=2, max_length=100, description="Industry: Healthcare, automotive, etc.")
+    notes: Optional[str] = Field(None, max_length=50000, description="Additional notes about the company")
 
 
 class CompanyCreate(CompanyBase):
@@ -31,11 +31,11 @@ class CompanyUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     siret: Optional[str] = Field(None, min_length=14, max_length=14)
     website: Optional[str] = Field(None, max_length=255)
-    headquarters: Optional[str] = None
+    headquarters: Optional[str] = Field(None, max_length=500)
     is_intermediary: Optional[bool] = None
-    company_type: Optional[str] = Field(None, max_length=100)
-    industry: Optional[str] = Field(None, max_length=100)
-    notes: Optional[str] = None
+    company_type: Optional[str] = Field(None, min_length=2, max_length=100)
+    industry: Optional[str] = Field(None, min_length=2, max_length=100)
+    notes: Optional[str] = Field(None, max_length=50000)
 
 
 class Company(CompanyBase):
