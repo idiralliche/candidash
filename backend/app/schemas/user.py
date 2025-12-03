@@ -4,6 +4,7 @@ Pydantic schemas for User entity.
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from app.utils.validators.format_validators import validate_name
 
 
 class UserBase(BaseModel):
@@ -13,6 +14,23 @@ class UserBase(BaseModel):
     email: EmailStr = Field(..., description="User email address (unique)")
     first_name: Optional[str] = Field(None, max_length=100, description="User first name")
     last_name: Optional[str] = Field(None, max_length=100, description="User last name")
+
+    @field_validator('first_name', mode='before')
+    @classmethod
+    def validate_first_name(cls, v: str) -> str:
+        return validate_name(v, "First name")
+
+    @field_validator('last_name', mode='before')
+    @classmethod
+    def validate_last_name(cls, v: str) -> str:
+        return validate_name(v, "Last name")
+
+    @field_validator('email')
+    @classmethod
+    def normalize_email(cls, v):
+        if v is not None:
+            return v.lower()
+        return v
 
 
 class UserCreate(UserBase):
@@ -44,6 +62,23 @@ class UserUpdate(BaseModel):
     last_name: Optional[str] = Field(None, max_length=100)
     password: Optional[str] = Field(None, min_length=8)
     is_active: Optional[bool] = None
+
+    @field_validator('first_name', mode='before')
+    @classmethod
+    def validate_first_name(cls, v: str) -> str:
+        return validate_name(v, "First name")
+
+    @field_validator('last_name', mode='before')
+    @classmethod
+    def validate_last_name(cls, v: str) -> str:
+        return validate_name(v, "Last name")
+
+    @field_validator('email')
+    @classmethod
+    def normalize_email(cls, v):
+        if v is not None:
+            return v.lower()
+        return v
 
 
 class User(UserBase):
