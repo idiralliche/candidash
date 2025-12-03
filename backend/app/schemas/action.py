@@ -3,19 +3,20 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 
+
 class ActionBase(BaseModel):
     """Base schema with common fields for Action."""
     type: str = Field(..., min_length=1, max_length=50, description="Type of action (follow_up, note, etc.)")
     completed_date: Optional[datetime] = Field(None, description="Date when action was completed")
     is_completed: bool = Field(default=False, description="Completion status")
-    notes: Optional[str] = Field(None, description="Details or notes about the action")
-    parent_action_id: Optional[int] = Field(None, description="ID of parent action for threading")
-    scheduled_event_id: Optional[int] = Field(None, description="ID of associated scheduled event")
+    notes: Optional[str] = Field(None, max_length=50000, description="Details or notes about the action")
+    parent_action_id: Optional[int] = Field(None, gt=0, description="ID of parent action for threading")
+    scheduled_event_id: Optional[int] = Field(None, gt=0, description="ID of associated scheduled event")
 
 
 class ActionCreate(ActionBase):
     """Schema for creating a new action (POST)."""
-    application_id: int = Field(..., description="ID of the related application")
+    application_id: int = Field(..., gt=0, description="ID of the related application")
 
 
 class ActionUpdate(BaseModel):
@@ -25,10 +26,10 @@ class ActionUpdate(BaseModel):
     type: Optional[str] = Field(None, min_length=1, max_length=50)
     completed_date: Optional[datetime] = None
     is_completed: Optional[bool] = None
-    notes: Optional[str] = None
-    parent_action_id: Optional[int] = None
-    scheduled_event_id: Optional[int] = None
-    application_id: Optional[int] = None
+    notes: Optional[str] = Field(None, max_length=50000)
+    parent_action_id: Optional[int] = Field(None, gt=0)
+    scheduled_event_id: Optional[int] = Field(None, gt=0)
+    application_id: Optional[int] = Field(None, gt=0)
 
 
 class Action(ActionBase):
