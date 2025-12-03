@@ -6,10 +6,10 @@ from pydantic import BaseModel, ConfigDict, Field
 class ProductBase(BaseModel):
     """Base schema with common fields for Product."""
     name: str = Field(..., min_length=1, max_length=255, description="Product or service name")
-    description: Optional[str] = Field(None, description="Detailed description of the product")
-    company_id: int = Field(..., description="Associated company ID")
+    description: Optional[str] = Field(None, max_length=5000, description="Detailed description of the product")
+    company_id: int = Field(..., gt=0, description="Associated company ID")
     website: Optional[str] = Field(None, max_length=255, description="Product specific website URL")
-    technologies_used: Optional[str] = Field(None, description="Stack or technologies used in this product")
+    technologies_used: Optional[str] = Field(None, max_length=5000, description="Stack or technologies used in this product")
 
 
 class ProductCreate(ProductBase):
@@ -22,10 +22,10 @@ class ProductUpdate(BaseModel):
     All fields are optional to support partial updates.
     """
     name: Optional[str] = Field(None, min_length=1, max_length=255)
-    description: Optional[str] = None
-    company_id: Optional[int] = None
+    description: Optional[str] = Field(None, max_length=5000)
+    company_id: Optional[int] = Field(None, gt=0)
     website: Optional[str] = Field(None, max_length=255)
-    technologies_used: Optional[str] = None
+    technologies_used: Optional[str] = Field(None, max_length=5000)
 
 
 class Product(ProductBase):
