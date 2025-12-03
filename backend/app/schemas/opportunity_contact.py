@@ -8,13 +8,13 @@ class OpportunityContactBase(BaseModel):
     is_primary_contact: bool = Field(default=False, description="Whether this is the primary contact for this opportunity")
     contact_role: Optional[str] = Field(None, max_length=50, description="Role of the contact in this specific opportunity (e.g. Recruiter, Hiring Manager)")
     origin: Optional[str] = Field(None, max_length=100, description="How this contact is related (e.g. direct approach, referral)")
-    notes: Optional[str] = Field(None, description="Contextual notes for this association")
+    notes: Optional[str] = Field(None, max_length=50000, description="Contextual notes for this association")
 
 
 class OpportunityContactCreate(OpportunityContactBase):
     """Schema for creating a new opportunity-contact association (POST)."""
-    opportunity_id: int = Field(..., description="ID of the opportunity")
-    contact_id: int = Field(..., description="ID of the contact")
+    opportunity_id: int = Field(..., gt=0, description="ID of the opportunity")
+    contact_id: int = Field(..., gt=0, description="ID of the contact")
 
 
 class OpportunityContactUpdate(BaseModel):
@@ -24,9 +24,9 @@ class OpportunityContactUpdate(BaseModel):
     is_primary_contact: Optional[bool] = None
     contact_role: Optional[str] = Field(None, max_length=50)
     origin: Optional[str] = Field(None, max_length=100)
-    notes: Optional[str] = None
-    opportunity_id: Optional[int] = None
-    contact_id: Optional[int] = None
+    notes: Optional[str] = Field(None, max_length=50000)
+    opportunity_id: Optional[int] = Field(None, gt=0)
+    contact_id: Optional[int] = Field(None, gt=0)
 
 
 class OpportunityContact(OpportunityContactBase):
