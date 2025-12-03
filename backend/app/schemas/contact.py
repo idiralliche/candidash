@@ -2,20 +2,20 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, EmailStr, field_validator
-from app.utils.validators import validate_name, validate_and_normalize_phone, validate_linkedin_url
+from app.utils.validators.format_validators import validate_name, validate_and_normalize_phone, validate_linkedin_url
 
 class ContactBase(BaseModel):
     """Base schema with common fields for Contact."""
     last_name: str = Field(..., min_length=1, max_length=100, description="Contact's last name")
     first_name: str = Field(..., min_length=1, max_length=100, description="Contact's first name")
-    position: Optional[str] = Field(None, max_length=100, description="Job title/position")
+    position: Optional[str] = Field(None, min_length=2, max_length=100, description="Job title/position")
     email: Optional[EmailStr] = Field(None, description="Email address")
     phone: Optional[str] = Field(None, max_length=20, description="Phone number (will be normalized to E.164)")
     linkedin: Optional[str] = Field(None, max_length=255, description="LinkedIn profile URL (normalized to short format)")
-    relationship_notes: Optional[str] = Field(None, description="How you know this person")
+    relationship_notes: Optional[str] = Field(None, max_length=50000, description="How you know this person")
     is_independent_recruiter: bool = Field(default=False, description="Whether this is an independent recruiter")
-    notes: Optional[str] = Field(None, description="Additional notes")
-    company_id: Optional[int] = Field(None, description="Associated company ID")
+    notes: Optional[str] = Field(None, max_length=50000, description="Additional notes")
+    company_id: Optional[int] = Field(None, gt=0, description="Associated company ID")
 
     @field_validator('first_name', mode='before')
     @classmethod
@@ -41,6 +41,13 @@ class ContactBase(BaseModel):
             return None
         return validate_linkedin_url(v)
 
+    @field_validator('email')
+    @classmethod
+    def normalize_email(cls, v):
+        if v is not None:
+            return v.lower()
+        return v
+
 
 class ContactCreate(ContactBase):
     """Schema for creating a new contact (POST)."""
@@ -53,14 +60,14 @@ class ContactUpdate(BaseModel):
     """
     last_name: Optional[str] = Field(None, min_length=1, max_length=100)
     first_name: Optional[str] = Field(None, min_length=1, max_length=100)
-    position: Optional[str] = Field(None, max_length=100)
+    position: Optional[str] = Field(None, min_length=2, max_length=100)
     email: Optional[EmailStr] = None
     phone: Optional[str] = Field(None, max_length=20)
     linkedin: Optional[str] = Field(None, max_length=255)
-    relationship_notes: Optional[str] = None
+    relationship_notes: Optional[str] = Field(None, max_length=50000)
     is_independent_recruiter: Optional[bool] = None
-    notes: Optional[str] = None
-    company_id: Optional[int] = None
+    notes: Optional[str] = Field(None, max_length=50000)
+    company_id: Optional[int] = Field(None, gt=0)
 
     @field_validator('first_name', mode='before')
     @classmethod
@@ -89,6 +96,13 @@ class ContactUpdate(BaseModel):
         if v is None or v == "":
             return None
         return validate_linkedin_url(v)
+
+    @field_validator('email')
+    @classmethod
+    def normalize_email(cls, v):
+        if v is not None:
+            return v.lower()
+        return v
 
 
 class Contact(ContactBase):
