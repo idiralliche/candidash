@@ -10,16 +10,16 @@ class OpportunityProductBase(BaseModel):
 
 class OpportunityProductCreate(OpportunityProductBase):
     """Schema for creating a new opportunity-product association (POST)."""
-    opportunity_id: int = Field(..., description="ID of the opportunity")
-    product_id: int = Field(..., description="ID of the product")
+    opportunity_id: int = Field(..., gt=0, description="ID of the opportunity")
+    product_id: int = Field(..., gt=0, description="ID of the product")
 
 
 class OpportunityProductUpdate(BaseModel):
     """Schema for updating an opportunity-product association (PUT/PATCH).
     All fields are optional to support partial updates.
     """
-    opportunity_id: Optional[int] = None
-    product_id: Optional[int] = None
+    opportunity_id: Optional[int] = Field(None, gt=0)
+    product_id: Optional[int] = Field(None, gt=0)
 
 
 class OpportunityProduct(OpportunityProductBase):
