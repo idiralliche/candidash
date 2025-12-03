@@ -10,15 +10,15 @@ class ApplicationBase(BaseModel):
     """Base schema with common fields for Application."""
     application_date: date = Field(..., description="Date when the application was sent")
     status: ApplicationStatus = Field(default=ApplicationStatus.PENDING, description="Current status of the application")
-    salary_expectation: Optional[float] = Field(None, description="Expected gross annual salary")
+    salary_expectation: Optional[float] = Field(None, ge=0, le=10_000_000, description="Expected gross annual salary")
     is_archived: bool = Field(default=False, description="Whether the application is archived")
-    resume_used_id: Optional[int] = Field(None, description="ID of the resume (Document) used")
-    cover_letter_id: Optional[int] = Field(None, description="ID of the cover letter (Document) used")
+    resume_used_id: Optional[int] = Field(None, gt=0, description="ID of the resume (Document) used")
+    cover_letter_id: Optional[int] = Field(None, gt=0, description="ID of the cover letter (Document) used")
 
 
 class ApplicationCreate(ApplicationBase):
     """Schema for creating a new application (POST)."""
-    opportunity_id: int = Field(..., description="ID of the related opportunity")
+    opportunity_id: int = Field(..., gt=0, description="ID of the related opportunity")
 
 
 class ApplicationCreateWithoutOpportunityId(ApplicationBase):
@@ -62,11 +62,11 @@ class ApplicationUpdate(BaseModel):
     """
     application_date: Optional[date] = None
     status: Optional[ApplicationStatus] = None
-    salary_expectation: Optional[float] = None
+    salary_expectation: Optional[float] = Field(None, ge=0, le=10_000_000)
     is_archived: Optional[bool] = None
-    resume_used_id: Optional[int] = None
-    cover_letter_id: Optional[int] = None
-    opportunity_id: Optional[int] = None
+    resume_used_id: Optional[int] = Field(None, gt=0)
+    cover_letter_id: Optional[int] = Field(None, gt=0)
+    opportunity_id: Optional[int] = Field(None, gt=0)
 
 
 class Application(ApplicationBase):
