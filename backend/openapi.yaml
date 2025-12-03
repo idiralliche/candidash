@@ -20,13 +20,18 @@ paths:
       tags:
       - companies
       summary: Get Companies
-      description: 'Retrieve a list of companies with pagination.
+      description: 'Retrieve a list of companies owned by the current user with pagination.
 
 
         - **skip**: Number of records to skip (for pagination)
 
-        - **limit**: Maximum number of records to return (max 100)'
+        - **limit**: Maximum number of records to return (max 100)
+
+
+        Returns only companies belonging to the authenticated user.'
       operationId: get_companies_api_v1_companies__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -88,8 +93,13 @@ paths:
         - **industry**: Industry sector: Healthcare, automotive, technology, etc.
         (optional)
 
-        - **notes**: Additional notes (optional)'
+        - **notes**: Additional notes (optional)
+
+
+        The company will be automatically assigned to the authenticated user.'
       operationId: create_company_api_v1_companies__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -117,8 +127,14 @@ paths:
       description: 'Retrieve a specific company by ID.
 
 
-        - **company_id**: The ID of the company to retrieve'
+        - **company_id**: The ID of the company to retrieve
+
+
+        Returns 404 if company doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_company_api_v1_companies__company_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: company_id
         in: path
@@ -148,8 +164,14 @@ paths:
 
         - **company_id**: The ID of the company to update
 
-        - All fields are optional - only provided fields will be updated'
+        - All fields are optional - only provided fields will be updated
+
+
+        Returns 404 if company doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_company_api_v1_companies__company_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: company_id
         in: path
@@ -188,8 +210,14 @@ paths:
 
         Note: This will cascade delete all associated products.
 
-        Opportunities and contacts will have their company_id set to NULL.'
+        Opportunities and contacts will have their company_id set to NULL.
+
+
+        Returns 404 if company doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_company_api_v1_companies__company_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: company_id
         in: path
@@ -211,7 +239,8 @@ paths:
       tags:
       - documents
       summary: Get Documents
-      description: 'Retrieve a list of documents with pagination and optional filtering.
+      description: 'Retrieve a list of documents owned by the current user with pagination
+        and optional filtering.
 
 
         - **skip**: Number of records to skip (for pagination)
@@ -219,8 +248,13 @@ paths:
         - **limit**: Maximum number of records to return (max 100)
 
         - **type**: Optional filter by document type (resume, cover_letter, portfolio,
-        etc.)'
+        etc.)
+
+
+        Returns only documents belonging to the authenticated user.'
       operationId: get_documents_api_v1_documents__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -247,7 +281,9 @@ paths:
         in: query
         required: false
         schema:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           description: Filter by document type
           title: Type
         description: Filter by document type
@@ -287,8 +323,12 @@ paths:
 
 
         Note: This endpoint creates a document record. File upload functionality should
-        be implemented separately.'
+        be implemented separately.
+
+        The document will be automatically assigned to the authenticated user.'
       operationId: create_document_api_v1_documents__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -316,8 +356,14 @@ paths:
       description: 'Retrieve a specific document by ID.
 
 
-        - **document_id**: The ID of the document to retrieve'
+        - **document_id**: The ID of the document to retrieve
+
+
+        Returns 404 if document doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_document_api_v1_documents__document_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: document_id
         in: path
@@ -347,8 +393,14 @@ paths:
 
         - **document_id**: The ID of the document to update
 
-        - All fields are optional - only provided fields will be updated'
+        - All fields are optional - only provided fields will be updated
+
+
+        Returns 404 if document doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_document_api_v1_documents__document_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: document_id
         in: path
@@ -386,8 +438,14 @@ paths:
 
 
         Note: This deletes the document record. Physical file deletion should be handled
-        separately.'
+        separately.
+
+
+        Returns 404 if document doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_document_api_v1_documents__document_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: document_id
         in: path
@@ -409,7 +467,8 @@ paths:
       tags:
       - contacts
       summary: Get Contacts
-      description: 'Retrieve a list of contacts with pagination and optional filtering.
+      description: 'Retrieve a list of contacts owned by the current user with pagination
+        and optional filtering.
 
 
         - **skip**: Number of records to skip (for pagination)
@@ -418,8 +477,13 @@ paths:
 
         - **company_id**: Optional filter by company ID
 
-        - **is_independent_recruiter**: Optional filter by independent recruiter status'
+        - **is_independent_recruiter**: Optional filter by independent recruiter status
+
+
+        Returns only contacts belonging to the authenticated user.'
       operationId: get_contacts_api_v1_contacts__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -505,8 +569,13 @@ paths:
 
         - **notes**: Additional notes (optional)
 
-        - **company_id**: Associated company ID (optional)'
+        - **company_id**: Associated company ID (optional)
+
+
+        The contact will be automatically assigned to the authenticated user.'
       operationId: create_contact_api_v1_contacts__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -534,8 +603,14 @@ paths:
       description: 'Retrieve a specific contact by ID.
 
 
-        - **contact_id**: The ID of the contact to retrieve'
+        - **contact_id**: The ID of the contact to retrieve
+
+
+        Returns 404 if contact doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_contact_api_v1_contacts__contact_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: contact_id
         in: path
@@ -565,8 +640,14 @@ paths:
 
         - **contact_id**: The ID of the contact to update
 
-        - All fields are optional - only provided fields will be updated'
+        - All fields are optional - only provided fields will be updated
+
+
+        Returns 404 if contact doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_contact_api_v1_contacts__contact_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: contact_id
         in: path
@@ -600,8 +681,14 @@ paths:
       description: 'Delete a contact.
 
 
-        - **contact_id**: The ID of the contact to delete'
+        - **contact_id**: The ID of the contact to delete
+
+
+        Returns 404 if contact doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_contact_api_v1_contacts__contact_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: contact_id
         in: path
@@ -813,8 +900,8 @@ paths:
       tags:
       - opportunities
       summary: Get Opportunities
-      description: 'Retrieve a list of opportunities with pagination and optional
-        filtering.
+      description: 'Retrieve a list of opportunities owned by the current user with
+        pagination and optional filtering.
 
 
         - **skip**: Number of records to skip (for pagination)
@@ -826,8 +913,13 @@ paths:
         - **application_type**: Optional filter by type (job_posting, spontaneous,
         etc.)
 
-        - **contract_type**: Optional filter by contract (permanent, fixed_term, etc.)'
+        - **contract_type**: Optional filter by contract (permanent, fixed_term, etc.)
+
+
+        Returns only opportunities belonging to the authenticated user.'
       operationId: get_opportunities_api_v1_opportunities__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -907,14 +999,19 @@ paths:
 
         - **application_type**: Type of application (required)
 
-        - **position_type**: Role type (required)
+        - **position_type**: Role type (optional)
 
-        - **contract_type**: Type of contract (required)
+        - **contract_type**: Type of contract (optional)
 
         - **company_id**: Associated company ID (optional)
 
-        - ... and other optional details'
+        - ... and other optional details
+
+
+        The opportunity will be automatically assigned to the authenticated user.'
       operationId: create_opportunity_api_v1_opportunities__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -942,8 +1039,14 @@ paths:
       description: 'Retrieve a specific opportunity by ID.
 
 
-        - **opportunity_id**: The ID of the opportunity to retrieve'
+        - **opportunity_id**: The ID of the opportunity to retrieve
+
+
+        Returns 404 if opportunity doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_opportunity_api_v1_opportunities__opportunity_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: opportunity_id
         in: path
@@ -973,8 +1076,14 @@ paths:
 
         - **opportunity_id**: The ID of the opportunity to update
 
-        - All fields are optional - only provided fields will be updated'
+        - All fields are optional - only provided fields will be updated
+
+
+        Returns 404 if opportunity doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_opportunity_api_v1_opportunities__opportunity_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: opportunity_id
         in: path
@@ -1008,8 +1117,14 @@ paths:
       description: 'Delete an opportunity.
 
 
-        - **opportunity_id**: The ID of the opportunity to delete'
+        - **opportunity_id**: The ID of the opportunity to delete
+
+
+        Returns 404 if opportunity doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_opportunity_api_v1_opportunities__opportunity_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: opportunity_id
         in: path
@@ -1240,21 +1355,66 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/applications/with-opportunity:
+    post:
+      tags:
+      - applications
+      summary: Create Application With Opportunity
+      description: "Create a new application with its opportunity in a single transaction.\n\
+        \nThis endpoint is useful when creating a new job application where\nthe opportunity\
+        \ doesn't exist yet. Both opportunity and application\nare created atomically.\n\
+        \n- **opportunity**: Opportunity details (job_title, application_type, company_id,\
+        \ etc.)\n- **application**: Application details (application_date, status,\
+        \ resume_used_id, etc.)\n\nReturns the created application with its generated\
+        \ ID and opportunity_id.\nThe opportunity is automatically assigned to the\
+        \ authenticated user.\n\nExample payload:\n```\n{\n    \"opportunity\": {\n\
+        \        \"job_title\": \"Senior Python Developer\",\n        \"application_type\"\
+        : \"job_posting\",\n        \"company_id\": 42,\n        \"contract_type\"\
+        : \"permanent\"\n    },\n    \"application\": {\n        \"application_date\"\
+        : \"2024-12-02\",\n        \"status\": \"pending\",\n        \"resume_used_id\"\
+        : 5\n    }\n}\n```"
+      operationId: create_application_with_opportunity_api_v1_applications_with_opportunity_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationWithOpportunityCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
   /api/v1/scheduled-events/:
     get:
       tags:
       - scheduled_events
       summary: Get Scheduled Events
-      description: 'Retrieve a list of scheduled events with pagination and optional
-        filtering.
+      description: 'Retrieve a list of scheduled events owned by the current user
+        with pagination and optional filtering.
 
 
         - **skip**: Number of records to skip (for pagination)
 
         - **limit**: Maximum number of records to return (max 100)
 
-        - **status**: Optional filter by event status (pending, confirmed, etc.)'
+        - **status**: Optional filter by event status (pending, confirmed, etc.)
+
+
+        Returns only scheduled events belonging to the authenticated user.'
       operationId: get_scheduled_events_api_v1_scheduled_events__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -1316,8 +1476,13 @@ paths:
 
         - **status**: Status (default: pending)
 
-        - ... and other optional details'
+        - ... and other optional details
+
+
+        The scheduled event will be automatically assigned to the authenticated user.'
       operationId: create_scheduled_event_api_v1_scheduled_events__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -1345,8 +1510,14 @@ paths:
       description: 'Retrieve a specific scheduled event by ID.
 
 
-        - **event_id**: The ID of the event to retrieve'
+        - **event_id**: The ID of the event to retrieve
+
+
+        Returns 404 if event doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_scheduled_event_api_v1_scheduled_events__event_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: event_id
         in: path
@@ -1376,8 +1547,14 @@ paths:
 
         - **event_id**: The ID of the event to update
 
-        - All fields are optional'
+        - All fields are optional
+
+
+        Returns 404 if event doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_scheduled_event_api_v1_scheduled_events__event_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: event_id
         in: path
@@ -1411,8 +1588,14 @@ paths:
       description: 'Delete a scheduled event.
 
 
-        - **event_id**: The ID of the event to delete'
+        - **event_id**: The ID of the event to delete
+
+
+        Returns 404 if event doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_scheduled_event_api_v1_scheduled_events__event_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: event_id
         in: path
@@ -2249,6 +2432,80 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/register:
+    post:
+      tags:
+      - authentication
+      summary: Register
+      description: 'Register a new user.
+
+
+        - **email**: User email (must be unique)
+
+        - **first_name**: User first name (optional)
+
+        - **last_name**: User last name (optional)
+
+        - **password**: Password (minimum 8 characters)
+
+        - **confirm_password**: Password confirmation (must match)'
+      operationId: register_api_v1_auth_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/login:
+    post:
+      tags:
+      - authentication
+      summary: Login
+      description: 'Login with email and password to get JWT access token.
+
+
+        OAuth2 compatible - use ''username'' field for email.
+
+
+        - **username**: User email address
+
+        - **password**: User password
+
+
+        Returns JWT access token for authenticated requests.'
+      operationId: login_api_v1_auth_login_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_login_api_v1_auth_login_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     Action:
@@ -2274,18 +2531,21 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
           description: Details or notes about the action
         parent_action_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Parent Action Id
           description: ID of parent action for threading
         scheduled_event_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Scheduled Event Id
           description: ID of associated scheduled event
@@ -2335,23 +2595,27 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
           description: Details or notes about the action
         parent_action_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Parent Action Id
           description: ID of parent action for threading
         scheduled_event_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Scheduled Event Id
           description: ID of associated scheduled event
         application_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Application Id
           description: ID of the related application
       type: object
@@ -2383,21 +2647,25 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
         parent_action_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Parent Action Id
         scheduled_event_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Scheduled Event Id
         application_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Application Id
       type: object
@@ -2420,6 +2688,8 @@ components:
         salary_expectation:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Expectation
           description: Expected gross annual salary
@@ -2431,12 +2701,14 @@ components:
         resume_used_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Resume Used Id
           description: ID of the resume (Document) used
         cover_letter_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Cover Letter Id
           description: ID of the cover letter (Document) used
@@ -2485,6 +2757,8 @@ components:
         salary_expectation:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Expectation
           description: Expected gross annual salary
@@ -2496,17 +2770,20 @@ components:
         resume_used_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Resume Used Id
           description: ID of the resume (Document) used
         cover_letter_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Cover Letter Id
           description: ID of the cover letter (Document) used
         opportunity_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Opportunity Id
           description: ID of the related opportunity
       type: object
@@ -2515,6 +2792,52 @@ components:
       - opportunity_id
       title: ApplicationCreate
       description: Schema for creating a new application (POST).
+    ApplicationCreateWithoutOpportunityId:
+      properties:
+        application_date:
+          type: string
+          format: date
+          title: Application Date
+          description: Date when the application was sent
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationStatus'
+          description: Current status of the application
+          default: pending
+        salary_expectation:
+          anyOf:
+          - type: number
+            maximum: 10000000.0
+            minimum: 0.0
+          - type: 'null'
+          title: Salary Expectation
+          description: Expected gross annual salary
+        is_archived:
+          type: boolean
+          title: Is Archived
+          description: Whether the application is archived
+          default: false
+        resume_used_id:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: Resume Used Id
+          description: ID of the resume (Document) used
+        cover_letter_id:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: Cover Letter Id
+          description: ID of the cover letter (Document) used
+      type: object
+      required:
+      - application_date
+      title: ApplicationCreateWithoutOpportunityId
+      description: 'Schema for creating an application without opportunity_id.
+
+        Used in composite endpoint where opportunity is created at the same time.'
     ApplicationStatus:
       type: string
       enum:
@@ -2549,6 +2872,8 @@ components:
         salary_expectation:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Expectation
         is_archived:
@@ -2559,16 +2884,19 @@ components:
         resume_used_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Resume Used Id
         cover_letter_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Cover Letter Id
         opportunity_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Opportunity Id
       type: object
@@ -2576,6 +2904,62 @@ components:
       description: 'Schema for updating an application (PUT/PATCH).
 
         All fields are optional to support partial updates.'
+    ApplicationWithOpportunityCreate:
+      properties:
+        opportunity:
+          allOf:
+          - $ref: '#/components/schemas/OpportunityCreate'
+          description: Opportunity details to create
+        application:
+          allOf:
+          - $ref: '#/components/schemas/ApplicationCreateWithoutOpportunityId'
+          description: Application details to create
+      type: object
+      required:
+      - opportunity
+      - application
+      title: ApplicationWithOpportunityCreate
+      description: "Composite schema for creating Application with its Opportunity\
+        \ in one call.\n\nUsed when the opportunity doesn't exist yet (new job application).\n\
+        Frontend sends both opportunity details and application details,\nbackend\
+        \ creates them in a single transaction.\n\nExample:\n{\n    \"opportunity\"\
+        : {\n        \"job_title\": \"Senior Python Developer\",\n        \"application_type\"\
+        : \"job_posting\",\n        \"company_id\": 42,\n        ...\n    },\n   \
+        \ \"application\": {\n        \"application_date\": \"2024-12-02\",\n    \
+        \    \"status\": \"pending\",\n        \"resume_used_id\": 5\n    }\n}"
+    Body_login_api_v1_auth_login_post:
+      properties:
+        grant_type:
+          anyOf:
+          - type: string
+            pattern: password
+          - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Secret
+      type: object
+      required:
+      - username
+      - password
+      title: Body_login_api_v1_auth_login_post
     CommunicationMethod:
       type: string
       enum:
@@ -2612,6 +2996,7 @@ components:
         headquarters:
           anyOf:
           - type: string
+            maxLength: 500
           - type: 'null'
           title: Headquarters
           description: Company headquarters address
@@ -2624,6 +3009,7 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Company Type
           description: 'Type: ESN, startup, enterprise, SME, etc.'
@@ -2631,12 +3017,14 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Industry
           description: 'Industry: Healthcare, automotive, etc.'
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
           description: Additional notes about the company
@@ -2692,6 +3080,7 @@ components:
         headquarters:
           anyOf:
           - type: string
+            maxLength: 500
           - type: 'null'
           title: Headquarters
           description: Company headquarters address
@@ -2704,6 +3093,7 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Company Type
           description: 'Type: ESN, startup, enterprise, SME, etc.'
@@ -2711,12 +3101,14 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Industry
           description: 'Industry: Healthcare, automotive, etc.'
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
           description: Additional notes about the company
@@ -2750,6 +3142,7 @@ components:
         headquarters:
           anyOf:
           - type: string
+            maxLength: 500
           - type: 'null'
           title: Headquarters
         is_intermediary:
@@ -2761,17 +3154,20 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Company Type
         industry:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Industry
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
       type: object
@@ -2798,6 +3194,7 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Position
           description: Job title/position
@@ -2825,6 +3222,7 @@ components:
         relationship_notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Relationship Notes
           description: How you know this person
@@ -2836,12 +3234,14 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
           description: Additional notes
         company_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Company Id
           description: Associated company ID
@@ -2889,6 +3289,7 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Position
           description: Job title/position
@@ -2916,6 +3317,7 @@ components:
         relationship_notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Relationship Notes
           description: How you know this person
@@ -2927,12 +3329,14 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
           description: Additional notes
         company_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Company Id
           description: Associated company ID
@@ -2962,6 +3366,7 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Position
         email:
@@ -2985,6 +3390,7 @@ components:
         relationship_notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Relationship Notes
         is_independent_recruiter:
@@ -2995,11 +3401,13 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
         company_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Company Id
       type: object
@@ -3041,12 +3449,14 @@ components:
           description: 'File format: pdf, docx, jpg, etc.'
         path:
           type: string
+          maxLength: 255
           minLength: 1
           title: Path
           description: Storage path or URL
         description:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Description
           description: Free text description
@@ -3074,42 +3484,9 @@ components:
         Includes all fields including generated ones (id, timestamp).'
     DocumentAssociation:
       properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique identifier
         document_id:
           type: integer
-          title: Document Id
-          description: ID of the document
-        entity_type:
-          allOf:
-          - $ref: '#/components/schemas/EntityType'
-          description: Type of the associated entity
-        entity_id:
-          type: integer
-          title: Entity Id
-          description: ID of the associated entity
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-          description: Creation timestamp
-      type: object
-      required:
-      - id
-      - document_id
-      - entity_type
-      - entity_id
-      - created_at
-      title: DocumentAssociation
-      description: 'Schema for reading a document association (GET).
-
-        Includes all fields including generated ones (id).'
-    DocumentAssociationCreate:
-      properties:
-        document_id:
-          type: integer
+          exclusiveMinimum: 0.0
           title: Document Id
           description: ID of the document
         entity_type:
@@ -3118,6 +3495,43 @@ components:
           description: Type of the associated entity (application, opportunity, etc.)
         entity_id:
           type: integer
+          exclusiveMinimum: 0.0
+          title: Entity Id
+          description: ID of the associated entity
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+      type: object
+      required:
+      - document_id
+      - entity_type
+      - entity_id
+      - id
+      - created_at
+      title: DocumentAssociation
+      description: 'Schema for reading a document association (GET).
+
+        Includes all fields including generated ones (id, created_at).'
+    DocumentAssociationCreate:
+      properties:
+        document_id:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Document Id
+          description: ID of the document
+        entity_type:
+          allOf:
+          - $ref: '#/components/schemas/EntityType'
+          description: Type of the associated entity (application, opportunity, etc.)
+        entity_id:
+          type: integer
+          exclusiveMinimum: 0.0
           title: Entity Id
           description: ID of the associated entity
       type: object
@@ -3132,6 +3546,7 @@ components:
         document_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Document Id
         entity_type:
@@ -3141,6 +3556,7 @@ components:
         entity_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Entity Id
       type: object
@@ -3171,12 +3587,14 @@ components:
           description: 'File format: pdf, docx, jpg, etc.'
         path:
           type: string
+          maxLength: 255
           minLength: 1
           title: Path
           description: Storage path or URL
         description:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Description
           description: Free text description
@@ -3214,12 +3632,14 @@ components:
         path:
           anyOf:
           - type: string
+            maxLength: 255
             minLength: 1
           - type: 'null'
           title: Path
         description:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Description
       type: object
@@ -3261,7 +3681,7 @@ components:
         job_title:
           type: string
           maxLength: 255
-          minLength: 1
+          minLength: 2
           title: Job Title
           description: Job title
         application_type:
@@ -3271,65 +3691,78 @@ components:
         company_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Company Id
           description: Associated company ID
         position_type:
-          type: string
-          maxLength: 100
-          minLength: 1
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 2
+          - type: 'null'
           title: Position Type
           description: Role type (backend, frontend, etc.)
         contract_type:
-          allOf:
+          anyOf:
           - $ref: '#/components/schemas/ContractType'
+          - type: 'null'
           description: Type of employment contract
         location:
           anyOf:
           - type: string
-            maxLength: 255
+            maxLength: 500
           - type: 'null'
           title: Location
           description: City, Country or specific location
         job_posting_url:
           anyOf:
           - type: string
+            maxLength: 255
           - type: 'null'
           title: Job Posting Url
           description: Link to original job posting
         job_description:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Job Description
           description: Summary or full text of the job description
         required_skills:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Required Skills
           description: List of required skills
         technologies:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Technologies
           description: Tech stack mentioned
         salary_min:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Min
           description: Minimum salary offered
         salary_max:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Max
           description: Maximum salary offered
         salary_info:
           anyOf:
           - type: string
+            maxLength: 2000
           - type: 'null'
           title: Salary Info
           description: Additional salary details (benefits, equity, etc.)
@@ -3341,6 +3774,7 @@ components:
         remote_details:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Remote Details
           description: Specific details about remote policy
@@ -3348,12 +3782,14 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Source
           description: Source of the opportunity (LinkedIn, Indeed, etc.)
         recruitment_process:
           anyOf:
           - type: string
+            maxLength: 10000
           - type: 'null'
           title: Recruitment Process
           description: Notes on the recruitment process steps
@@ -3377,8 +3813,6 @@ components:
       required:
       - job_title
       - application_type
-      - position_type
-      - contract_type
       - id
       - created_at
       title: Opportunity
@@ -3410,6 +3844,7 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
           description: Contextual notes for this association
@@ -3465,15 +3900,18 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
           description: Contextual notes for this association
         opportunity_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Opportunity Id
           description: ID of the opportunity
         contact_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Contact Id
           description: ID of the contact
       type: object
@@ -3504,16 +3942,19 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 50000
           - type: 'null'
           title: Notes
         opportunity_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Opportunity Id
         contact_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Contact Id
       type: object
@@ -3526,7 +3967,7 @@ components:
         job_title:
           type: string
           maxLength: 255
-          minLength: 1
+          minLength: 2
           title: Job Title
           description: Job title
         application_type:
@@ -3536,65 +3977,78 @@ components:
         company_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Company Id
           description: Associated company ID
         position_type:
-          type: string
-          maxLength: 100
-          minLength: 1
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 2
+          - type: 'null'
           title: Position Type
           description: Role type (backend, frontend, etc.)
         contract_type:
-          allOf:
+          anyOf:
           - $ref: '#/components/schemas/ContractType'
+          - type: 'null'
           description: Type of employment contract
         location:
           anyOf:
           - type: string
-            maxLength: 255
+            maxLength: 500
           - type: 'null'
           title: Location
           description: City, Country or specific location
         job_posting_url:
           anyOf:
           - type: string
+            maxLength: 255
           - type: 'null'
           title: Job Posting Url
           description: Link to original job posting
         job_description:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Job Description
           description: Summary or full text of the job description
         required_skills:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Required Skills
           description: List of required skills
         technologies:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Technologies
           description: Tech stack mentioned
         salary_min:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Min
           description: Minimum salary offered
         salary_max:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Max
           description: Maximum salary offered
         salary_info:
           anyOf:
           - type: string
+            maxLength: 2000
           - type: 'null'
           title: Salary Info
           description: Additional salary details (benefits, equity, etc.)
@@ -3606,6 +4060,7 @@ components:
         remote_details:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Remote Details
           description: Specific details about remote policy
@@ -3613,12 +4068,14 @@ components:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Source
           description: Source of the opportunity (LinkedIn, Indeed, etc.)
         recruitment_process:
           anyOf:
           - type: string
+            maxLength: 10000
           - type: 'null'
           title: Recruitment Process
           description: Notes on the recruitment process steps
@@ -3626,8 +4083,6 @@ components:
       required:
       - job_title
       - application_type
-      - position_type
-      - contract_type
       title: OpportunityCreate
       description: Schema for creating a new opportunity (POST).
     OpportunityProduct:
@@ -3657,10 +4112,12 @@ components:
       properties:
         opportunity_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Opportunity Id
           description: ID of the opportunity
         product_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Product Id
           description: ID of the product
       type: object
@@ -3674,11 +4131,13 @@ components:
         opportunity_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Opportunity Id
         product_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Product Id
       type: object
@@ -3692,7 +4151,7 @@ components:
           anyOf:
           - type: string
             maxLength: 255
-            minLength: 1
+            minLength: 2
           - type: 'null'
           title: Job Title
         application_type:
@@ -3702,13 +4161,14 @@ components:
         company_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Company Id
         position_type:
           anyOf:
           - type: string
             maxLength: 100
-            minLength: 1
+            minLength: 2
           - type: 'null'
           title: Position Type
         contract_type:
@@ -3718,42 +4178,51 @@ components:
         location:
           anyOf:
           - type: string
-            maxLength: 255
+            maxLength: 500
           - type: 'null'
           title: Location
         job_posting_url:
           anyOf:
           - type: string
+            maxLength: 255
           - type: 'null'
           title: Job Posting Url
         job_description:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Job Description
         required_skills:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Required Skills
         technologies:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Technologies
         salary_min:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Min
         salary_max:
           anyOf:
           - type: number
+            maximum: 10000000.0
+            minimum: 0.0
           - type: 'null'
           title: Salary Max
         salary_info:
           anyOf:
           - type: string
+            maxLength: 2000
           - type: 'null'
           title: Salary Info
         remote_policy:
@@ -3763,17 +4232,20 @@ components:
         remote_details:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Remote Details
         source:
           anyOf:
           - type: string
             maxLength: 100
+            minLength: 2
           - type: 'null'
           title: Source
         recruitment_process:
           anyOf:
           - type: string
+            maxLength: 10000
           - type: 'null'
           title: Recruitment Process
       type: object
@@ -3792,11 +4264,13 @@ components:
         description:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Description
           description: Detailed description of the product
         company_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Company Id
           description: Associated company ID
         website:
@@ -3809,6 +4283,7 @@ components:
         technologies_used:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Technologies Used
           description: Stack or technologies used in this product
@@ -3842,11 +4317,13 @@ components:
         description:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Description
           description: Detailed description of the product
         company_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Company Id
           description: Associated company ID
         website:
@@ -3859,6 +4336,7 @@ components:
         technologies_used:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Technologies Used
           description: Stack or technologies used in this product
@@ -3880,11 +4358,13 @@ components:
         description:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Description
         company_id:
           anyOf:
           - type: integer
+            exclusiveMinimum: 0.0
           - type: 'null'
           title: Company Id
         website:
@@ -3896,6 +4376,7 @@ components:
         technologies_used:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Technologies Used
       type: object
@@ -3947,6 +4428,7 @@ components:
         event_link:
           anyOf:
           - type: string
+            maxLength: 255
           - type: 'null'
           title: Event Link
           description: URL for video call or meeting details
@@ -3960,12 +4442,14 @@ components:
         location:
           anyOf:
           - type: string
+            maxLength: 500
           - type: 'null'
           title: Location
           description: Physical address or location info
         instructions:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Instructions
           description: Specific instructions for the candidate
@@ -3977,6 +4461,7 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Notes
           description: Private notes about the event
@@ -4041,6 +4526,7 @@ components:
         event_link:
           anyOf:
           - type: string
+            maxLength: 255
           - type: 'null'
           title: Event Link
           description: URL for video call or meeting details
@@ -4054,12 +4540,14 @@ components:
         location:
           anyOf:
           - type: string
+            maxLength: 500
           - type: 'null'
           title: Location
           description: Physical address or location info
         instructions:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Instructions
           description: Specific instructions for the candidate
@@ -4071,6 +4559,7 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Notes
           description: Private notes about the event
@@ -4114,6 +4603,7 @@ components:
         event_link:
           anyOf:
           - type: string
+            maxLength: 255
           - type: 'null'
           title: Event Link
         phone_number:
@@ -4125,11 +4615,13 @@ components:
         location:
           anyOf:
           - type: string
+            maxLength: 500
           - type: 'null'
           title: Location
         instructions:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Instructions
         status:
@@ -4139,6 +4631,7 @@ components:
         notes:
           anyOf:
           - type: string
+            maxLength: 5000
           - type: 'null'
           title: Notes
       type: object
@@ -4146,6 +4639,114 @@ components:
       description: 'Schema for updating a scheduled event (PUT/PATCH).
 
         All fields are optional to support partial updates.'
+    Token:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+      type: object
+      required:
+      - access_token
+      title: Token
+      description: 'Token response schema.
+
+
+        Returned after successful login.'
+    User:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+          description: User email address (unique)
+        first_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: First Name
+          description: User first name
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Last Name
+          description: User last name
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether the user account is active
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+          description: Last update timestamp
+      type: object
+      required:
+      - email
+      - id
+      - is_active
+      - created_at
+      title: User
+      description: 'Schema for reading a user (GET).
+
+        Includes all fields except password (never exposed).'
+    UserCreate:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+          description: User email address (unique)
+        first_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: First Name
+          description: User first name
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Last Name
+          description: User last name
+        password:
+          type: string
+          minLength: 8
+          title: Password
+          description: User password (minimum 8 characters)
+        confirm_password:
+          type: string
+          minLength: 8
+          title: Confirm Password
+          description: Password confirmation
+      type: object
+      required:
+      - email
+      - password
+      - confirm_password
+      title: UserCreate
+      description: 'Schema for creating a new user (POST /auth/register).
+
+        Includes password confirmation validation.'
     ValidationError:
       properties:
         loc:
@@ -4167,3 +4768,10 @@ components:
       - msg
       - type
       title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: /api/v1/auth/login
