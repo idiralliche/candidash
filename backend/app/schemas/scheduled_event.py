@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app.models.scheduled_event import EventStatus, CommunicationMethod
-from app.utils.validators import validate_and_normalize_phone
+from app.utils.validators.format_validators import validate_and_normalize_phone
 
 class ScheduledEventBase(BaseModel):
     """Base schema with common fields for ScheduledEvent."""
@@ -14,13 +14,13 @@ class ScheduledEventBase(BaseModel):
 
     # Access/Location details
     communication_method: Optional[CommunicationMethod] = Field(None, description="Method (video, phone, etc.)")
-    event_link: Optional[str] = Field(None, description="URL for video call or meeting details")
+    event_link: Optional[str] = Field(None, max_length=255, description="URL for video call or meeting details")
     phone_number: Optional[str] = Field(None, max_length=20, description="Phone number if applicable")
-    location: Optional[str] = Field(None, description="Physical address or location info")
-    instructions: Optional[str] = Field(None, description="Specific instructions for the candidate")
+    location: Optional[str] = Field(None, max_length=500, description="Physical address or location info")
+    instructions: Optional[str] = Field(None, max_length=5000, description="Specific instructions for the candidate")
 
     status: EventStatus = Field(default=EventStatus.PENDING, description="Current status of the event")
-    notes: Optional[str] = Field(None, description="Private notes about the event")
+    notes: Optional[str] = Field(None, max_length=5000, description="Private notes about the event")
 
     @field_validator('phone_number', mode='before')
     @classmethod
@@ -45,13 +45,13 @@ class ScheduledEventUpdate(BaseModel):
     duration_minutes: Optional[int] = Field(None, ge=1)
 
     communication_method: Optional[CommunicationMethod] = None
-    event_link: Optional[str] = None
+    event_link: Optional[str] = Field(None, max_length=255)
     phone_number: Optional[str] = Field(None, max_length=20)
-    location: Optional[str] = None
-    instructions: Optional[str] = None
+    location: Optional[str] = Field(None, max_length=500)
+    instructions: Optional[str] = Field(None, max_length=5000)
 
     status: Optional[EventStatus] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(None, max_length=5000)
 
     @field_validator('phone_number', mode='before')
     @classmethod
