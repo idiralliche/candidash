@@ -11,8 +11,8 @@ class DocumentBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255, description="Document name")
     type: str = Field(..., min_length=1, max_length=50, description="Document type: resume, cover_letter, portfolio, certificate, job_posting, other")
     format: str = Field(..., min_length=1, max_length=10, description="File format: pdf, docx, jpg, etc.")
-    path: str = Field(..., min_length=1, description="Storage path or URL")
-    description: Optional[str] = Field(None, description="Free text description")
+    path: str = Field(..., min_length=1, max_length=255, description="Storage path or URL")
+    description: Optional[str] = Field(None, max_length=50000, description="Free text description")
 
 
 class DocumentCreate(DocumentBase):
@@ -28,8 +28,8 @@ class DocumentUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     type: Optional[str] = Field(None, min_length=1, max_length=50)
     format: Optional[str] = Field(None, min_length=1, max_length=10)
-    path: Optional[str] = Field(None, min_length=1)
-    description: Optional[str] = None
+    path: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = Field(None, max_length=50000)
 
 
 class Document(DocumentBase):
