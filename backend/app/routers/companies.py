@@ -1,20 +1,21 @@
 """
 Company routes - CRUD operations for companies.
 """
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
 from app.models.company import Company as CompanyModel
 from app.schemas.company import Company, CompanyCreate, CompanyUpdate
+from app.utils.db import get_owned_entity_or_404
 
 
 router = APIRouter(prefix="/companies", tags=["companies"])
 
 
-@router.get("/", response_model=List[Company])
+@router.get("/", response_model=list[Company])
 def get_companies(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=100, description="Maximum number of records to return"),
@@ -48,14 +49,13 @@ def get_company(
 
     Returns 404 if company doesn't exist or doesn't belong to the authenticated user.
     """
-    company = db.query(CompanyModel).filter(
-        CompanyModel.id == company_id,
-        CompanyModel.owner_id == current_user.id
-    ).first()
-
-    if not company:
-        raise HTTPException(status_code=404, detail="Company not found")
-
+    company = get_owned_entity_or_404(
+        db=db,
+        entity_model=CompanyModel,
+        entity_id=company_id,
+        owner_id=current_user.id,
+        entity_name="Company"
+    )
     return company
 
 
@@ -79,14 +79,29 @@ def create_company(
 
     The company will be automatically assigned to the authenticated user.
     """
-    company_data = company.model_dump()
-    company_data['owner_id'] = current_user.id
+    try:
+        company_data = company.model_dump()
+        company_data['owner_id'] = current_user.id
 
-    db_company = CompanyModel(**company_data)
-    db.add(db_company)
-    db.commit()
-    db.refresh(db_company)
-    return db_company
+        db_company = CompanyModel(**company_data)
+        db.add(db_company)
+        db.commit()
+        db.refresh(db_company)
+        return db_company
+    except IntegrityError as e:
+        db.rollback()
+        # Check for Postgres Unique Violation (pgcode 23505)
+        if hasattr(e.orig, 'pgcode') and e.orig.pgcode == '23505':
+            if "siret" in str(e.orig):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"A company with SIRET {company.siret} already exists in your account."
+                )
+        # Other integrity errors
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Database integrity error."
+        )
 
 
 @router.put("/{company_id}", response_model=Company)
@@ -104,22 +119,38 @@ def update_company(
 
     Returns 404 if company doesn't exist or doesn't belong to the authenticated user.
     """
-    db_company = db.query(CompanyModel).filter(
-        CompanyModel.id == company_id,
-        CompanyModel.owner_id == current_user.id
-    ).first()
-
-    if not db_company:
-        raise HTTPException(status_code=404, detail="Company not found")
+    db_company = get_owned_entity_or_404(
+        db=db,
+        entity_model=CompanyModel,
+        entity_id=company_id,
+        owner_id=current_user.id,
+        entity_name="Company"
+    )
 
     # Update only provided fields
     update_data = company_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_company, field, value)
 
-    db.commit()
-    db.refresh(db_company)
-    return db_company
+    try:
+        db.commit()
+        db.refresh(db_company)
+        return db_company
+    except IntegrityError as e:
+        db.rollback()
+        # Check for Postgres Unique Violation (pgcode 23505)
+        if hasattr(e.orig, 'pgcode') and e.orig.pgcode == '23505':
+            if "siret" in str(e.orig):
+                siret_val = update_data.get('siret', 'provided')
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"A company with SIRET {siret_val} already exists in your account."
+                )
+        # Other integrity errors
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Database integrity error."
+        )
 
 
 @router.delete("/{company_id}", status_code=204)
@@ -138,14 +169,14 @@ def delete_company(
 
     Returns 404 if company doesn't exist or doesn't belong to the authenticated user.
     """
-    db_company = db.query(CompanyModel).filter(
-        CompanyModel.id == company_id,
-        CompanyModel.owner_id == current_user.id
-    ).first()
-
-    if not db_company:
-        raise HTTPException(status_code=404, detail="Company not found")
+    db_company = get_owned_entity_or_404(
+        db=db,
+        entity_model=CompanyModel,
+        entity_id=company_id,
+        owner_id=current_user.id,
+        entity_name="Company"
+    )
 
     db.delete(db_company)
     db.commit()
-    return None
+    return
