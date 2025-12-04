@@ -23,7 +23,7 @@ Dockerized web application to manage and track job applications (personal ATS).
 Clone the repository:
 
 ```bash
-git clone <your-repo>
+git clone git@github.com:idiralliche/candidash
 cd candidash
 ```
 
@@ -144,27 +144,27 @@ docker compose down -v --remove-orphans
 
 The following variables must be passed at startup:
 
-| Variable            | Description                   | Required | Default (Dev)          |
-| ------------------- | ----------------------------- | -------- | ---------------------- |
-| `POSTGRES_USER`     | DB User                       | Yes      | `candidash_user`       |
-| `POSTGRES_PASSWORD` | DB Password                   | Yes      | `candidash_password`   |
-| `POSTGRES_DB`       | DB Name                       | Yes      | `candidash_db`         |
+| Variable            | Description | Required | Default (Dev)        |
+| ------------------- | ----------- | -------- | -------------------- |
+| `POSTGRES_USER`     | DB User     | Yes      | `candidash_user`     |
+| `POSTGRES_PASSWORD` | DB Password | Yes      | `candidash_password` |
+| `POSTGRES_DB`       | DB Name     | Yes      | `candidash_db`       |
 
 ### Secrets (Docker Secrets)
 
 The following secrets are read from files mounted at `/run/secrets/`:
 
-| Secret              | File Path                  | Description                          |
-| ------------------- | -------------------------- | ------------------------------------ |
-| `SECRET_KEY`        | `secrets/secret_key.txt`   | JWT signing key (HS256, 32+ chars)   |
+| Secret       | File Path                | Description                        |
+| ------------ | ------------------------ | ---------------------------------- |
+| `SECRET_KEY` | `secrets/secret_key.txt` | JWT signing key (HS256, 32+ chars) |
 
 ### Other Configuration
 
-| Variable            | Description                   | Default                |
-| ------------------- | ----------------------------- | ---------------------- |
-| `POSTGRES_HOST`     | DB Host                       | `db` (internal Docker) |
-| `DOCUMENTS_PATH`    | Internal storage path         | `/app/documents`       |
-| `ENV`               | Environment (dev, test, prod) | `dev`                  |
+| Variable         | Description                   | Default                |
+| ---------------- | ----------------------------- | ---------------------- |
+| `POSTGRES_HOST`  | DB Host                       | `db` (internal Docker) |
+| `DOCUMENTS_PATH` | Internal storage path         | `/app/documents`       |
+| `ENV`            | Environment (dev, test, prod) | `dev`                  |
 
 ## 📏 Naming Conventions
 
