@@ -2,7 +2,7 @@
 ScheduledEvent routes - CRUD operations for scheduled events.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.dependencies import get_current_user
@@ -10,10 +10,9 @@ from app.models.user import User
 from app.models.scheduled_event import ScheduledEvent as ScheduledEventModel
 from app.models.scheduled_event import EventStatus
 from app.schemas.scheduled_event import ScheduledEvent, ScheduledEventCreate, ScheduledEventUpdate
-
+from app.utils.db import get_owned_entity_or_404
 
 router = APIRouter(prefix="/scheduled-events", tags=["scheduled_events"])
-
 
 @router.get("/", response_model=List[ScheduledEvent])
 def get_scheduled_events(
@@ -42,7 +41,6 @@ def get_scheduled_events(
     events = query.offset(skip).limit(limit).all()
     return events
 
-
 @router.get("/{event_id}", response_model=ScheduledEvent)
 def get_scheduled_event(
     event_id: int,
@@ -56,16 +54,14 @@ def get_scheduled_event(
 
     Returns 404 if event doesn't exist or doesn't belong to the authenticated user.
     """
-    event = db.query(ScheduledEventModel).filter(
-        ScheduledEventModel.id == event_id,
-        ScheduledEventModel.owner_id == current_user.id
-    ).first()
-
-    if not event:
-        raise HTTPException(status_code=404, detail="Scheduled event not found")
-
+    event = get_owned_entity_or_404(
+        db=db,
+        entity_model=ScheduledEventModel,
+        entity_id=event_id,
+        owner_id=current_user.id,
+        entity_name="ScheduledEvent"
+    )
     return event
-
 
 @router.post("/", response_model=ScheduledEvent, status_code=201)
 def create_scheduled_event(
@@ -92,7 +88,6 @@ def create_scheduled_event(
     db.refresh(db_event)
     return db_event
 
-
 @router.put("/{event_id}", response_model=ScheduledEvent)
 def update_scheduled_event(
     event_id: int,
@@ -108,13 +103,13 @@ def update_scheduled_event(
 
     Returns 404 if event doesn't exist or doesn't belong to the authenticated user.
     """
-    db_event = db.query(ScheduledEventModel).filter(
-        ScheduledEventModel.id == event_id,
-        ScheduledEventModel.owner_id == current_user.id
-    ).first()
-
-    if not db_event:
-        raise HTTPException(status_code=404, detail="Scheduled event not found")
+    db_event = get_owned_entity_or_404(
+        db=db,
+        entity_model=ScheduledEventModel,
+        entity_id=event_id,
+        owner_id=current_user.id,
+        entity_name="ScheduledEvent"
+    )
 
     update_data = event_update.model_dump(exclude_unset=True)
 
@@ -125,8 +120,7 @@ def update_scheduled_event(
     db.refresh(db_event)
     return db_event
 
-
-@router.delete("/{event_id}", status_code=204)
+@router.delete("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_scheduled_event(
     event_id: int,
     current_user: User = Depends(get_current_user),
@@ -139,14 +133,14 @@ def delete_scheduled_event(
 
     Returns 404 if event doesn't exist or doesn't belong to the authenticated user.
     """
-    db_event = db.query(ScheduledEventModel).filter(
-        ScheduledEventModel.id == event_id,
-        ScheduledEventModel.owner_id == current_user.id
-    ).first()
-
-    if not db_event:
-        raise HTTPException(status_code=404, detail="Scheduled event not found")
+    db_event = get_owned_entity_or_404(
+        db=db,
+        entity_model=ScheduledEventModel,
+        entity_id=event_id,
+        owner_id=current_user.id,
+        entity_name="ScheduledEvent"
+    )
 
     db.delete(db_event)
     db.commit()
-    return None
+    return
