@@ -2,7 +2,7 @@
 Opportunity routes - CRUD operations for opportunities.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.dependencies import get_current_user
@@ -10,10 +10,10 @@ from app.models.user import User
 from app.models.opportunity import Opportunity as OpportunityModel
 from app.models.opportunity import ApplicationType, ContractType
 from app.schemas.opportunity import Opportunity, OpportunityCreate, OpportunityUpdate
-
+from app.utils.validators.ownership_validators import validate_company_exists_and_owned
+from app.utils.db import get_owned_entity_or_404
 
 router = APIRouter(prefix="/opportunities", tags=["opportunities"])
-
 
 @router.get("/", response_model=List[Opportunity])
 def get_opportunities(
@@ -41,6 +41,7 @@ def get_opportunities(
     )
 
     if company_id is not None:
+        validate_company_exists_and_owned(db, company_id, current_user)
         query = query.filter(OpportunityModel.company_id == company_id)
 
     if application_type is not None:
@@ -51,7 +52,6 @@ def get_opportunities(
 
     opportunities = query.offset(skip).limit(limit).all()
     return opportunities
-
 
 @router.get("/{opportunity_id}", response_model=Opportunity)
 def get_opportunity(
@@ -66,16 +66,14 @@ def get_opportunity(
 
     Returns 404 if opportunity doesn't exist or doesn't belong to the authenticated user.
     """
-    opportunity = db.query(OpportunityModel).filter(
-        OpportunityModel.id == opportunity_id,
-        OpportunityModel.owner_id == current_user.id
-    ).first()
-
-    if not opportunity:
-        raise HTTPException(status_code=404, detail="Opportunity not found")
-
+    opportunity = get_owned_entity_or_404(
+        db=db,
+        entity_model=OpportunityModel,
+        entity_id=opportunity_id,
+        owner_id=current_user.id,
+        entity_name="Opportunity"
+    )
     return opportunity
-
 
 @router.post("/", response_model=Opportunity, status_code=201)
 def create_opportunity(
@@ -95,15 +93,8 @@ def create_opportunity(
 
     The opportunity will be automatically assigned to the authenticated user.
     """
-    # Verify company exists and belongs to user if company_id is provided
     if opportunity.company_id is not None:
-        from app.models.company import Company as CompanyModel
-        company = db.query(CompanyModel).filter(
-            CompanyModel.id == opportunity.company_id,
-            CompanyModel.owner_id == current_user.id
-        ).first()
-        if not company:
-            raise HTTPException(status_code=404, detail=f"Company with id {opportunity.company_id} not found")
+        validate_company_exists_and_owned(db, opportunity.company_id, current_user)
 
     opportunity_data = opportunity.model_dump()
     opportunity_data['owner_id'] = current_user.id
@@ -113,7 +104,6 @@ def create_opportunity(
     db.commit()
     db.refresh(db_opportunity)
     return db_opportunity
-
 
 @router.put("/{opportunity_id}", response_model=Opportunity)
 def update_opportunity(
@@ -130,26 +120,20 @@ def update_opportunity(
 
     Returns 404 if opportunity doesn't exist or doesn't belong to the authenticated user.
     """
-    db_opportunity = db.query(OpportunityModel).filter(
-        OpportunityModel.id == opportunity_id,
-        OpportunityModel.owner_id == current_user.id
-    ).first()
+    db_opportunity = get_owned_entity_or_404(
+        db=db,
+        entity_model=OpportunityModel,
+        entity_id=opportunity_id,
+        owner_id=current_user.id,
+        entity_name="Opportunity"
+    )
 
-    if not db_opportunity:
-        raise HTTPException(status_code=404, detail="Opportunity not found")
-
-    # Verify company exists and belongs to user if company_id is being updated
     update_data = opportunity_update.model_dump(exclude_unset=True)
     if "company_id" in update_data and update_data["company_id"] is not None:
-        from app.models.company import Company as CompanyModel
-        company = db.query(CompanyModel).filter(
-            CompanyModel.id == update_data["company_id"],
-            CompanyModel.owner_id == current_user.id
-        ).first()
-        if not company:
-            raise HTTPException(status_code=404, detail=f"Company with id {update_data['company_id']} not found")
+        validate_company_exists_and_owned(
+            db, update_data["company_id"], current_user
+        )
 
-    # Update only provided fields
     for field, value in update_data.items():
         setattr(db_opportunity, field, value)
 
@@ -157,8 +141,7 @@ def update_opportunity(
     db.refresh(db_opportunity)
     return db_opportunity
 
-
-@router.delete("/{opportunity_id}", status_code=204)
+@router.delete("/{opportunity_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_opportunity(
     opportunity_id: int,
     current_user: User = Depends(get_current_user),
@@ -171,14 +154,14 @@ def delete_opportunity(
 
     Returns 404 if opportunity doesn't exist or doesn't belong to the authenticated user.
     """
-    db_opportunity = db.query(OpportunityModel).filter(
-        OpportunityModel.id == opportunity_id,
-        OpportunityModel.owner_id == current_user.id
-    ).first()
-
-    if not db_opportunity:
-        raise HTTPException(status_code=404, detail="Opportunity not found")
+    db_opportunity = get_owned_entity_or_404(
+        db=db,
+        entity_model=OpportunityModel,
+        entity_id=opportunity_id,
+        owner_id=current_user.id,
+        entity_name="Opportunity"
+    )
 
     db.delete(db_opportunity)
     db.commit()
-    return None
+    return
