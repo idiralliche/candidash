@@ -52,7 +52,7 @@ services:
     networks:
       - test_net
     # Override default command to run tests instead of server
-    command: ["python3", "tests/test_integration.py"]
+    command: ["pytest", "tests/", "-v", "--tb=short", "--color=yes"]
 
 networks:
   test_net:
