@@ -2,7 +2,7 @@
 Application routes - CRUD operations for applications.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.dependencies import get_current_user
@@ -16,10 +16,15 @@ from app.schemas.application import (
     ApplicationUpdate,
     ApplicationWithOpportunityCreate,
 )
-
+from app.utils.validators.ownership_validators import (
+    validate_opportunity_exists_and_owned,
+    validate_document_exists_and_owned,
+    validate_company_exists_and_owned
+)
+from app.utils.db import get_owned_entity_or_404
+from app.utils.db.helpers import JoinSpec
 
 router = APIRouter(prefix="/applications", tags=["applications"])
-
 
 @router.get("/", response_model=List[Application])
 def get_applications(
@@ -28,18 +33,25 @@ def get_applications(
     opportunity_id: Optional[int] = Query(None, description="Filter by opportunity ID"),
     status: Optional[ApplicationStatus] = Query(None, description="Filter by application status"),
     is_archived: Optional[bool] = Query(None, description="Filter by archive status"),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Retrieve a list of applications with pagination and optional filtering.
+    Retrieve a list of applications owned by the current user with pagination and optional filtering.
 
     - **skip**: Number of records to skip (for pagination)
     - **limit**: Maximum number of records to return (max 100)
-    - **opportunity_id**: Optional filter by opportunity
+    - **opportunity_id**: Optional filter by opportunity ID
     - **status**: Optional filter by status (pending, rejected, accepted, etc.)
     - **is_archived**: Optional filter by archive status
+
+    Returns only applications belonging to the authenticated user (via opportunity ownership).
     """
-    query = db.query(ApplicationModel)
+    query = db.query(ApplicationModel).join(
+        OpportunityModel, ApplicationModel.opportunity_id == OpportunityModel.id
+    ).filter(
+        OpportunityModel.owner_id == current_user.id
+    )
 
     if opportunity_id is not None:
         query = query.filter(ApplicationModel.opportunity_id == opportunity_id)
@@ -53,40 +65,35 @@ def get_applications(
     applications = query.offset(skip).limit(limit).all()
     return applications
 
-
 @router.get("/{application_id}", response_model=Application)
-def get_application(application_id: int, db: Session = Depends(get_db)):
+def get_application(
+    application_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Retrieve a specific application by ID.
 
     - **application_id**: The ID of the application to retrieve
+
+    Returns 404 if application doesn't exist or doesn't belong to the authenticated user.
     """
-    application = db.query(ApplicationModel).filter(ApplicationModel.id == application_id).first()
-    if not application:
-        raise HTTPException(status_code=404, detail="Application not found")
+    application = get_owned_entity_or_404(
+        db=db,
+        entity_model=ApplicationModel,
+        entity_id=application_id,
+        owner_id=current_user.id,
+        entity_name="Application",
+        requires_joins=[JoinSpec(model=OpportunityModel, owner_field='owner_id')]
+    )
     return application
 
-
-def validate_foreign_keys(db: Session, opportunity_id: Optional[int] = None, resume_id: Optional[int] = None, cover_letter_id: Optional[int] = None):
-    """Helper to validate foreign keys existence."""
-    if opportunity_id is not None:
-        from app.models.opportunity import Opportunity
-        if not db.query(Opportunity).filter(Opportunity.id == opportunity_id).first():
-            raise HTTPException(status_code=404, detail=f"Opportunity with id {opportunity_id} not found")
-
-    if resume_id is not None:
-        from app.models.document import Document
-        if not db.query(Document).filter(Document.id == resume_id).first():
-            raise HTTPException(status_code=404, detail=f"Document (resume) with id {resume_id} not found")
-
-    if cover_letter_id is not None:
-        from app.models.document import Document
-        if not db.query(Document).filter(Document.id == cover_letter_id).first():
-            raise HTTPException(status_code=404, detail=f"Document (cover letter) with id {cover_letter_id} not found")
-
-
 @router.post("/", response_model=Application, status_code=201)
-def create_application(application: ApplicationCreate, db: Session = Depends(get_db)):
+def create_application(
+    application: ApplicationCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Create a new application.
 
@@ -96,20 +103,18 @@ def create_application(application: ApplicationCreate, db: Session = Depends(get
     - **resume_used_id**: ID of resume document (optional)
     - **cover_letter_id**: ID of cover letter document (optional)
     """
-    # Verify FKs
-    validate_foreign_keys(
-        db,
-        opportunity_id=application.opportunity_id,
-        resume_id=application.resume_used_id,
-        cover_letter_id=application.cover_letter_id
-    )
+    # Validate foreign keys ownership
+    validate_opportunity_exists_and_owned(db, application.opportunity_id, current_user)
+    if application.resume_used_id is not None:
+        validate_document_exists_and_owned(db, application.resume_used_id, current_user)
+    if application.cover_letter_id is not None:
+        validate_document_exists_and_owned(db, application.cover_letter_id, current_user)
 
     db_application = ApplicationModel(**application.model_dump())
     db.add(db_application)
     db.commit()
     db.refresh(db_application)
     return db_application
-
 
 @router.post("/with-opportunity", response_model=Application, status_code=201)
 def create_application_with_opportunity(
@@ -129,48 +134,27 @@ def create_application_with_opportunity(
 
     Returns the created application with its generated ID and opportunity_id.
     The opportunity is automatically assigned to the authenticated user.
-
-    Example payload:
-    ```
-    {
-        "opportunity": {
-            "job_title": "Senior Python Developer",
-            "application_type": "job_posting",
-            "company_id": 42,
-            "contract_type": "permanent"
-        },
-        "application": {
-            "application_date": "2024-12-02",
-            "status": "pending",
-            "resume_used_id": 5
-        }
-    }
-    ```
     """
     try:
-        # Validate foreign keys in application data (resume, cover letter)
-        validate_foreign_keys(
-            db,
-            resume_id=data.application.resume_used_id,
-            cover_letter_id=data.application.cover_letter_id
-        )
+        # Validate documents ownership (resume, cover letter)
+        if data.application.resume_used_id is not None:
+            validate_document_exists_and_owned(
+                db, data.application.resume_used_id, current_user
+            )
+        if data.application.cover_letter_id is not None:
+            validate_document_exists_and_owned(
+                db, data.application.cover_letter_id, current_user
+            )
 
-        # Validate company_id if provided in opportunity and verify ownership
+        # Validate company_id if provided in opportunity
         if data.opportunity.company_id is not None:
-            from app.models.company import Company
-            company = db.query(Company).filter(
-                Company.id == data.opportunity.company_id,
-                Company.owner_id == current_user.id
-            ).first()
-            if not company:
-                raise HTTPException(
-                    status_code=404,
-                    detail=f"Company with id {data.opportunity.company_id} not found or does not belong to you"
-                )
+            validate_company_exists_and_owned(
+                db, data.opportunity.company_id, current_user
+            )
 
         # Create Opportunity with owner_id
         opportunity_data = data.opportunity.model_dump()
-        opportunity_data['owner_id'] = current_user.id  # ← AJOUTÉ
+        opportunity_data['owner_id'] = current_user.id
 
         db_opportunity = OpportunityModel(**opportunity_data)
         db.add(db_opportunity)
@@ -198,11 +182,11 @@ def create_application_with_opportunity(
             detail=f"Failed to create application with opportunity: {str(e)}"
         )
 
-
 @router.put("/{application_id}", response_model=Application)
 def update_application(
     application_id: int,
     application_update: ApplicationUpdate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -210,20 +194,27 @@ def update_application(
 
     - **application_id**: The ID of the application to update
     - All fields are optional
-    """
-    db_application = db.query(ApplicationModel).filter(ApplicationModel.id == application_id).first()
-    if not db_application:
-        raise HTTPException(status_code=404, detail="Application not found")
 
-    # Check validation for FKs if they are present in update data
+    Returns 404 if application doesn't exist or doesn't belong to the authenticated user.
+    """
+    db_application = get_owned_entity_or_404(
+        db=db,
+        entity_model=ApplicationModel,
+        entity_id=application_id,
+        owner_id=current_user.id,
+        entity_name="Application",
+        requires_joins=[JoinSpec(model=OpportunityModel, owner_field='owner_id')]
+    )
+
     update_data = application_update.model_dump(exclude_unset=True)
 
-    validate_foreign_keys(
-        db,
-        opportunity_id=update_data.get("opportunity_id"),
-        resume_id=update_data.get("resume_used_id"),
-        cover_letter_id=update_data.get("cover_letter_id")
-    )
+    # Validate updated FKs if present
+    if "opportunity_id" in update_data:
+        validate_opportunity_exists_and_owned(db, update_data["opportunity_id"], current_user)
+    if "resume_used_id" in update_data and update_data["resume_used_id"] is not None:
+        validate_document_exists_and_owned(db, update_data["resume_used_id"], current_user)
+    if "cover_letter_id" in update_data and update_data["cover_letter_id"] is not None:
+        validate_document_exists_and_owned(db, update_data["cover_letter_id"], current_user)
 
     # Update fields
     for field, value in update_data.items():
@@ -233,18 +224,28 @@ def update_application(
     db.refresh(db_application)
     return db_application
 
-
-@router.delete("/{application_id}", status_code=204)
-def delete_application(application_id: int, db: Session = Depends(get_db)):
+@router.delete("/{application_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_application(
+    application_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Delete an application.
 
     - **application_id**: The ID of the application to delete
+
+    Returns 404 if application doesn't exist or doesn't belong to the authenticated user.
     """
-    db_application = db.query(ApplicationModel).filter(ApplicationModel.id == application_id).first()
-    if not db_application:
-        raise HTTPException(status_code=404, detail="Application not found")
+    db_application = get_owned_entity_or_404(
+        db=db,
+        entity_model=ApplicationModel,
+        entity_id=application_id,
+        owner_id=current_user.id,
+        entity_name="Application",
+        requires_joins=[JoinSpec(model=OpportunityModel, owner_field='owner_id')]
+    )
 
     db.delete(db_application)
     db.commit()
-    return None
+    return
