@@ -2,14 +2,15 @@
 Contact routes - CRUD operations for contacts.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
 from app.models.contact import Contact as ContactModel
 from app.schemas.contact import Contact, ContactCreate, ContactUpdate
-
+from app.utils.validators.ownership_validators import validate_company_exists_and_owned
+from app.utils.db import get_owned_entity_or_404
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
@@ -60,14 +61,13 @@ def get_contact(
 
     Returns 404 if contact doesn't exist or doesn't belong to the authenticated user.
     """
-    contact = db.query(ContactModel).filter(
-        ContactModel.id == contact_id,
-        ContactModel.owner_id == current_user.id
-    ).first()
-
-    if not contact:
-        raise HTTPException(status_code=404, detail="Contact not found")
-
+    contact = get_owned_entity_or_404(
+        db=db,
+        entity_model=ContactModel,
+        entity_id=contact_id,
+        owner_id=current_user.id,
+        entity_name="Contact"
+    )
     return contact
 
 
@@ -93,15 +93,8 @@ def create_contact(
 
     The contact will be automatically assigned to the authenticated user.
     """
-    # Verify company exists and belongs to user if company_id is provided
     if contact.company_id is not None:
-        from app.models.company import Company as CompanyModel
-        company = db.query(CompanyModel).filter(
-            CompanyModel.id == contact.company_id,
-            CompanyModel.owner_id == current_user.id
-        ).first()
-        if not company:
-            raise HTTPException(status_code=404, detail=f"Company with id {contact.company_id} not found or does not belong to you")
+        validate_company_exists_and_owned(db, contact.company_id, current_user)
 
     contact_data = contact.model_dump()
     contact_data['owner_id'] = current_user.id
@@ -128,26 +121,20 @@ def update_contact(
 
     Returns 404 if contact doesn't exist or doesn't belong to the authenticated user.
     """
-    db_contact = db.query(ContactModel).filter(
-        ContactModel.id == contact_id,
-        ContactModel.owner_id == current_user.id
-    ).first()
+    db_contact = get_owned_entity_or_404(
+        db=db,
+        entity_model=ContactModel,
+        entity_id=contact_id,
+        owner_id=current_user.id,
+        entity_name="Contact"
+    )
 
-    if not db_contact:
-        raise HTTPException(status_code=404, detail="Contact not found")
-
-    # Verify company exists and belongs to user if company_id is being updated
     update_data = contact_update.model_dump(exclude_unset=True)
     if "company_id" in update_data and update_data["company_id"] is not None:
-        from app.models.company import Company as CompanyModel
-        company = db.query(CompanyModel).filter(
-            CompanyModel.id == update_data["company_id"],
-            CompanyModel.owner_id == current_user.id
-        ).first()
-        if not company:
-            raise HTTPException(status_code=404, detail=f"Company with id {update_data['company_id']} not found or does not belong to you")
+        validate_company_exists_and_owned(
+            db, update_data["company_id"], current_user
+        )
 
-    # Update only provided fields
     for field, value in update_data.items():
         setattr(db_contact, field, value)
 
@@ -156,7 +143,7 @@ def update_contact(
     return db_contact
 
 
-@router.delete("/{contact_id}", status_code=204)
+@router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_contact(
     contact_id: int,
     current_user: User = Depends(get_current_user),
@@ -169,14 +156,14 @@ def delete_contact(
 
     Returns 404 if contact doesn't exist or doesn't belong to the authenticated user.
     """
-    db_contact = db.query(ContactModel).filter(
-        ContactModel.id == contact_id,
-        ContactModel.owner_id == current_user.id
-    ).first()
-
-    if not db_contact:
-        raise HTTPException(status_code=404, detail="Contact not found")
+    db_contact = get_owned_entity_or_404(
+        db=db,
+        entity_model=ContactModel,
+        entity_id=contact_id,
+        owner_id=current_user.id,
+        entity_name="Contact"
+    )
 
     db.delete(db_contact)
     db.commit()
-    return None
+    return
