@@ -6,26 +6,29 @@ to the authenticated user (multi-tenancy enforcement).
 
 Usage: Call these functions in routers after getting current_user from Depends(get_current_user).
 """
-from typing import Optional, Type, List, Tuple
-from fastapi import HTTPException
+from typing import Optional
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.models.document_association import EntityType
+from app.utils.db.helpers import get_owned_entity_or_404, JoinSpec
 
 
 def validate_owned_entity(
     db: Session,
-    entity_model: Type,
+    entity_model: type,
     entity_id: int,
     current_user: User,
     entity_name: Optional[str] = None,
-    requires_joins: Optional[List[Tuple[Type, str]]] = None
+    requires_joins: Optional[list[JoinSpec]] = None
 ) -> None:
     """
-    Generic validator for entities with owner_id.
+    Validate entity ownership without returning the entity.
+
+    This is a semantic wrapper around get_owned_entity_or_404 for cases
+    where you only need to validate ownership without retrieving the entity
+    (e.g., before creating a related entity).
 
     Supports both direct ownership and inherited ownership through JOIN relationships.
-    Automatically deduces entity name from model if not provided.
 
     Args:
         db: Database session
@@ -33,71 +36,31 @@ def validate_owned_entity(
         entity_id: ID of the entity to validate
         current_user: Current authenticated user (from Depends(get_current_user))
         entity_name: Display name for error messages (auto-deduced if None)
-        requires_joins: List of (JoinModel, owner_field_name) tuples for entities that
-                        inherit ownership through relationships.
-                        Example: [(Application, None), (Opportunity, 'owner_id')] for Action
+        requires_joins: List of JoinSpec for entities that inherit ownership
+                       through relationships
 
     Raises:
         HTTPException 404: If entity doesn't exist or doesn't belong to user
 
     Examples:
-        # Direct ownership
-        validate_owned_entity(db, Company, 42, current_user)
+        # Direct ownership validation (before creating a contact)
+        validate_owned_entity(db, Company, company_id, current_user)
 
-        # With custom name
-        validate_owned_entity(db, Company, 42, current_user, "Entreprise")
-
-        # Inherited ownership (Application via Opportunity)
+        # Inherited ownership validation (before creating an action)
         validate_owned_entity(
-            db, Application, 10, current_user,
-            requires_joins=[(Opportunity, 'owner_id')]
-        )
-
-        # Multiple JOINs (Action via Application via Opportunity)
-        validate_owned_entity(
-            db, Action, 5, current_user,
-            requires_joins=[(Application, None), (Opportunity, 'owner_id')]
+            db, Application, application_id, current_user,
+            requires_joins=[JoinSpec(model=Opportunity, owner_field='owner_id')]
         )
     """
-    # Auto-deduce entity name from model if not provided
-    if entity_name is None:
-        entity_name = entity_model.__name__
-
-    if requires_joins:
-        # Build query with multiple JOINs
-        query = db.query(entity_model)
-
-        for join_model, _ in requires_joins:
-            query = query.join(join_model)
-
-        # Get the last model that contains owner_id
-        last_model = None
-        owner_field = None
-        for join_model, field in requires_joins:
-            if field is not None:
-                last_model = join_model
-                owner_field = field
-
-        if last_model is None or owner_field is None:
-            raise ValueError("requires_joins must contain at least one tuple with owner_field")
-
-        # Filter by entity ID and owner_id on the last model
-        entity = query.filter(
-            entity_model.id == entity_id,
-            getattr(last_model, owner_field) == current_user.id
-        ).first()
-    else:
-        # Direct ownership - entity has owner_id
-        entity = db.query(entity_model).filter(
-            entity_model.id == entity_id,
-            entity_model.owner_id == current_user.id
-        ).first()
-
-    if not entity:
-        raise HTTPException(
-            status_code=404,
-            detail=f"{entity_name} with id {entity_id} not found or doesn't belong to you"
-        )
+    # Call get_owned_entity_or_404 but discard the result
+    get_owned_entity_or_404(
+        db=db,
+        entity_model=entity_model,
+        entity_id=entity_id,
+        owner_id=current_user.id,
+        entity_name=entity_name,
+        requires_joins=requires_joins
+    )
 
 
 def validate_company_exists_and_owned(
@@ -209,7 +172,7 @@ def validate_application_exists_and_owned(
         entity_model=Application,
         entity_id=application_id,
         current_user=current_user,
-        requires_joins=[(Opportunity, 'owner_id')]
+        requires_joins=[JoinSpec(model=Opportunity, owner_field='owner_id')]
     )
 
 
@@ -266,6 +229,8 @@ def validate_entity_exists_and_owned(
         HTTPException 404: If entity doesn't exist or doesn't belong to user
         HTTPException 500: If entity_type is not handled (should never happen)
     """
+    from fastapi import HTTPException
+
     if entity_type == EntityType.APPLICATION:
         validate_application_exists_and_owned(db, entity_id, current_user)
 
