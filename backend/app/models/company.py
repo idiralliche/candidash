@@ -1,7 +1,7 @@
 """
 Company model - represents a company.
 """
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Index, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -19,7 +19,7 @@ class Company(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, index=True)
-    siret = Column(String(14), nullable=True, unique=True)  # French business ID
+    siret = Column(String(14), nullable=True)  # French business ID
     website = Column(String(255), nullable=True)
     headquarters = Column(Text, nullable=True)  # Full address
     is_intermediary = Column(Boolean, default=False)
@@ -32,6 +32,17 @@ class Company(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
+
+    # Composite unique constraint on (siret, owner_id) - only enforced when siret IS NOT NULL
+    __table_args__ = (
+        Index(
+            'ix_company_siret_owner_unique',
+            'siret',
+            'owner_id',
+            unique=True,
+            postgresql_where=text('siret IS NOT NULL')
+        ),
+    )
 
     # Relationships
     owner = relationship("User")
