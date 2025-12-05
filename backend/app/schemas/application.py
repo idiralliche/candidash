@@ -74,6 +74,7 @@ class Application(ApplicationBase):
     Includes all fields including generated ones (id, timestamps).
     """
     id: int = Field(..., description="Unique identifier")
+    owner_id: int = Field(..., description="Owner user ID")
     opportunity_id: int = Field(..., description="ID of the related opportunity")
     created_at: datetime = Field(..., description="Creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
