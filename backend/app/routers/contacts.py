@@ -39,6 +39,7 @@ def get_contacts(
     )
 
     if company_id is not None:
+        validate_company_exists_and_owned(db, company_id, current_user)
         query = query.filter(ContactModel.company_id == company_id)
 
     if is_independent_recruiter is not None:
