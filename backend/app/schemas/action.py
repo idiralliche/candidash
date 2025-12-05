@@ -7,10 +7,8 @@ from pydantic import BaseModel, ConfigDict, Field
 class ActionBase(BaseModel):
     """Base schema with common fields for Action."""
     type: str = Field(..., min_length=1, max_length=50, description="Type of action (follow_up, note, etc.)")
-    completed_date: Optional[datetime] = Field(None, description="Date when action was completed")
-    is_completed: bool = Field(default=False, description="Completion status")
-    notes: Optional[str] = Field(None, max_length=50000, description="Details or notes about the action")
-    parent_action_id: Optional[int] = Field(None, gt=0, description="ID of parent action for threading")
+    completed_date: Optional[datetime] = Field(None, description="Date when action was completed (NULL = ongoing)")
+    notes: Optional[str] = Field(None, max_length=5000, description="Details or notes about the action")
     scheduled_event_id: Optional[int] = Field(None, gt=0, description="ID of associated scheduled event")
 
 
@@ -25,9 +23,7 @@ class ActionUpdate(BaseModel):
     """
     type: Optional[str] = Field(None, min_length=1, max_length=50)
     completed_date: Optional[datetime] = None
-    is_completed: Optional[bool] = None
-    notes: Optional[str] = Field(None, max_length=50000)
-    parent_action_id: Optional[int] = Field(None, gt=0)
+    notes: Optional[str] = Field(None, max_length=5000)
     scheduled_event_id: Optional[int] = Field(None, gt=0)
     application_id: Optional[int] = Field(None, gt=0)
 
@@ -37,8 +33,10 @@ class Action(ActionBase):
     Includes all fields including generated ones (id, timestamps).
     """
     id: int = Field(..., description="Unique identifier")
+    owner_id: int = Field(..., description="Owner user ID")
     application_id: int = Field(..., description="ID of the related application")
     created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
 
     model_config = ConfigDict(from_attributes=True)
 
