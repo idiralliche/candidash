@@ -45,15 +45,12 @@ def get_applications(
     - **status**: Optional filter by status (pending, rejected, accepted, etc.)
     - **is_archived**: Optional filter by archive status
 
-    Returns only applications belonging to the authenticated user (via opportunity ownership).
+    Returns only applications belonging to the authenticated user (owner_id direct).
     """
-    query = db.query(ApplicationModel).join(
-        OpportunityModel, ApplicationModel.opportunity_id == OpportunityModel.id
-    ).filter(
-        OpportunityModel.owner_id == current_user.id
-    )
+    query = db.query(ApplicationModel).filter(ApplicationModel.owner_id == current_user.id)
 
     if opportunity_id is not None:
+        validate_opportunity_exists_and_owned(db, opportunity_id, current_user)
         query = query.filter(ApplicationModel.opportunity_id == opportunity_id)
 
     if status is not None:
@@ -84,7 +81,6 @@ def get_application(
         entity_id=application_id,
         owner_id=current_user.id,
         entity_name="Application",
-        requires_joins=[JoinSpec(model=OpportunityModel, owner_field='owner_id')]
     )
     return application
 
@@ -110,7 +106,10 @@ def create_application(
     if application.cover_letter_id is not None:
         validate_document_exists_and_owned(db, application.cover_letter_id, current_user)
 
-    db_application = ApplicationModel(**application.model_dump())
+    application_data = application.model_dump()
+    application_data['owner_id'] = current_user.id
+
+    db_application = ApplicationModel(**application_data)
     db.add(db_application)
     db.commit()
     db.refresh(db_application)
@@ -160,8 +159,9 @@ def create_application_with_opportunity(
         db.add(db_opportunity)
         db.flush()  # Get opportunity.id without committing yet
 
-        # Create Application with the generated opportunity_id
+        # Create Application with owner_id and the generated opportunity_id
         application_data = data.application.model_dump()
+        application_data['owner_id'] = current_user.id
         application_data['opportunity_id'] = db_opportunity.id
         db_application = ApplicationModel(**application_data)
         db.add(db_application)
@@ -203,7 +203,6 @@ def update_application(
         entity_id=application_id,
         owner_id=current_user.id,
         entity_name="Application",
-        requires_joins=[JoinSpec(model=OpportunityModel, owner_field='owner_id')]
     )
 
     update_data = application_update.model_dump(exclude_unset=True)
@@ -216,9 +215,10 @@ def update_application(
     if "cover_letter_id" in update_data and update_data["cover_letter_id"] is not None:
         validate_document_exists_and_owned(db, update_data["cover_letter_id"], current_user)
 
-    # Update fields
+    # Update fields (no ownership change allowed)
     for field, value in update_data.items():
-        setattr(db_application, field, value)
+        if field != 'owner_id':
+            setattr(db_application, field, value)
 
     db.commit()
     db.refresh(db_application)
@@ -243,7 +243,6 @@ def delete_application(
         entity_id=application_id,
         owner_id=current_user.id,
         entity_name="Application",
-        requires_joins=[JoinSpec(model=OpportunityModel, owner_field='owner_id')]
     )
 
     db.delete(db_application)
