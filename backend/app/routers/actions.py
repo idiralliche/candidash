@@ -2,11 +2,18 @@
 Action routes - CRUD operations for actions.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
+from app.core.dependencies import get_current_user
+from app.models.user import User
 from app.models.action import Action as ActionModel
 from app.schemas.action import Action, ActionCreate, ActionUpdate
+from app.utils.validators.ownership_validators import (
+    validate_application_exists_and_owned,
+    validate_scheduled_event_exists_and_owned
+)
+from app.utils.db import get_owned_entity_or_404
 
 router = APIRouter(prefix="/actions", tags=["actions"])
 
@@ -16,126 +23,90 @@ def get_actions(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=100, description="Maximum number of records to return"),
     application_id: Optional[int] = Query(None, description="Filter by application ID"),
-    is_completed: Optional[bool] = Query(None, description="Filter by completion status"),
+    completed: Optional[bool] = Query(None, description="Filter by completion status (true=completed_date IS NOT NULL)"),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Retrieve a list of actions with pagination and optional filtering.
+    Retrieve a list of actions owned by the current user with pagination and optional filtering.
 
     - **skip**: Number of records to skip (for pagination)
     - **limit**: Maximum number of records to return (max 100)
-    - **application_id**: Optional filter by application
-    - **is_completed**: Optional filter by completion status
+    - **application_id**: Optional filter by application ID
+    - **completed**: Filter by completion (true=completed_date NOT NULL, false=NULL)
     """
-    query = db.query(ActionModel)
+    query = db.query(ActionModel).filter(
+        ActionModel.owner_id == current_user.id
+    )
 
     if application_id is not None:
+        validate_application_exists_and_owned(db, application_id, current_user)
         query = query.filter(ActionModel.application_id == application_id)
 
-    if is_completed is not None:
-        query = query.filter(ActionModel.is_completed == is_completed)
+    if completed is not None:
+        if completed:
+            query = query.filter(ActionModel.completed_date.isnot(None))
+        else:
+            query = query.filter(ActionModel.completed_date.is_(None))
 
-    actions = query.offset(skip).limit(limit).all()
+    actions = query.order_by(ActionModel.created_at.asc()).offset(skip).limit(limit).all()
     return actions
 
-
 @router.get("/{action_id}", response_model=Action)
-def get_action(action_id: int, db: Session = Depends(get_db)):
+def get_action(
+    action_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Retrieve a specific action by ID.
 
     - **action_id**: The ID of the action to retrieve
+
+    Returns 404 if action doesn't exist or doesn't belong to the authenticated user.
     """
-    action = db.query(ActionModel).filter(ActionModel.id == action_id).first()
-    if not action:
-        raise HTTPException(status_code=404, detail="Action not found")
+    action = get_owned_entity_or_404(
+        db=db,
+        entity_model=ActionModel,
+        entity_id=action_id,
+        owner_id=current_user.id,
+        entity_name="Action",
+    )
     return action
 
-
-def validate_foreign_keys(
-    db: Session,
-    application_id: Optional[int] = None,
-    scheduled_event_id: Optional[int] = None,
-    parent_action_id: Optional[int] = None
-):
-    """Helper to validate foreign keys existence."""
-    if application_id is not None:
-        from app.models.application import Application
-        if not db.query(Application).filter(Application.id == application_id).first():
-            raise HTTPException(status_code=404, detail=f"Application with id {application_id} not found")
-
-    if scheduled_event_id is not None:
-        from app.models.scheduled_event import ScheduledEvent
-        if not db.query(ScheduledEvent).filter(ScheduledEvent.id == scheduled_event_id).first():
-            raise HTTPException(status_code=404, detail=f"ScheduledEvent with id {scheduled_event_id} not found")
-
-    if parent_action_id is not None:
-        # Check if parent action exists (self-referential)
-        if not db.query(ActionModel).filter(ActionModel.id == parent_action_id).first():
-            raise HTTPException(status_code=404, detail=f"Parent Action with id {parent_action_id} not found")
-
-
-def validate_circular_dependency(db: Session, action_id: int, parent_id: int):
-    """Check for circular dependencies when setting a parent action."""
-    if action_id == parent_id:
-        raise HTTPException(status_code=400, detail="Self-reference detected: Action cannot be its own parent")
-
-    current_id = parent_id
-    # We use a set to track visited nodes to handle existing cycles in DB if any
-    visited = {action_id}
-
-    # Safety limit to prevent infinite loops if data is already corrupted
-    max_depth = 50
-    depth = 0
-
-    while current_id is not None:
-        if current_id in visited:
-             raise HTTPException(status_code=400, detail="Circular dependency detected in action chain")
-
-        visited.add(current_id)
-        depth += 1
-        if depth > max_depth:
-            # Stop verification if chain is too deep
-            break
-
-        # Fetch parent of current node
-        result = db.query(ActionModel).filter(ActionModel.id == current_id).first()
-
-        if not result:
-            break
-
-        current_id = result.parent_action_id
-
-
 @router.post("/", response_model=Action, status_code=201)
-def create_action(action: ActionCreate, db: Session = Depends(get_db)):
+def create_action(
+    action: ActionCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Create a new action.
 
     - **application_id**: ID of the application (required)
     - **type**: Type of action (required)
     - **scheduled_event_id**: ID of associated event (optional)
-    - **parent_action_id**: ID of parent action (optional)
     """
-    # Verify FKs
-    validate_foreign_keys(
-        db,
-        application_id=action.application_id,
-        scheduled_event_id=action.scheduled_event_id,
-        parent_action_id=action.parent_action_id
-    )
+    # Validate foreign keys ownership
+    validate_application_exists_and_owned(db, action.application_id, current_user)
+    if action.scheduled_event_id is not None:
+        validate_scheduled_event_exists_and_owned(db, action.scheduled_event_id, current_user)
 
-    db_action = ActionModel(**action.model_dump())
+    # owner_id automatique
+    action_data = action.model_dump()
+    action_data['owner_id'] = current_user.id
+
+    db_action = ActionModel(**action_data)
     db.add(db_action)
     db.commit()
     db.refresh(db_action)
     return db_action
 
-
 @router.put("/{action_id}", response_model=Action)
 def update_action(
     action_id: int,
     action_update: ActionUpdate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
@@ -143,45 +114,55 @@ def update_action(
 
     - **action_id**: The ID of the action to update
     - All fields are optional
+
+    Returns 404 if action doesn't exist or doesn't belong to the authenticated user.
     """
-    db_action = db.query(ActionModel).filter(ActionModel.id == action_id).first()
-    if not db_action:
-        raise HTTPException(status_code=404, detail="Action not found")
-
-    # Check validation for FKs if they are present in update data
-    update_data = action_update.model_dump(exclude_unset=True)
-
-    validate_foreign_keys(
-        db,
-        application_id=update_data.get("application_id"),
-        scheduled_event_id=update_data.get("scheduled_event_id"),
-        parent_action_id=update_data.get("parent_action_id")
+    db_action = get_owned_entity_or_404(
+        db=db,
+        entity_model=ActionModel,
+        entity_id=action_id,
+        owner_id=current_user.id,
+        entity_name="Action"
     )
 
-    # Check for circular dependency if parent_action_id is being updated
-    if "parent_action_id" in update_data and update_data["parent_action_id"] is not None:
-        validate_circular_dependency(db, action_id, update_data["parent_action_id"])
+    update_data = action_update.model_dump(exclude_unset=True)
 
-    # Update fields
+    if "application_id" in update_data :
+        validate_application_exists_and_owned(db, update_data["application_id"], current_user)
+
+    if "scheduled_event_id" in update_data and update_data["scheduled_event_id"] is not None:
+        validate_scheduled_event_exists_and_owned(db, update_data["scheduled_event_id"], current_user)
+
+    # Update fields (no ownership change allowed)
     for field, value in update_data.items():
-        setattr(db_action, field, value)
+        if field != 'owner_id':  # Protection
+            setattr(db_action, field, value)
 
     db.commit()
     db.refresh(db_action)
     return db_action
 
-
-@router.delete("/{action_id}", status_code=204)
-def delete_action(action_id: int, db: Session = Depends(get_db)):
+@router.delete("/{action_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_action(
+    action_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Delete an action.
 
     - **action_id**: The ID of the action to delete
+
+    Returns 404 if action doesn't exist or doesn't belong to the authenticated user.
     """
-    db_action = db.query(ActionModel).filter(ActionModel.id == action_id).first()
-    if not db_action:
-        raise HTTPException(status_code=404, detail="Action not found")
+    db_action = get_owned_entity_or_404(
+        db=db,
+        entity_model=ActionModel,
+        entity_id=action_id,
+        owner_id=current_user.id,
+        entity_name="Action"
+    )
 
     db.delete(db_action)
     db.commit()
-    return None
+    return
