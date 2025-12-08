@@ -68,7 +68,7 @@ def get_product(
     return product
 
 
-@router.post("/", response_model=Product, status_code=201)
+@router.post("/", response_model=Product, status_code=status.HTTP_201_CREATED)
 def create_product(
     product: ProductCreate,
     current_user: User = Depends(get_current_user),

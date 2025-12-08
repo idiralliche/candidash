@@ -75,7 +75,7 @@ def get_opportunity(
     )
     return opportunity
 
-@router.post("/", response_model=Opportunity, status_code=201)
+@router.post("/", response_model=Opportunity, status_code=status.HTTP_201_CREATED)
 def create_opportunity(
     opportunity: OpportunityCreate,
     current_user: User = Depends(get_current_user),

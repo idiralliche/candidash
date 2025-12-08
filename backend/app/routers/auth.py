@@ -13,7 +13,7 @@ from app.schemas.token import Token
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 
-@router.post("/register", response_model=UserSchema, status_code=201)
+@router.post("/register", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user.

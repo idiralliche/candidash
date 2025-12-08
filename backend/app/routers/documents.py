@@ -56,7 +56,7 @@ def get_document(
     )
     return document
 
-@router.post("/", response_model=Document, status_code=201)
+@router.post("/", response_model=Document, status_code=status.HTTP_201_CREATED)
 def create_document(
     document: DocumentCreate,
     current_user: User = Depends(get_current_user),

@@ -74,7 +74,7 @@ def get_action(
     )
     return action
 
-@router.post("/", response_model=Action, status_code=201)
+@router.post("/", response_model=Action, status_code=status.HTTP_201_CREATED)
 def create_action(
     action: ActionCreate,
     current_user: User = Depends(get_current_user),

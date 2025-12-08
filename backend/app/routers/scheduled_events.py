@@ -63,7 +63,7 @@ def get_scheduled_event(
     )
     return event
 
-@router.post("/", response_model=ScheduledEvent, status_code=201)
+@router.post("/", response_model=ScheduledEvent, status_code=status.HTTP_201_CREATED)
 def create_scheduled_event(
     event: ScheduledEventCreate,
     current_user: User = Depends(get_current_user),

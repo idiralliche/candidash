@@ -84,7 +84,7 @@ def get_application(
     )
     return application
 
-@router.post("/", response_model=Application, status_code=201)
+@router.post("/", response_model=Application, status_code=status.HTTP_201_CREATED)
 def create_application(
     application: ApplicationCreate,
     current_user: User = Depends(get_current_user),
@@ -115,7 +115,7 @@ def create_application(
     db.refresh(db_application)
     return db_application
 
-@router.post("/with-opportunity", response_model=Application, status_code=201)
+@router.post("/with-opportunity", response_model=Application, status_code=status.HTTP_201_CREATED)
 def create_application_with_opportunity(
     data: ApplicationWithOpportunityCreate,
     current_user: User = Depends(get_current_user),

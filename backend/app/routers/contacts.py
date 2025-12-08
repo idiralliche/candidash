@@ -72,7 +72,7 @@ def get_contact(
     return contact
 
 
-@router.post("/", response_model=Contact, status_code=201)
+@router.post("/", response_model=Contact, status_code=status.HTTP_201_CREATED)
 def create_contact(
     contact: ContactCreate,
     current_user: User = Depends(get_current_user),

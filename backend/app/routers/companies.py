@@ -59,7 +59,7 @@ def get_company(
     return company
 
 
-@router.post("/", response_model=Company, status_code=201)
+@router.post("/", response_model=Company, status_code=status.HTTP_201_CREATED)
 def create_company(
     company: CompanyCreate,
     current_user: User = Depends(get_current_user),
