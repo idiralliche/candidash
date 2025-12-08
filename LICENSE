@@ -1,0 +1,54 @@
+CandiDash Source-Available License (Non-Commercial)
+
+Copyright (c) 2024
+Idir Alliche
+
+1. Grant of Permission
+
+Subject to the terms below, you are allowed to:
+
+-   View, read, and study the source code of this project.
+-   Fork the repository and modify the source code.
+-   Use the software and/or your modifications for:
+    -   Personal, educational, or research purposes.
+    -   Open-source contributions back to this project via pull requests.
+
+2. Non-Commercial Restriction
+
+You are NOT allowed to, without prior written permission from the author:
+
+-   Sell, rent, lease, or license the software, in whole or in part.
+-   Offer the software as a paid service (SaaS) or as part of a paid product.
+-   Use the software, or any modified version of it, in any commercial context,
+    including internal business use that directly or indirectly generates revenue.
+-   Use the name “CandiDash” or any related branding to market a product,
+    service, or offering.
+
+For any commercial use, you must obtain a separate commercial license
+directly from the author.
+
+3. Redistribution
+
+You may redistribute unmodified or modified copies of the software under
+the following conditions:
+
+-   You must keep this license text intact and clearly visible.
+-   You must clearly indicate any changes you have made.
+-   You may not misrepresent your copy as the original official version.
+
+All redistribution must comply with the non-commercial restriction above.
+
+4. No Warranty
+
+The software is provided “as is”, without warranty of any kind, express
+or implied, including but not limited to the warranties of
+merchantability, fitness for a particular purpose, and noninfringement.
+In no event shall the author or copyright holder be liable for any
+claim, damages, or other liability, whether in an action of contract,
+tort, or otherwise, arising from, out of, or in connection with the
+software or the use or other dealings in the software.
+
+5. No Additional Rights
+
+Except as explicitly stated in this license, no other rights are granted.
+All rights not expressly granted are reserved by the author.
