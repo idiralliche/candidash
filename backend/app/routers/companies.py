@@ -130,7 +130,8 @@ def update_company(
     # Update only provided fields
     update_data = company_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
-        setattr(db_company, field, value)
+        if field != 'owner_id':
+            setattr(db_company, field, value)
 
     try:
         db.commit()
@@ -153,7 +154,7 @@ def update_company(
         )
 
 
-@router.delete("/{company_id}", status_code=204)
+@router.delete("/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_company(
     company_id: int,
     current_user: User = Depends(get_current_user),

@@ -114,7 +114,8 @@ def update_scheduled_event(
     update_data = event_update.model_dump(exclude_unset=True)
 
     for field, value in update_data.items():
-        setattr(db_event, field, value)
+        if field != 'owner_id':
+            setattr(db_event, field, value)
 
     db.commit()
     db.refresh(db_event)

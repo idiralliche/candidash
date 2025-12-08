@@ -2,7 +2,7 @@
 Contact routes - CRUD operations for contacts.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.dependencies import get_current_user
@@ -137,7 +137,8 @@ def update_contact(
         )
 
     for field, value in update_data.items():
-        setattr(db_contact, field, value)
+        if field != 'owner_id':
+            setattr(db_contact, field, value)
 
     db.commit()
     db.refresh(db_contact)

@@ -2,7 +2,7 @@
 Opportunity routes - CRUD operations for opportunities.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.dependencies import get_current_user
@@ -135,7 +135,8 @@ def update_opportunity(
         )
 
     for field, value in update_data.items():
-        setattr(db_opportunity, field, value)
+        if field != 'owner_id':
+            setattr(db_opportunity, field, value)
 
     db.commit()
     db.refresh(db_opportunity)

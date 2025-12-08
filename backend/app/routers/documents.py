@@ -2,7 +2,7 @@
 Document routes - CRUD operations for documents.
 """
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.dependencies import get_current_user
@@ -109,7 +109,8 @@ def update_document(
     # Update only provided fields
     update_data = document_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
-        setattr(db_document, field, value)
+        if field != 'owner_id':
+            setattr(db_document, field, value)
 
     db.commit()
     db.refresh(db_document)
