@@ -54,7 +54,7 @@ def get_owned_entity_or_404(
     Args:
         db: SQLAlchemy session
         entity_model: SQLAlchemy model class (e.g., Company, Application)
-        entity_id: Primary key of the entity to retrieve
+        entity_id: Primary key of the entity to retrieve (must be positive)
         owner_id: ID of the user who should own the entity
         entity_name: Optional human-readable name for error messages
                     (defaults to model.__name__)
@@ -65,8 +65,9 @@ def get_owned_entity_or_404(
         The entity instance if found and owned by the user
 
     Raises:
-        HTTPException: 404 if the entity does not exist or is not owned by the user
+        ValueError: If entity_id <= 0 or entity_model is None
         ValueError: If requires_joins is provided but contains no owner_field
+        HTTPException: 404 if the entity does not exist or is not owned by the user
 
     Examples:
         # Direct ownership
@@ -98,6 +99,13 @@ def get_owned_entity_or_404(
             ]
         )
     """
+    # Input validation
+    if entity_id <= 0:
+        raise ValueError(f"entity_id must be a positive integer, got: {entity_id}")
+
+    if entity_model is None:
+        raise ValueError("entity_model cannot be None")
+
     entity_name = entity_name or entity_model.__name__
     query: Query = db.query(entity_model)
 
