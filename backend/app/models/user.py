@@ -33,8 +33,8 @@ class User(Base):
     documents = relationship("Document", back_populates="owner", cascade="all, delete-orphan")
     scheduled_events = relationship("ScheduledEvent", back_populates="owner", cascade="all, delete-orphan")
     actions = relationship("Action", back_populates="owner", cascade="all, delete-orphan")
-    application = relationship("Application", back_populates="owner", cascade="all, delete-orphan")
-    product = relationship("Product", back_populates="owner", cascade="all, delete-orphan")
+    applications = relationship("Application", back_populates="owner", cascade="all, delete-orphan")
+    products = relationship("Product", back_populates="owner", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}')>"
