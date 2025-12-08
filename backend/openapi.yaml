@@ -15,6 +15,80 @@ paths:
           content:
             application/json:
               schema: {}
+  /api/v1/auth/register:
+    post:
+      tags:
+      - authentication
+      summary: Register
+      description: 'Register a new user.
+
+
+        - **email**: User email (must be unique)
+
+        - **first_name**: User first name (optional)
+
+        - **last_name**: User last name (optional)
+
+        - **password**: Password (minimum 8 characters)
+
+        - **confirm_password**: Password confirmation (must match)'
+      operationId: register_api_v1_auth_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/login:
+    post:
+      tags:
+      - authentication
+      summary: Login
+      description: 'Login with email and password to get JWT access token.
+
+
+        OAuth2 compatible - use ''username'' field for email.
+
+
+        - **username**: User email address
+
+        - **password**: User password
+
+
+        Returns JWT access token for authenticated requests.'
+      operationId: login_api_v1_auth_login_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_login_api_v1_auth_login_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/companies/:
     get:
       tags:
@@ -239,16 +313,12 @@ paths:
       tags:
       - documents
       summary: Get Documents
-      description: 'Retrieve a list of documents owned by the current user with pagination
-        and optional filtering.
+      description: 'Retrieve a list of documents owned by the current user with pagination.
 
 
         - **skip**: Number of records to skip (for pagination)
 
         - **limit**: Maximum number of records to return (max 100)
-
-        - **type**: Optional filter by document type (resume, cover_letter, portfolio,
-        etc.)
 
 
         Returns only documents belonging to the authenticated user.'
@@ -277,16 +347,6 @@ paths:
           default: 100
           title: Limit
         description: Maximum number of records to return
-      - name: type
-        in: query
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          description: Filter by document type
-          title: Type
-        description: Filter by document type
       responses:
         '200':
           description: Successful Response
@@ -710,15 +770,21 @@ paths:
       tags:
       - products
       summary: Get Products
-      description: 'Retrieve a list of products with pagination and optional filtering.
+      description: 'Retrieve a list of products owned by the current user with pagination
+        and optional filtering.
 
 
         - **skip**: Number of records to skip (for pagination)
 
         - **limit**: Maximum number of records to return (max 100)
 
-        - **company_id**: Optional filter by company ID'
+        - **company_id**: Optional filter by company ID
+
+
+        Returns only products belonging to the authenticated user.'
       operationId: get_products_api_v1_products__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -782,8 +848,13 @@ paths:
 
         - **website**: Product specific website URL (optional)
 
-        - **technologies_used**: Stack or technologies used (optional)'
+        - **technologies_used**: Stack or technologies used (optional)
+
+
+        The product will be automatically assigned to the authenticated user.'
       operationId: create_product_api_v1_products__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -811,8 +882,14 @@ paths:
       description: 'Retrieve a specific product by ID.
 
 
-        - **product_id**: The ID of the product to retrieve'
+        - **product_id**: The ID of the product to retrieve
+
+
+        Returns 404 if product doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_product_api_v1_products__product_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: product_id
         in: path
@@ -842,8 +919,14 @@ paths:
 
         - **product_id**: The ID of the product to update
 
-        - All fields are optional - only provided fields will be updated'
+        - All fields are optional - only provided fields will be updated
+
+
+        Returns 404 if product doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_product_api_v1_products__product_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: product_id
         in: path
@@ -877,8 +960,14 @@ paths:
       description: 'Delete a product.
 
 
-        - **product_id**: The ID of the product to delete'
+        - **product_id**: The ID of the product to delete
+
+
+        Returns 404 if product doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_product_api_v1_products__product_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: product_id
         in: path
@@ -1146,19 +1235,25 @@ paths:
       tags:
       - applications
       summary: Get Applications
-      description: 'Retrieve a list of applications with pagination and optional filtering.
+      description: 'Retrieve a list of applications owned by the current user with
+        pagination and optional filtering.
 
 
         - **skip**: Number of records to skip (for pagination)
 
         - **limit**: Maximum number of records to return (max 100)
 
-        - **opportunity_id**: Optional filter by opportunity
+        - **opportunity_id**: Optional filter by opportunity ID
 
         - **status**: Optional filter by status (pending, rejected, accepted, etc.)
 
-        - **is_archived**: Optional filter by archive status'
+        - **is_archived**: Optional filter by archive status
+
+
+        Returns only applications belonging to the authenticated user (owner_id direct).'
       operationId: get_applications_api_v1_applications__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -1244,6 +1339,8 @@ paths:
 
         - **cover_letter_id**: ID of cover letter document (optional)'
       operationId: create_application_api_v1_applications__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -1271,8 +1368,14 @@ paths:
       description: 'Retrieve a specific application by ID.
 
 
-        - **application_id**: The ID of the application to retrieve'
+        - **application_id**: The ID of the application to retrieve
+
+
+        Returns 404 if application doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_application_api_v1_applications__application_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: application_id
         in: path
@@ -1302,8 +1405,14 @@ paths:
 
         - **application_id**: The ID of the application to update
 
-        - All fields are optional'
+        - All fields are optional
+
+
+        Returns 404 if application doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_application_api_v1_applications__application_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: application_id
         in: path
@@ -1337,8 +1446,14 @@ paths:
       description: 'Delete an application.
 
 
-        - **application_id**: The ID of the application to delete'
+        - **application_id**: The ID of the application to delete
+
+
+        Returns 404 if application doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_application_api_v1_applications__application_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: application_id
         in: path
@@ -1360,19 +1475,26 @@ paths:
       tags:
       - applications
       summary: Create Application With Opportunity
-      description: "Create a new application with its opportunity in a single transaction.\n\
-        \nThis endpoint is useful when creating a new job application where\nthe opportunity\
-        \ doesn't exist yet. Both opportunity and application\nare created atomically.\n\
-        \n- **opportunity**: Opportunity details (job_title, application_type, company_id,\
-        \ etc.)\n- **application**: Application details (application_date, status,\
-        \ resume_used_id, etc.)\n\nReturns the created application with its generated\
-        \ ID and opportunity_id.\nThe opportunity is automatically assigned to the\
-        \ authenticated user.\n\nExample payload:\n```\n{\n    \"opportunity\": {\n\
-        \        \"job_title\": \"Senior Python Developer\",\n        \"application_type\"\
-        : \"job_posting\",\n        \"company_id\": 42,\n        \"contract_type\"\
-        : \"permanent\"\n    },\n    \"application\": {\n        \"application_date\"\
-        : \"2024-12-02\",\n        \"status\": \"pending\",\n        \"resume_used_id\"\
-        : 5\n    }\n}\n```"
+      description: 'Create a new application with its opportunity in a single transaction.
+
+
+        This endpoint is useful when creating a new job application where
+
+        the opportunity doesn''t exist yet. Both opportunity and application
+
+        are created atomically.
+
+
+        - **opportunity**: Opportunity details (job_title, application_type, company_id,
+        etc.)
+
+        - **application**: Application details (application_date, status, resume_used_id,
+        etc.)
+
+
+        Returns the created application with its generated ID and opportunity_id.
+
+        The opportunity is automatically assigned to the authenticated user.'
       operationId: create_application_with_opportunity_api_v1_applications_with_opportunity_post
       requestBody:
         content:
@@ -1617,17 +1739,20 @@ paths:
       tags:
       - actions
       summary: Get Actions
-      description: 'Retrieve a list of actions with pagination and optional filtering.
+      description: 'Retrieve a list of actions owned by the current user with pagination
+        and optional filtering.
 
 
         - **skip**: Number of records to skip (for pagination)
 
         - **limit**: Maximum number of records to return (max 100)
 
-        - **application_id**: Optional filter by application
+        - **application_id**: Optional filter by application ID
 
-        - **is_completed**: Optional filter by completion status'
+        - **completed**: Filter by completion (true=completed_date NOT NULL, false=NULL)'
       operationId: get_actions_api_v1_actions__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -1660,16 +1785,16 @@ paths:
           description: Filter by application ID
           title: Application Id
         description: Filter by application ID
-      - name: is_completed
+      - name: completed
         in: query
         required: false
         schema:
           anyOf:
           - type: boolean
           - type: 'null'
-          description: Filter by completion status
-          title: Is Completed
-        description: Filter by completion status
+          description: Filter by completion status (true=completed_date IS NOT NULL)
+          title: Completed
+        description: Filter by completion status (true=completed_date IS NOT NULL)
       responses:
         '200':
           description: Successful Response
@@ -1697,10 +1822,10 @@ paths:
 
         - **type**: Type of action (required)
 
-        - **scheduled_event_id**: ID of associated event (optional)
-
-        - **parent_action_id**: ID of parent action (optional)'
+        - **scheduled_event_id**: ID of associated event (optional)'
       operationId: create_action_api_v1_actions__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -1728,8 +1853,14 @@ paths:
       description: 'Retrieve a specific action by ID.
 
 
-        - **action_id**: The ID of the action to retrieve'
+        - **action_id**: The ID of the action to retrieve
+
+
+        Returns 404 if action doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_action_api_v1_actions__action_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: action_id
         in: path
@@ -1759,8 +1890,14 @@ paths:
 
         - **action_id**: The ID of the action to update
 
-        - All fields are optional'
+        - All fields are optional
+
+
+        Returns 404 if action doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_action_api_v1_actions__action_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: action_id
         in: path
@@ -1794,8 +1931,14 @@ paths:
       description: 'Delete an action.
 
 
-        - **action_id**: The ID of the action to delete'
+        - **action_id**: The ID of the action to delete
+
+
+        Returns 404 if action doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_action_api_v1_actions__action_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: action_id
         in: path
@@ -1817,20 +1960,26 @@ paths:
       tags:
       - opportunity_contacts
       summary: Get Opportunity Contacts
-      description: 'Retrieve a list of opportunity-contact associations with pagination
-        and filtering.
+      description: 'Retrieve a list of opportunity-contact associations owned by the
+        current user with pagination and filtering.
 
 
-        - **skip**: Number of records to skip
+        - **skip**: Number of records to skip (for pagination)
 
-        - **limit**: Maximum number of records to return
+        - **limit**: Maximum number of records to return (max 100)
 
-        - **opportunity_id**: Optional filter by opportunity
+        - **opportunity_id**: Optional filter by opportunity ID
 
-        - **contact_id**: Optional filter by contact
+        - **contact_id**: Optional filter by contact ID
 
-        - **is_primary_contact**: Optional filter by primary status'
+        - **is_primary_contact**: Optional filter by primary contact status
+
+
+        Returns only associations where the opportunity belongs to the authenticated
+        user.'
       operationId: get_opportunity_contacts_api_v1_opportunity_contacts__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -1912,8 +2061,19 @@ paths:
 
         - **is_primary_contact**: Primary contact flag (default: false)
 
-        - **contact_role**: Role description (optional)'
+        - **contact_role**: Role description (optional)
+
+        - **origin**: How contact is related (optional)
+
+        - **notes**: Contextual notes (optional)
+
+
+        Both opportunity and contact must belong to the authenticated user.
+
+        The association will be timestamped automatically.'
       operationId: create_opportunity_contact_api_v1_opportunity_contacts__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -1938,11 +2098,17 @@ paths:
       tags:
       - opportunity_contacts
       summary: Get Opportunity Contact
-      description: 'Retrieve a specific association by ID.
+      description: 'Retrieve a specific opportunity-contact association by ID.
 
 
-        - **association_id**: The ID of the association to retrieve'
+        - **association_id**: The ID of the association to retrieve
+
+
+        Returns 404 if association doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_opportunity_contact_api_v1_opportunity_contacts__association_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: association_id
         in: path
@@ -1967,13 +2133,22 @@ paths:
       tags:
       - opportunity_contacts
       summary: Update Opportunity Contact
-      description: 'Update an existing association.
+      description: 'Update an existing opportunity-contact association.
 
 
         - **association_id**: The ID of the association to update
 
-        - All fields are optional'
+        - All metadata fields are optional (is_primary_contact, contact_role, origin,
+        notes)
+
+        - **Note**: Foreign keys (opportunity_id, contact_id) cannot be modified
+
+
+        Returns 404 if association doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: update_opportunity_contact_api_v1_opportunity_contacts__association_id__put
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: association_id
         in: path
@@ -2004,11 +2179,17 @@ paths:
       tags:
       - opportunity_contacts
       summary: Delete Opportunity Contact
-      description: 'Delete an association.
+      description: 'Delete an opportunity-contact association.
 
 
-        - **association_id**: The ID of the association to delete'
+        - **association_id**: The ID of the association to delete
+
+
+        Returns 404 if association doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_opportunity_contact_api_v1_opportunity_contacts__association_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: association_id
         in: path
@@ -2030,18 +2211,24 @@ paths:
       tags:
       - opportunity_products
       summary: Get Opportunity Products
-      description: 'Retrieve a list of opportunity-product associations with pagination
-        and filtering.
+      description: 'Retrieve a list of opportunity-product associations owned by the
+        current user with pagination and filtering.
 
 
-        - **skip**: Number of records to skip
+        - **skip**: Number of records to skip (for pagination)
 
-        - **limit**: Maximum number of records to return
+        - **limit**: Maximum number of records to return (max 100)
 
-        - **opportunity_id**: Optional filter by opportunity
+        - **opportunity_id**: Optional filter by opportunity ID
 
-        - **product_id**: Optional filter by product'
+        - **product_id**: Optional filter by product ID
+
+
+        Returns only associations where the opportunity belongs to the authenticated
+        user.'
       operationId: get_opportunity_products_api_v1_opportunity_products__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -2109,8 +2296,15 @@ paths:
 
         - **opportunity_id**: ID of the opportunity (required)
 
-        - **product_id**: ID of the product (required)'
+        - **product_id**: ID of the product (required)
+
+
+        Both opportunity and product must belong to the authenticated user.
+
+        The association will be timestamped automatically.'
       operationId: create_opportunity_product_api_v1_opportunity_products__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -2135,11 +2329,17 @@ paths:
       tags:
       - opportunity_products
       summary: Get Opportunity Product
-      description: 'Retrieve a specific association by ID.
+      description: 'Retrieve a specific opportunity-product association by ID.
 
 
-        - **association_id**: The ID of the association to retrieve'
+        - **association_id**: The ID of the association to retrieve
+
+
+        Returns 404 if association doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_opportunity_product_api_v1_opportunity_products__association_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: association_id
         in: path
@@ -2147,43 +2347,6 @@ paths:
         schema:
           type: integer
           title: Association Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OpportunityProduct'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    put:
-      tags:
-      - opportunity_products
-      summary: Update Opportunity Product
-      description: 'Update an existing association.
-
-
-        - **association_id**: The ID of the association to update
-
-        - All fields are optional'
-      operationId: update_opportunity_product_api_v1_opportunity_products__association_id__put
-      parameters:
-      - name: association_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          title: Association Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OpportunityProductUpdate'
       responses:
         '200':
           description: Successful Response
@@ -2201,11 +2364,17 @@ paths:
       tags:
       - opportunity_products
       summary: Delete Opportunity Product
-      description: 'Delete an association.
+      description: 'Delete an opportunity-product association.
 
 
-        - **association_id**: The ID of the association to delete'
+        - **association_id**: The ID of the association to delete
+
+
+        Returns 404 if association doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_opportunity_product_api_v1_opportunity_products__association_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: association_id
         in: path
@@ -2227,19 +2396,27 @@ paths:
       tags:
       - document_associations
       summary: Get Document Associations
-      description: 'Retrieve a list of document associations with pagination and filtering.
+      description: 'Retrieve a list of document associations owned by the current
+        user with pagination and filtering.
 
 
-        - **skip**: Number of records to skip
+        - **skip**: Number of records to skip (for pagination)
 
-        - **limit**: Maximum number of records to return
+        - **limit**: Maximum number of records to return (max 100)
 
-        - **document_id**: Optional filter by document
+        - **document_id**: Optional filter by document ID
 
         - **entity_type**: Optional filter by entity type
 
-        - **entity_id**: Optional filter by entity ID'
+        - **entity_id**: Optional filter by entity ID (requires entity_type to be
+        specified)
+
+
+        Returns only associations where the document belongs to the authenticated
+        user.'
       operationId: get_document_associations_api_v1_document_associations__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: skip
         in: query
@@ -2289,9 +2466,9 @@ paths:
           anyOf:
           - type: integer
           - type: 'null'
-          description: Filter by entity ID
+          description: Filter by entity ID (requires entity_type)
           title: Entity Id
-        description: Filter by entity ID
+        description: Filter by entity ID (requires entity_type)
       responses:
         '200':
           description: Successful Response
@@ -2319,8 +2496,15 @@ paths:
 
         - **entity_type**: Type of entity (application, opportunity, company, contact)
 
-        - **entity_id**: ID of the entity (required)'
+        - **entity_id**: ID of the entity (required)
+
+
+        Both document and entity must belong to the authenticated user.
+
+        The association will be timestamped automatically.'
       operationId: create_document_association_api_v1_document_associations__post
+      security:
+      - OAuth2PasswordBearer: []
       requestBody:
         required: true
         content:
@@ -2345,11 +2529,17 @@ paths:
       tags:
       - document_associations
       summary: Get Document Association
-      description: 'Retrieve a specific association by ID.
+      description: 'Retrieve a specific document association by ID.
 
 
-        - **association_id**: The ID of the association to retrieve'
+        - **association_id**: The ID of the association to retrieve
+
+
+        Returns 404 if association doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: get_document_association_api_v1_document_associations__association_id__get
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: association_id
         in: path
@@ -2357,43 +2547,6 @@ paths:
         schema:
           type: integer
           title: Association Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DocumentAssociation'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    put:
-      tags:
-      - document_associations
-      summary: Update Document Association
-      description: 'Update an existing association.
-
-
-        - **association_id**: The ID of the association to update
-
-        - All fields are optional'
-      operationId: update_document_association_api_v1_document_associations__association_id__put
-      parameters:
-      - name: association_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          title: Association Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DocumentAssociationUpdate'
       responses:
         '200':
           description: Successful Response
@@ -2411,11 +2564,17 @@ paths:
       tags:
       - document_associations
       summary: Delete Document Association
-      description: 'Delete an association.
+      description: 'Delete a document association.
 
 
-        - **association_id**: The ID of the association to delete'
+        - **association_id**: The ID of the association to delete
+
+
+        Returns 404 if association doesn''t exist or doesn''t belong to the authenticated
+        user.'
       operationId: delete_document_association_api_v1_document_associations__association_id__delete
+      security:
+      - OAuth2PasswordBearer: []
       parameters:
       - name: association_id
         in: path
@@ -2426,80 +2585,6 @@ paths:
       responses:
         '204':
           description: Successful Response
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/auth/register:
-    post:
-      tags:
-      - authentication
-      summary: Register
-      description: 'Register a new user.
-
-
-        - **email**: User email (must be unique)
-
-        - **first_name**: User first name (optional)
-
-        - **last_name**: User last name (optional)
-
-        - **password**: Password (minimum 8 characters)
-
-        - **confirm_password**: Password confirmation (must match)'
-      operationId: register_api_v1_auth_register_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserCreate'
-        required: true
-      responses:
-        '201':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/auth/login:
-    post:
-      tags:
-      - authentication
-      summary: Login
-      description: 'Login with email and password to get JWT access token.
-
-
-        OAuth2 compatible - use ''username'' field for email.
-
-
-        - **username**: User email address
-
-        - **password**: User password
-
-
-        Returns JWT access token for authenticated requests.'
-      operationId: login_api_v1_auth_login_post
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Body_login_api_v1_auth_login_post'
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
         '422':
           description: Validation Error
           content:
@@ -2522,26 +2607,14 @@ components:
             format: date-time
           - type: 'null'
           title: Completed Date
-          description: Date when action was completed
-        is_completed:
-          type: boolean
-          title: Is Completed
-          description: Completion status
-          default: false
+          description: Date when action was completed (NULL = ongoing)
         notes:
           anyOf:
           - type: string
-            maxLength: 50000
+            maxLength: 5000
           - type: 'null'
           title: Notes
           description: Details or notes about the action
-        parent_action_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Parent Action Id
-          description: ID of parent action for threading
         scheduled_event_id:
           anyOf:
           - type: integer
@@ -2553,6 +2626,10 @@ components:
           type: integer
           title: Id
           description: Unique identifier
+        owner_id:
+          type: integer
+          title: Owner Id
+          description: Owner user ID
         application_id:
           type: integer
           title: Application Id
@@ -2562,10 +2639,18 @@ components:
           format: date-time
           title: Created At
           description: Creation timestamp
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+          description: Last update timestamp
       type: object
       required:
       - type
       - id
+      - owner_id
       - application_id
       - created_at
       title: Action
@@ -2586,26 +2671,14 @@ components:
             format: date-time
           - type: 'null'
           title: Completed Date
-          description: Date when action was completed
-        is_completed:
-          type: boolean
-          title: Is Completed
-          description: Completion status
-          default: false
+          description: Date when action was completed (NULL = ongoing)
         notes:
           anyOf:
           - type: string
-            maxLength: 50000
+            maxLength: 5000
           - type: 'null'
           title: Notes
           description: Details or notes about the action
-        parent_action_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Parent Action Id
-          description: ID of parent action for threading
         scheduled_event_id:
           anyOf:
           - type: integer
@@ -2639,23 +2712,12 @@ components:
             format: date-time
           - type: 'null'
           title: Completed Date
-        is_completed:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Completed
         notes:
           anyOf:
           - type: string
-            maxLength: 50000
+            maxLength: 5000
           - type: 'null'
           title: Notes
-        parent_action_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Parent Action Id
         scheduled_event_id:
           anyOf:
           - type: integer
@@ -2716,6 +2778,10 @@ components:
           type: integer
           title: Id
           description: Unique identifier
+        owner_id:
+          type: integer
+          title: Owner Id
+          description: Owner user ID
         opportunity_id:
           type: integer
           title: Opportunity Id
@@ -2736,6 +2802,7 @@ components:
       required:
       - application_date
       - id
+      - owner_id
       - opportunity_id
       - created_at
       title: Application
@@ -3541,29 +3608,6 @@ components:
       - entity_id
       title: DocumentAssociationCreate
       description: Schema for creating a new document association (POST).
-    DocumentAssociationUpdate:
-      properties:
-        document_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Document Id
-        entity_type:
-          anyOf:
-          - $ref: '#/components/schemas/EntityType'
-          - type: 'null'
-        entity_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Entity Id
-      type: object
-      title: DocumentAssociationUpdate
-      description: 'Schema for updating a document association (PUT/PATCH).
-
-        All fields are optional to support partial updates.'
     DocumentCreate:
       properties:
         name:
@@ -3821,6 +3865,16 @@ components:
         Includes all fields including generated ones (id, timestamps).'
     OpportunityContact:
       properties:
+        opportunity_id:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Opportunity Id
+          description: ID of the opportunity
+        contact_id:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Contact Id
+          description: ID of the contact
         is_primary_contact:
           type: boolean
           title: Is Primary Contact
@@ -3844,7 +3898,7 @@ components:
         notes:
           anyOf:
           - type: string
-            maxLength: 50000
+            maxLength: 5000
           - type: 'null'
           title: Notes
           description: Contextual notes for this association
@@ -3852,14 +3906,6 @@ components:
           type: integer
           title: Id
           description: Unique identifier
-        opportunity_id:
-          type: integer
-          title: Opportunity Id
-          description: ID of the opportunity
-        contact_id:
-          type: integer
-          title: Contact Id
-          description: ID of the contact
         created_at:
           type: string
           format: date-time
@@ -3867,9 +3913,9 @@ components:
           description: Creation timestamp
       type: object
       required:
-      - id
       - opportunity_id
       - contact_id
+      - id
       - created_at
       title: OpportunityContact
       description: 'Schema for reading an opportunity-contact association (GET).
@@ -3877,6 +3923,16 @@ components:
         Includes all fields including generated ones (id, timestamps).'
     OpportunityContactCreate:
       properties:
+        opportunity_id:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Opportunity Id
+          description: ID of the opportunity
+        contact_id:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Contact Id
+          description: ID of the contact
         is_primary_contact:
           type: boolean
           title: Is Primary Contact
@@ -3900,20 +3956,10 @@ components:
         notes:
           anyOf:
           - type: string
-            maxLength: 50000
+            maxLength: 5000
           - type: 'null'
           title: Notes
           description: Contextual notes for this association
-        opportunity_id:
-          type: integer
-          exclusiveMinimum: 0.0
-          title: Opportunity Id
-          description: ID of the opportunity
-        contact_id:
-          type: integer
-          exclusiveMinimum: 0.0
-          title: Contact Id
-          description: ID of the contact
       type: object
       required:
       - opportunity_id
@@ -3942,24 +3988,14 @@ components:
         notes:
           anyOf:
           - type: string
-            maxLength: 50000
+            maxLength: 5000
           - type: 'null'
           title: Notes
-        opportunity_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Opportunity Id
-        contact_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Contact Id
       type: object
       title: OpportunityContactUpdate
       description: 'Schema for updating an opportunity-contact association (PUT/PATCH).
+
+        Only metadata fields can be updated. Foreign keys are immutable.
 
         All fields are optional to support partial updates.'
     OpportunityCreate:
@@ -4087,27 +4123,35 @@ components:
       description: Schema for creating a new opportunity (POST).
     OpportunityProduct:
       properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique identifier
         opportunity_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Opportunity Id
           description: ID of the opportunity
         product_id:
           type: integer
+          exclusiveMinimum: 0.0
           title: Product Id
           description: ID of the product
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Creation timestamp
       type: object
       required:
-      - id
       - opportunity_id
       - product_id
+      - id
+      - created_at
       title: OpportunityProduct
       description: 'Schema for reading an opportunity-product association (GET).
 
-        Includes all fields including generated ones (id).'
+        Includes all fields including generated ones (id, timestamps).'
     OpportunityProductCreate:
       properties:
         opportunity_id:
@@ -4126,25 +4170,6 @@ components:
       - product_id
       title: OpportunityProductCreate
       description: Schema for creating a new opportunity-product association (POST).
-    OpportunityProductUpdate:
-      properties:
-        opportunity_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Opportunity Id
-        product_id:
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0.0
-          - type: 'null'
-          title: Product Id
-      type: object
-      title: OpportunityProductUpdate
-      description: 'Schema for updating an opportunity-product association (PUT/PATCH).
-
-        All fields are optional to support partial updates.'
     OpportunityUpdate:
       properties:
         job_title:
