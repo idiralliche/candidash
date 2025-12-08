@@ -60,13 +60,11 @@ from app.schemas.opportunity_contact import (
 from app.schemas.opportunity_product import (
     OpportunityProduct,
     OpportunityProductCreate,
-    OpportunityProductUpdate,
     OpportunityProductInDB,
 )
 from app.schemas.document_association import (
     DocumentAssociation,
     DocumentAssociationCreate,
-    DocumentAssociationUpdate,
     DocumentAssociationInDB,
 )
 from app.schemas.token import (
@@ -122,11 +120,9 @@ __all__ = [
     "OpportunityContactInDB",
     "OpportunityProduct",
     "OpportunityProductCreate",
-    "OpportunityProductUpdate",
     "OpportunityProductInDB",
     "DocumentAssociation",
     "DocumentAssociationCreate",
-    "DocumentAssociationUpdate",
     "DocumentAssociationInDB",
     "Token",
     "TokenData",
