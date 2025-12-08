@@ -1,6 +1,5 @@
 """Pydantic schemas for DocumentAssociation entity."""
 from datetime import datetime
-from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from app.models.document_association import EntityType
 
@@ -15,15 +14,6 @@ class DocumentAssociationBase(BaseModel):
 class DocumentAssociationCreate(DocumentAssociationBase):
     """Schema for creating a new document association (POST)."""
     pass
-
-
-class DocumentAssociationUpdate(BaseModel):
-    """Schema for updating a document association (PUT/PATCH).
-    All fields are optional to support partial updates.
-    """
-    document_id: Optional[int] = Field(None, gt=0)
-    entity_type: Optional[EntityType] = None
-    entity_id: Optional[int] = Field(None, gt=0)
 
 
 class DocumentAssociation(DocumentAssociationBase):
