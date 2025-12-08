@@ -2,15 +2,21 @@
 DocumentAssociation routes - CRUD operations for polymorphic document associations.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
+from app.core.dependencies import get_current_user
+from app.models.user import User
+from app.models.document import Document
 from app.models.document_association import DocumentAssociation as DocumentAssociationModel
 from app.models.document_association import EntityType
 from app.schemas.document_association import (
     DocumentAssociation,
-    DocumentAssociationCreate,
-    DocumentAssociationUpdate
+    DocumentAssociationCreate
+)
+from app.utils.validators.ownership_validators import (
+    validate_document_exists_and_owned,
+    validate_entity_exists_and_owned
 )
 
 router = APIRouter(prefix="/document-associations", tags=["document_associations"])
@@ -22,27 +28,43 @@ def get_document_associations(
     limit: int = Query(100, ge=1, le=100, description="Maximum number of records to return"),
     document_id: Optional[int] = Query(None, description="Filter by document ID"),
     entity_type: Optional[EntityType] = Query(None, description="Filter by entity type"),
-    entity_id: Optional[int] = Query(None, description="Filter by entity ID"),
+    entity_id: Optional[int] = Query(None, description="Filter by entity ID (requires entity_type)"),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Retrieve a list of document associations with pagination and filtering.
+    Retrieve a list of document associations owned by the current user with pagination and filtering.
 
-    - **skip**: Number of records to skip
-    - **limit**: Maximum number of records to return
-    - **document_id**: Optional filter by document
+    - **skip**: Number of records to skip (for pagination)
+    - **limit**: Maximum number of records to return (max 100)
+    - **document_id**: Optional filter by document ID
     - **entity_type**: Optional filter by entity type
-    - **entity_id**: Optional filter by entity ID
+    - **entity_id**: Optional filter by entity ID (requires entity_type to be specified)
+
+    Returns only associations where the document belongs to the authenticated user.
     """
-    query = db.query(DocumentAssociationModel)
+    # Strict validation: entity_id requires entity_type
+    if entity_id is not None and entity_type is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="entity_type is required when filtering by entity_id"
+        )
+
+    # Filter by document ownership
+    query = db.query(DocumentAssociationModel).join(Document).filter(
+        Document.owner_id == current_user.id
+    )
 
     if document_id is not None:
+        validate_document_exists_and_owned(db, document_id, current_user)
         query = query.filter(DocumentAssociationModel.document_id == document_id)
 
     if entity_type is not None:
         query = query.filter(DocumentAssociationModel.entity_type == entity_type)
 
     if entity_id is not None:
+        # Validate entity ownership (entity_type already validated as not None)
+        validate_entity_exists_and_owned(db, entity_type, entity_id, current_user)
         query = query.filter(DocumentAssociationModel.entity_id == entity_id)
 
     associations = query.offset(skip).limit(limit).all()
@@ -50,76 +72,54 @@ def get_document_associations(
 
 
 @router.get("/{association_id}", response_model=DocumentAssociation)
-def get_document_association(association_id: int, db: Session = Depends(get_db)):
+def get_document_association(
+    association_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
-    Retrieve a specific association by ID.
+    Retrieve a specific document association by ID.
 
     - **association_id**: The ID of the association to retrieve
+
+    Returns 404 if association doesn't exist or doesn't belong to the authenticated user.
     """
-    association = db.query(DocumentAssociationModel).filter(DocumentAssociationModel.id == association_id).first()
+    association = db.query(DocumentAssociationModel).join(Document).filter(
+        DocumentAssociationModel.id == association_id,
+        Document.owner_id == current_user.id
+    ).first()
+
     if not association:
-        raise HTTPException(status_code=404, detail="DocumentAssociation not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="DocumentAssociation not found"
+        )
+
     return association
 
 
-def validate_polymorphic_reference(db: Session, entity_type: EntityType, entity_id: int):
-    """Helper to validate that the referenced entity exists dynamically."""
-    model = None
-
-    if entity_type == EntityType.APPLICATION:
-        from app.models.application import Application
-        model = Application
-    elif entity_type == EntityType.OPPORTUNITY:
-        from app.models.opportunity import Opportunity
-        model = Opportunity
-    elif entity_type == EntityType.COMPANY:
-        from app.models.company import Company
-        model = Company
-    elif entity_type == EntityType.CONTACT:
-        from app.models.contact import Contact
-        model = Contact
-
-    if model:
-        exists = db.query(model).filter(model.id == entity_id).first()
-        if not exists:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Referenced entity {entity_type.value} with id {entity_id} not found"
-            )
-
-
-def validate_foreign_keys(
-    db: Session,
-    document_id: Optional[int] = None,
-    entity_type: Optional[EntityType] = None,
-    entity_id: Optional[int] = None
+@router.post("/", response_model=DocumentAssociation, status_code=status.HTTP_201_CREATED)
+def create_document_association(
+    association: DocumentAssociationCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
-    """Helper to validate all foreign keys including polymorphic ones."""
-    if document_id is not None:
-        from app.models.document import Document
-        if not db.query(Document).filter(Document.id == document_id).first():
-            raise HTTPException(status_code=404, detail=f"Document with id {document_id} not found")
-
-    # Only validate entity reference if both type and id are provided
-    if entity_type is not None and entity_id is not None:
-        validate_polymorphic_reference(db, entity_type, entity_id)
-
-
-@router.post("/", response_model=DocumentAssociation, status_code=201)
-def create_document_association(association: DocumentAssociationCreate, db: Session = Depends(get_db)):
     """
     Create a new link between a document and any entity.
 
     - **document_id**: ID of the document (required)
     - **entity_type**: Type of entity (application, opportunity, company, contact)
     - **entity_id**: ID of the entity (required)
+
+    Both document and entity must belong to the authenticated user.
+    The association will be timestamped automatically.
     """
-    # Verify FKs
-    validate_foreign_keys(
-        db,
-        document_id=association.document_id,
-        entity_type=association.entity_type,
-        entity_id=association.entity_id
+    # Validate document ownership
+    validate_document_exists_and_owned(db, association.document_id, current_user)
+
+    # Validate entity ownership (polymorphic)
+    validate_entity_exists_and_owned(
+        db, association.entity_type, association.entity_id, current_user
     )
 
     db_association = DocumentAssociationModel(**association.model_dump())
@@ -129,57 +129,30 @@ def create_document_association(association: DocumentAssociationCreate, db: Sess
     return db_association
 
 
-@router.put("/{association_id}", response_model=DocumentAssociation)
-def update_document_association(
+@router.delete("/{association_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_document_association(
     association_id: int,
-    association_update: DocumentAssociationUpdate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Update an existing association.
-
-    - **association_id**: The ID of the association to update
-    - All fields are optional
-    """
-    db_association = db.query(DocumentAssociationModel).filter(DocumentAssociationModel.id == association_id).first()
-    if not db_association:
-        raise HTTPException(status_code=404, detail="DocumentAssociation not found")
-
-    update_data = association_update.model_dump(exclude_unset=True)
-
-    # Check validation for FKs if they are present in update data
-    # Note: If updating only type or only id, we must check consistency with existing data
-    # For safety, we check the new combination or the combination of new+old
-
-    check_type = update_data.get("entity_type", db_association.entity_type)
-    check_id = update_data.get("entity_id", db_association.entity_id)
-
-    validate_foreign_keys(
-        db,
-        document_id=update_data.get("document_id"),
-        entity_type=check_type,
-        entity_id=check_id
-    )
-
-    for field, value in update_data.items():
-        setattr(db_association, field, value)
-
-    db.commit()
-    db.refresh(db_association)
-    return db_association
-
-
-@router.delete("/{association_id}", status_code=204)
-def delete_document_association(association_id: int, db: Session = Depends(get_db)):
-    """
-    Delete an association.
+    Delete a document association.
 
     - **association_id**: The ID of the association to delete
+
+    Returns 404 if association doesn't exist or doesn't belong to the authenticated user.
     """
-    db_association = db.query(DocumentAssociationModel).filter(DocumentAssociationModel.id == association_id).first()
+    db_association = db.query(DocumentAssociationModel).join(Document).filter(
+        DocumentAssociationModel.id == association_id,
+        Document.owner_id == current_user.id
+    ).first()
+
     if not db_association:
-        raise HTTPException(status_code=404, detail="DocumentAssociation not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="DocumentAssociation not found"
+        )
 
     db.delete(db_association)
     db.commit()
-    return None
+    return
