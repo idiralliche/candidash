@@ -7,11 +7,16 @@ import requests
 import time
 import os
 import uuid
+import psycopg2
+from urllib.parse import urlparse
 
 # Configuration
-DEFAULT_API_URL = "http://localhost:8000/api/v1"
+DEFAULT_API_URL = "http://backend:8000/api/v1"
 API_URL = os.getenv("CANDIDASH_API_URL", DEFAULT_API_URL)
 HEADERS = {"Content-Type": "application/json"}
+
+# Database connection string
+DB_DSN = "postgresql://test_user:test_password@db:5432/candidash_test_db"
 
 @pytest.fixture(scope="session")
 def api_url():
@@ -22,7 +27,7 @@ def api_url():
 def wait_for_server():
     """Wait for API to be reachable before running any tests."""
     print(f"\n⏳ Checking server availability at {API_URL}...")
-    for i in range(10):
+    for i in range(20):
         try:
             response = requests.get(f"{API_URL}/../docs", timeout=5)
             if response.status_code in [200, 404]:
@@ -33,7 +38,7 @@ def wait_for_server():
         except Exception as e:
             print(f"   ⚠️ Unexpected error: {e}")
 
-        print(f"   💤 Server unavailable, retrying in 2s ({i+1}/10)...")
+        print(f"   💤 Server unavailable, retrying in 2s ({i+1}/20)...")
         time.sleep(2)
 
     pytest.fail("❌ Cannot reach backend")
@@ -41,37 +46,41 @@ def wait_for_server():
 @pytest.fixture(scope="function", autouse=True)
 def cleanup_database():
     """
-    Clean database tables before EACH test function to ensure isolation.
-    Uses TRUNCATE CASCADE for speed.
+    Clean database tables before EACH test function.
+    Connects directly to the DB container from the tester container.
     """
-    # Note: Dans un env réel de CI/CD, on préfère souvent une DB par test ou des transactions rollback.
-    # Ici, avec Docker, le truncate est efficace pour les tests d'intégration E2E.
-    result = os.system("""
-    docker compose exec -T db psql -U test_user -d candidash_test_db -c "
-    TRUNCATE TABLE
-        document_associations,
-        actions,
-        opportunity_products,
-        opportunity_contacts,
-        applications,
-        opportunities,
-        scheduled_events,
-        products,
-        contacts,
-        documents,
-        companies,
-        users
-    RESTART IDENTITY CASCADE;
-    " > /dev/null 2>&1
-    """)
-    if result != 0:
-        print("   ⚠️ Database cleanup failed (might be running outside docker)")
+    tables = [
+        "document_associations",
+        "actions",
+        "opportunity_products",
+        "opportunity_contacts",
+        "applications",
+        "opportunities",
+        "scheduled_events",
+        "products",
+        "contacts",
+        "documents",
+        "companies",
+        "users"
+    ]
+
+    conn = None
+    try:
+        conn = psycopg2.connect(DB_DSN)
+        conn.autocommit = True
+        with conn.cursor() as cur:
+            cur.execute(f"TRUNCATE TABLE {', '.join(tables)} RESTART IDENTITY CASCADE;")
+    except Exception as e:
+        print(f"\n⚠️ Database cleanup failed: {e}")
+        # On ne fail pas forcément le test ici, mais c'est risqué
+    finally:
+        if conn:
+            conn.close()
 
 @pytest.fixture(scope="function")
 def auth_headers(api_url):
     """
     Register a unique new user and return their authentication headers.
-    This ensures every test runs with a fresh user/tenant.
     """
     unique_id = str(uuid.uuid4())[:8]
     email = f"test_{unique_id}@candidash.com"
