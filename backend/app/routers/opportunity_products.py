@@ -2,14 +2,20 @@
 OpportunityProduct routes - CRUD operations for opportunity-product associations.
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
+from app.core.dependencies import get_current_user
+from app.models.user import User
+from app.models.opportunity import Opportunity
 from app.models.opportunity_product import OpportunityProduct as OpportunityProductModel
 from app.schemas.opportunity_product import (
     OpportunityProduct,
-    OpportunityProductCreate,
-    OpportunityProductUpdate
+    OpportunityProductCreate
+)
+from app.utils.validators.ownership_validators import (
+    validate_opportunity_exists_and_owned,
+    validate_product_exists_and_owned
 )
 
 router = APIRouter(prefix="/opportunity-products", tags=["opportunity_products"])
@@ -21,22 +27,31 @@ def get_opportunity_products(
     limit: int = Query(100, ge=1, le=100, description="Maximum number of records to return"),
     opportunity_id: Optional[int] = Query(None, description="Filter by opportunity ID"),
     product_id: Optional[int] = Query(None, description="Filter by product ID"),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Retrieve a list of opportunity-product associations with pagination and filtering.
+    Retrieve a list of opportunity-product associations owned by the current user with pagination and filtering.
 
-    - **skip**: Number of records to skip
-    - **limit**: Maximum number of records to return
-    - **opportunity_id**: Optional filter by opportunity
-    - **product_id**: Optional filter by product
+    - **skip**: Number of records to skip (for pagination)
+    - **limit**: Maximum number of records to return (max 100)
+    - **opportunity_id**: Optional filter by opportunity ID
+    - **product_id**: Optional filter by product ID
+
+    Returns only associations where the opportunity belongs to the authenticated user.
     """
-    query = db.query(OpportunityProductModel)
+    query = db.query(OpportunityProductModel).join(
+        OpportunityProductModel.opportunity
+    ).filter(
+        Opportunity.owner_id == current_user.id
+    )
 
     if opportunity_id is not None:
+        validate_opportunity_exists_and_owned(db, opportunity_id, current_user)
         query = query.filter(OpportunityProductModel.opportunity_id == opportunity_id)
 
     if product_id is not None:
+        validate_product_exists_and_owned(db, product_id, current_user)
         query = query.filter(OpportunityProductModel.product_id == product_id)
 
     associations = query.offset(skip).limit(limit).all()
@@ -44,45 +59,52 @@ def get_opportunity_products(
 
 
 @router.get("/{association_id}", response_model=OpportunityProduct)
-def get_opportunity_product(association_id: int, db: Session = Depends(get_db)):
+def get_opportunity_product(
+    association_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
-    Retrieve a specific association by ID.
+    Retrieve a specific opportunity-product association by ID.
 
     - **association_id**: The ID of the association to retrieve
+
+    Returns 404 if association doesn't exist or doesn't belong to the authenticated user.
     """
-    association = db.query(OpportunityProductModel).filter(OpportunityProductModel.id == association_id).first()
+    association = db.query(OpportunityProductModel).join(
+        OpportunityProductModel.opportunity
+    ).filter(
+        OpportunityProductModel.id == association_id,
+        Opportunity.owner_id == current_user.id
+    ).first()
+
     if not association:
-        raise HTTPException(status_code=404, detail="OpportunityProduct association not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="OpportunityProduct association not found"
+        )
+
     return association
 
 
-def validate_foreign_keys(db: Session, opportunity_id: Optional[int] = None, product_id: Optional[int] = None):
-    """Helper to validate foreign keys existence."""
-    if opportunity_id is not None:
-        from app.models.opportunity import Opportunity
-        if not db.query(Opportunity).filter(Opportunity.id == opportunity_id).first():
-            raise HTTPException(status_code=404, detail=f"Opportunity with id {opportunity_id} not found")
-
-    if product_id is not None:
-        from app.models.product import Product
-        if not db.query(Product).filter(Product.id == product_id).first():
-            raise HTTPException(status_code=404, detail=f"Product with id {product_id} not found")
-
-
-@router.post("/", response_model=OpportunityProduct, status_code=201)
-def create_opportunity_product(association: OpportunityProductCreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=OpportunityProduct, status_code=status.HTTP_201_CREATED)
+def create_opportunity_product(
+    association: OpportunityProductCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """
     Create a new link between an opportunity and a product.
 
     - **opportunity_id**: ID of the opportunity (required)
     - **product_id**: ID of the product (required)
+
+    Both opportunity and product must belong to the authenticated user.
+    The association will be timestamped automatically.
     """
-    # Verify FKs
-    validate_foreign_keys(
-        db,
-        opportunity_id=association.opportunity_id,
-        product_id=association.product_id
-    )
+    # Validate ownership of both entities (ensures same owner_id)
+    validate_opportunity_exists_and_owned(db, association.opportunity_id, current_user)
+    validate_product_exists_and_owned(db, association.product_id, current_user)
 
     db_association = OpportunityProductModel(**association.model_dump())
     db.add(db_association)
@@ -91,50 +113,32 @@ def create_opportunity_product(association: OpportunityProductCreate, db: Sessio
     return db_association
 
 
-@router.put("/{association_id}", response_model=OpportunityProduct)
-def update_opportunity_product(
+@router.delete("/{association_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_opportunity_product(
     association_id: int,
-    association_update: OpportunityProductUpdate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Update an existing association.
-
-    - **association_id**: The ID of the association to update
-    - All fields are optional
-    """
-    db_association = db.query(OpportunityProductModel).filter(OpportunityProductModel.id == association_id).first()
-    if not db_association:
-        raise HTTPException(status_code=404, detail="OpportunityProduct association not found")
-
-    update_data = association_update.model_dump(exclude_unset=True)
-
-    # Check validation for FKs if they are present in update data
-    validate_foreign_keys(
-        db,
-        opportunity_id=update_data.get("opportunity_id"),
-        product_id=update_data.get("product_id")
-    )
-
-    for field, value in update_data.items():
-        setattr(db_association, field, value)
-
-    db.commit()
-    db.refresh(db_association)
-    return db_association
-
-
-@router.delete("/{association_id}", status_code=204)
-def delete_opportunity_product(association_id: int, db: Session = Depends(get_db)):
-    """
-    Delete an association.
+    Delete an opportunity-product association.
 
     - **association_id**: The ID of the association to delete
+
+    Returns 404 if association doesn't exist or doesn't belong to the authenticated user.
     """
-    db_association = db.query(OpportunityProductModel).filter(OpportunityProductModel.id == association_id).first()
+    db_association = db.query(OpportunityProductModel).join(
+        OpportunityProductModel.opportunity
+    ).filter(
+        OpportunityProductModel.id == association_id,
+        Opportunity.owner_id == current_user.id
+    ).first()
+
     if not db_association:
-        raise HTTPException(status_code=404, detail="OpportunityProduct association not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="OpportunityProduct association not found"
+        )
 
     db.delete(db_association)
     db.commit()
-    return None
+    return
