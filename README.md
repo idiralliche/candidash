@@ -6,8 +6,8 @@ CandiDash is a modern web application designed to help job seekers structure, tr
 
 > **Project Status: MVP**
 >
-> CandiDash is currently an MVP focused on the backend and core domain model.  
-> The goal is to provide a solid, well-tested foundation (multi-tenant API, data model, and infrastructure) that will evolve over time with new features and a dedicated frontend.  
+> CandiDash is currently an MVP focused on the backend and core domain model.
+> The goal is to provide a solid, well-tested foundation (multi-tenant API, data model, and infrastructure) that will evolve over time with new features and a dedicated frontend.
 > Contributions, ideas, and feedback are very welcome.
 
 ---
@@ -165,22 +165,22 @@ You can customize the behavior of the application through environment variables 
 
 ### Core Environment Variables
 
-| Variable            | Description                     | Default (dev)          |
-|---------------------|---------------------------------|------------------------|
-| `POSTGRES_USER`     | Database user                   | `candidash_user`       |
-| `POSTGRES_PASSWORD` | Database password               | `candidash_password`   |
-| `POSTGRES_DB`       | Database name                   | `candidash_db`         |
-| `POSTGRES_HOST`     | Database host (Docker service)  | `db`                   |
-| `DOCUMENTS_PATH`    | Internal path for documents     | `/app/documents`       |
-| `ENV`               | Environment (`dev/test/prod`)   | `dev`                  |
+| Variable            | Description                    | Default (dev)        |
+| ------------------- | ------------------------------ | -------------------- |
+| `POSTGRES_USER`     | Database user                  | `candidash_user`     |
+| `POSTGRES_PASSWORD` | Database password              | `candidash_password` |
+| `POSTGRES_DB`       | Database name                  | `candidash_db`       |
+| `POSTGRES_HOST`     | Database host (Docker service) | `db`                 |
+| `DOCUMENTS_PATH`    | Internal path for documents    | `/app/documents`     |
+| `ENV`               | Environment (`dev/test/prod`)  | `dev`                |
 
 ### Secrets
 
 The following secret is read from the `secrets/` directory and mounted as a Docker secret:
 
-| Secret       | Local file path            | Description                                |
-|--------------|----------------------------|--------------------------------------------|
-| `SECRET_KEY` | `secrets/secret_key.txt`   | JWT signing key (HS256, at least 32 bytes) |
+| Secret       | Local file path          | Description                                |
+| ------------ | ------------------------ | ------------------------------------------ |
+| `SECRET_KEY` | `secrets/secret_key.txt` | JWT signing key (HS256, at least 32 bytes) |
 
 In production environments, you should use a proper secret management solution (Docker Swarm secrets, Vault, AWS Secrets Manager, etc.).
 
@@ -261,6 +261,11 @@ In production, you should:
 
 ## 📄 License
 
-This project is licensed under the **MIT License**.
+CandiDash is distributed under a **non-commercial, source-available license**.
 
-You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of this software, subject to the conditions described in the `LICENSE` file.
+- You are free to read, study, and modify the code.
+- You may use it for personal, educational, and research purposes.
+- Any commercial use (including SaaS, resale, or integration into a paid product)
+  requires a separate commercial license from the author.
+
+See the [LICENSE](LICENSE) file for the full terms.
