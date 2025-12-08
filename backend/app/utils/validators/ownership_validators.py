@@ -4,6 +4,9 @@ Ownership validation functions for database entities.
 These validators ensure that entities exist in the database and belong
 to the authenticated user (multi-tenancy enforcement).
 
+All validators expect non-None entity IDs. Optional FK handling must be
+done in the calling router (check if ID is not None before calling validator).
+
 Usage: Call these functions in routers after getting current_user from Depends(get_current_user).
 """
 from typing import Optional
@@ -33,13 +36,14 @@ def validate_owned_entity(
     Args:
         db: Database session
         entity_model: SQLAlchemy model class (Company, Document, Opportunity, etc.)
-        entity_id: ID of the entity to validate
+        entity_id: ID of the entity to validate (must be positive)
         current_user: Current authenticated user (from Depends(get_current_user))
         entity_name: Display name for error messages (auto-deduced if None)
         requires_joins: List of JoinSpec for entities that inherit ownership
                        through relationships
 
     Raises:
+        ValueError: If entity_id <= 0
         HTTPException 404: If entity doesn't exist or doesn't belong to user
 
     Examples:
@@ -52,6 +56,10 @@ def validate_owned_entity(
             requires_joins=[JoinSpec(model=Opportunity, owner_field='owner_id')]
         )
     """
+    # Input validation
+    if entity_id <= 0:
+        raise ValueError(f"entity_id must be a positive integer, got: {entity_id}")
+
     # Call get_owned_entity_or_404 but discard the result
     get_owned_entity_or_404(
         db=db,
@@ -65,25 +73,21 @@ def validate_owned_entity(
 
 def validate_company_exists_and_owned(
     db: Session,
-    company_id: Optional[int],
+    company_id: int,
     current_user: User
 ) -> None:
     """
     Validate that a company exists and belongs to the current user.
 
-    Supports optional FK (returns silently if company_id is None).
-
     Args:
         db: Database session
-        company_id: ID of the company (can be None for optional FK)
+        company_id: ID of the company (must be positive)
         current_user: Current authenticated user
 
     Raises:
-        HTTPException 404: If company_id is provided but doesn't exist or doesn't belong to user
+        ValueError: If company_id <= 0
+        HTTPException 404: If company_id doesn't exist or doesn't belong to user
     """
-    if company_id is None:
-        return
-
     from app.models.company import Company
 
     validate_owned_entity(
@@ -104,10 +108,11 @@ def validate_document_exists_and_owned(
 
     Args:
         db: Database session
-        document_id: ID of the document
+        document_id: ID of the document (must be positive)
         current_user: Current authenticated user
 
     Raises:
+        ValueError: If document_id <= 0
         HTTPException 404: If document doesn't exist or doesn't belong to user
     """
     from app.models.document import Document
@@ -130,10 +135,11 @@ def validate_opportunity_exists_and_owned(
 
     Args:
         db: Database session
-        opportunity_id: ID of the opportunity
+        opportunity_id: ID of the opportunity (must be positive)
         current_user: Current authenticated user
 
     Raises:
+        ValueError: If document_id <= 0
         HTTPException 404: If opportunity doesn't exist or doesn't belong to user
     """
     from app.models.opportunity import Opportunity
@@ -154,55 +160,98 @@ def validate_application_exists_and_owned(
     """
     Validate that an application exists and belongs to the current user.
 
-    Application inherits ownership through Opportunity, so this performs a JOIN.
-
     Args:
         db: Database session
-        application_id: ID of the application
+        application_id: ID of the application (must be positive)
         current_user: Current authenticated user
 
     Raises:
+        ValueError: If document_id <= 0
         HTTPException 404: If application doesn't exist or doesn't belong to user
     """
     from app.models.application import Application
-    from app.models.opportunity import Opportunity
 
     validate_owned_entity(
         db=db,
         entity_model=Application,
         entity_id=application_id,
         current_user=current_user,
-        requires_joins=[JoinSpec(model=Opportunity, owner_field='owner_id')]
     )
 
 
 def validate_scheduled_event_exists_and_owned(
     db: Session,
-    scheduled_event_id: Optional[int],
+    scheduled_event_id: int,
     current_user: User
 ) -> None:
     """
     Validate that a scheduled event exists and belongs to the current user.
 
-    Supports optional FK (returns silently if scheduled_event_id is None).
-
     Args:
         db: Database session
-        scheduled_event_id: ID of the scheduled event (can be None for optional FK)
+        scheduled_event_id: ID of the scheduled event (must be positive)
         current_user: Current authenticated user
 
     Raises:
-        HTTPException 404: If scheduled_event_id is provided but doesn't exist or doesn't belong to user
+        ValueError: If document_id <= 0
+        HTTPException 404: If scheduled_event_id doesn't exist or doesn't belong to user
     """
-    if scheduled_event_id is None:
-        return
-
     from app.models.scheduled_event import ScheduledEvent
 
     validate_owned_entity(
         db=db,
         entity_model=ScheduledEvent,
         entity_id=scheduled_event_id,
+        current_user=current_user
+    )
+
+def validate_contact_exists_and_owned(
+    db: Session,
+    contact_id: int,
+    current_user: User
+) -> None:
+    """
+    Validate that a contact exists and belongs to the current user.
+
+    Args:
+        db: Database session
+        contact_id: ID of the contact
+        current_user: Current authenticated user
+
+    Raises:
+        HTTPException 404: If contact doesn't exist or doesn't belong to user
+    """
+    from app.models.contact import Contact
+
+    validate_owned_entity(
+        db=db,
+        entity_model=Contact,
+        entity_id=contact_id,
+        current_user=current_user
+    )
+
+def validate_product_exists_and_owned(
+    db: Session,
+    product_id: int,
+    current_user: User
+) -> None:
+    """
+    Validate that a product exists and belongs to the current user.
+
+    Args:
+        db: Database session
+        product_id: ID of the product
+        current_user: Current authenticated user
+
+    Raises:
+        HTTPException 404: If product doesn't exist or doesn't belong to user
+    """
+    from app.models.product import Product
+
+    validate_owned_entity(
+        db=db,
+        entity_model=Product,
+        entity_id=product_id,
         current_user=current_user
     )
 
@@ -222,10 +271,11 @@ def validate_entity_exists_and_owned(
     Args:
         db: Database session
         entity_type: Type of entity from EntityType enum (application, opportunity, company, contact)
-        entity_id: ID of the entity
+        entity_id: ID of the entity (must be positive)
         current_user: Current authenticated user
 
     Raises:
+        ValueError: If entity_id <= 0
         HTTPException 404: If entity doesn't exist or doesn't belong to user
         HTTPException 500: If entity_type is not handled (should never happen)
     """
@@ -241,8 +291,7 @@ def validate_entity_exists_and_owned(
         validate_company_exists_and_owned(db, entity_id, current_user)
 
     elif entity_type == EntityType.CONTACT:
-        from app.models.contact import Contact
-        validate_owned_entity(db, Contact, entity_id, current_user)
+        validate_contact_exists_and_owned(db, entity_id, current_user)
 
     else:
         # Should never happen if EntityType enum is properly defined
