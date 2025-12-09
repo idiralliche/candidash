@@ -4,6 +4,7 @@ Utility functions and helpers for the application.
 This package provides reusable components for:
 - Database operations (db helpers)
 - Input validation (format and ownership validators)
+- Document operations (file upload, storage management)
 """
 from .db import get_owned_entity_or_404, JoinSpec
 from .validators import (
@@ -29,7 +30,16 @@ from .validators import (
     validate_external_url,
     validate_path_format,
     validate_format_consistency,
+    validate_document_storage_update,
+)
+from .documents import (
+    get_file_extension_or_400,
+    get_mime_type_or_400,
+    get_document_format_or_400,
     sanitize_filename,
+    save_uploaded_file,
+    process_uploaded_file,
+    delete_local_file_safe,
 )
 
 
@@ -60,5 +70,14 @@ __all__ = [
     "validate_external_url",
     "validate_path_format",
     "validate_format_consistency",
+    "validate_document_storage_update",
+
+    # from documents
+    "get_file_extension_or_400",
+    "get_mime_type_or_400",
+    "get_document_format_or_400",
     "sanitize_filename",
+    "save_uploaded_file",
+    "process_uploaded_file",
+    "delete_local_file_safe",
 ]
