@@ -4,9 +4,11 @@ WORKDIR /app
 
 # System dependencies installation
 # Added postgresql-client for potential debugging and bash support
+# Added libmagic1 for python-magic file type detection
 RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
+    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Dependencies file copy
