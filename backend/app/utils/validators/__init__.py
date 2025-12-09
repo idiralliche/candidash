@@ -20,7 +20,7 @@ from .document_validators import (
     validate_external_url,
     validate_path_format,
     validate_format_consistency,
-    sanitize_filename,
+    validate_document_storage_update,
 )
 
 
@@ -45,5 +45,5 @@ __all__ = [
     "validate_external_url",
     "validate_path_format",
     "validate_format_consistency",
-    "sanitize_filename",
+    "validate_document_storage_update",
 ]

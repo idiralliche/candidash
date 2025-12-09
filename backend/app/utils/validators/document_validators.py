@@ -1,11 +1,8 @@
 """
 Validators for document operations.
 """
-import magic
 import re
-from pathlib import Path
 from urllib.parse import urlparse
-from typing import Optional
 from fastapi import HTTPException, status, UploadFile
 from sqlalchemy.orm import Session
 from app.config import settings
@@ -36,63 +33,38 @@ async def validate_file_size(file: UploadFile) -> None:
         )
 
 
-async def validate_mime_type(file: UploadFile) -> str:
+async def validate_mime_type(file: UploadFile) -> None:
     """
-    Validate file MIME type using python-magic (checks actual file content, not just extension).
+    Validate file MIME type (wrapper around get_mime_type_or_400).
+
+    This validator uses get_mime_type_or_400 internally but doesn't return
+    the MIME type, following the pattern of validate_* functions.
 
     Args:
         file: Uploaded file to validate
 
-    Returns:
-        Detected MIME type
-
     Raises:
         HTTPException 400: If file type is not allowed
     """
-    # Read file content for MIME detection
-    contents = await file.read()
-    await file.seek(0)  # Reset pointer
-
-    # Detect real MIME type from file content
-    detected_mime = magic.from_buffer(contents, mime=True)
-
-    if detected_mime not in settings.ALLOWED_MIME_TYPES:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"File type '{detected_mime}' is not allowed. Allowed types: {', '.join(sorted(settings.ALLOWED_MIME_TYPES))}"
-        )
-
-    return detected_mime
+    from app.utils.documents.helpers import get_mime_type_or_400
+    await get_mime_type_or_400(file)
 
 
-def validate_file_extension(filename: str) -> str:
+def validate_file_extension(filename: str) -> None:
     """
-    Validate file extension against allowed list.
+    Validate file extension (wrapper around get_file_extension_or_400).
+
+    This validator uses get_file_extension_or_400 internally but doesn't return
+    the extension, following the pattern of validate_* functions.
 
     Args:
         filename: Original filename
 
-    Returns:
-        Lowercase file extension (e.g., ".pdf")
-
     Raises:
-        HTTPException 400: If extension is not allowed
+        HTTPException 400: If extension is not allowed or missing
     """
-    file_ext = Path(filename).suffix.lower()
-
-    if not file_ext:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="File must have an extension"
-        )
-
-    if file_ext not in settings.ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"File extension '{file_ext}' is not allowed. Allowed extensions: {', '.join(sorted(settings.ALLOWED_EXTENSIONS))}"
-        )
-
-    return file_ext
+    from app.utils.documents.helpers import get_file_extension_or_400
+    get_file_extension_or_400(filename)
 
 
 async def check_user_quota(db: Session, user_id: int) -> None:
@@ -203,28 +175,73 @@ def validate_format_consistency(format_value: DocumentFormat, is_external: bool)
         raise ValueError("Format cannot be 'external' when is_external is False")
 
 
-def sanitize_filename(filename: str) -> str:
+def validate_document_storage_update(
+    db_document,
+    new_is_external: bool,
+    new_path: str,
+    old_is_external: bool,
+    old_path: str,
+    path_provided: bool
+) -> None:
     """
-    Sanitize filename to prevent path traversal and special characters.
+    Validate document storage migration scenarios in PUT endpoint.
+
+    This validator checks the coherence of storage migration requests
+    and automatically updates the format field when needed.
 
     Args:
-        filename: Original filename
+        db_document: Document model instance
+        new_is_external: New is_external value
+        new_path: New path value
+        old_is_external: Current is_external value
+        old_path: Current path value
+        path_provided: Whether path was provided in update
 
-    Returns:
-        Sanitized filename
+    Raises:
+        HTTPException: If migration scenario is invalid
     """
-    # Remove path separators and dangerous characters
-    dangerous_chars = ['/', '\\', '..', '\0', '\n', '\r', '<', '>', ':', '"', '|', '?', '*']
-    sanitized = filename
+    # Scenario 1: Trying to convert external → local
+    if old_is_external and not new_is_external:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot convert external document to local via PUT. Use POST /documents/{id}/replace-file to upload a new file instead."
+        )
 
-    for char in dangerous_chars:
-        sanitized = sanitized.replace(char, '_')
+    # Scenario 2: Converting local → external
+    if not old_is_external and new_is_external:
+        # Must provide new path (external URL)
+        if not path_provided:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Must provide 'path' (external URL) when setting is_external=true"
+            )
 
-    # Limit length
-    if len(sanitized) > 255:
-        # Keep extension, truncate name
-        ext = Path(sanitized).suffix
-        name = Path(sanitized).stem[:200]
-        sanitized = f"{name}{ext}"
+        # Validate external URL
+        try:
+            validate_path_format(new_path, is_external=True)
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(e)
+            )
 
-    return sanitized
+        # Auto-set format to 'external'
+        db_document.format = DocumentFormat.EXTERNAL
+
+    # Scenario 3: Updating external URL (external → external)
+    if old_is_external and new_is_external and new_path != old_path:
+        # Validate new external URL
+        try:
+            validate_path_format(new_path, is_external=True)
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(e)
+            )
+
+    # Scenario 4: Updating path for local document (local → local)
+    if not old_is_external and not new_is_external and new_path != old_path:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change path for local documents. Delete and re-upload instead, or convert to external link."
+        )
