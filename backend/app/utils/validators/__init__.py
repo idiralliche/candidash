@@ -12,6 +12,16 @@ from .ownership_validators import (
     validate_application_exists_and_owned,
     validate_scheduled_event_exists_and_owned,
 )
+from .document_validators import (
+    validate_file_size,
+    validate_mime_type,
+    validate_file_extension,
+    check_user_quota,
+    validate_external_url,
+    validate_path_format,
+    validate_format_consistency,
+    sanitize_filename,
+)
 
 
 __all__ = [
@@ -27,4 +37,13 @@ __all__ = [
     "validate_opportunity_exists_and_owned",
     "validate_application_exists_and_owned",
     "validate_scheduled_event_exists_and_owned",
+    # Document validators
+    "validate_file_size",
+    "validate_mime_type",
+    "validate_file_extension",
+    "check_user_quota",
+    "validate_external_url",
+    "validate_path_format",
+    "validate_format_consistency",
+    "sanitize_filename",
 ]
