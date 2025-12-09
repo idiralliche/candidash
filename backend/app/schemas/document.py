@@ -61,12 +61,22 @@ class DocumentUpdate(BaseModel):
     Schema for updating a document (PUT/PATCH).
 
     All fields are optional to support partial updates.
-    Note: Cannot change is_external or format after creation (would require file migration).
+
+    **Special Cases:**
+    - **path + is_external**: Can be updated together to change storage location
+      (e.g., local file → external link, or update external URL)
+    - **format**: Automatically set to 'external' when is_external=true
+
+    **Notes:**
+    - When changing from local to external, the local file will be deleted
+    - When changing external URL, old URL remains accessible (not controlled by CandiDash)
+    - Cannot change from external to local via PUT (use dedicated upload endpoint instead)
     """
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     type: Optional[str] = Field(None, min_length=1, max_length=50)
     description: Optional[str] = Field(None, max_length=5000)
-    # path, format, is_external are immutable after creation
+    path: Optional[str] = Field(None, min_length=1, description="New path (URL for external, or leave unchanged)")
+    is_external: Optional[bool] = Field(None, description="Change storage type (local ↔ external)")
 
 
 class Document(DocumentBase):
