@@ -66,7 +66,12 @@ class Document(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationships
-    owner = relationship("User")
+    owner = relationship("User", back_populates="documents")
+    associations = relationship(
+        "DocumentAssociation",
+        back_populates="document",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<Document(id={self.id}, name='{self.name}', type={self.type}, is_external={self.is_external}, owner_id={self.owner_id})>"
