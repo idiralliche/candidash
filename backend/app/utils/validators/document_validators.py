@@ -115,9 +115,12 @@ def validate_external_url(url: str) -> None:
     if parsed.scheme.lower() in dangerous_schemes:
         raise ValueError(f"URL protocol '{parsed.scheme}' is not allowed for security reasons")
 
+    # Extract hostname (without port)
+    hostname = parsed.netloc.split(':')[0].lower()
+
     # Block localhost and loopback
     blocked_hosts = ['localhost', '127.0.0.1', '0.0.0.0', '::1']
-    if parsed.netloc.lower() in blocked_hosts:
+    if hostname in blocked_hosts:
         raise ValueError("Links to localhost are not allowed")
 
     # Block private IP ranges (RFC 1918)
@@ -128,7 +131,7 @@ def validate_external_url(url: str) -> None:
     ]
 
     for pattern in private_ip_patterns:
-        if re.match(pattern, parsed.netloc):
+        if re.match(pattern, hostname):
             raise ValueError("Links to private IP addresses are not allowed")
 
 
