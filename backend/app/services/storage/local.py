@@ -6,7 +6,6 @@ import uuid
 from pathlib import Path
 from app.services.storage.base import StorageBackend
 from app.config import settings
-from app.utils.validators.document_validators import sanitize_filename
 
 
 class LocalStorage(StorageBackend):
@@ -61,18 +60,17 @@ class LocalStorage(StorageBackend):
         Args:
             file_data: Raw file bytes
             user_id: Owner user ID (used for directory organization)
-            original_filename: Original filename to extract extension
+            original_filename: Already sanitized original filename
 
         Returns:
-            Relative storage path from app root (e.g., "app/documents/42/uuid.pdf")
+            Absolute storage path (e.g., "/app/documents/42/uuid.pdf")
         """
         # Create user directory
         user_dir = self.base_path / str(user_id)
         user_dir.mkdir(parents=True, exist_ok=True)
 
-        # Sanitize filename and extract extension
-        safe_filename = sanitize_filename(original_filename)
-        file_ext = Path(safe_filename).suffix.lower()
+        # Extract extension (filename is already sanitized by caller)
+        file_ext = Path(original_filename).suffix.lower()
 
         # Ensure extension starts with dot
         if file_ext and not file_ext.startswith('.'):
@@ -86,7 +84,7 @@ class LocalStorage(StorageBackend):
         async with aiofiles.open(file_path, 'wb') as f:
             await f.write(file_data)
 
-        # Return relative path from app root
+        # Return absolute path
         return str(file_path)
 
     async def get_file(self, file_path: str) -> bytes:
