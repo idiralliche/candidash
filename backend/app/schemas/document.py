@@ -3,7 +3,7 @@ Pydantic schemas for Document entity.
 """
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from app.models.document import DocumentFormat
 from app.utils.validators.document_validators import validate_path_format, validate_format_consistency
 
@@ -17,22 +17,6 @@ class DocumentBase(BaseModel):
     description: Optional[str] = Field(None, max_length=5000, description="Free text description")
     is_external: bool = Field(default=False, description="Whether document is an external link")
 
-    @field_validator('path')
-    @classmethod
-    def validate_path(cls, v: str, info) -> str:
-        """Validate path format based on is_external flag."""
-        is_external = info.data.get('is_external', False)
-        validate_path_format(v, is_external)
-        return v
-
-    @field_validator('format')
-    @classmethod
-    def validate_format(cls, v: DocumentFormat, info) -> DocumentFormat:
-        """Ensure format is consistent with is_external."""
-        is_external = info.data.get('is_external', False)
-        validate_format_consistency(v, is_external)
-        return v
-
 
 class DocumentCreate(DocumentBase):
     """
@@ -41,7 +25,12 @@ class DocumentCreate(DocumentBase):
     Used for creating external link references.
     For file uploads, use the /upload endpoint instead.
     """
-    pass
+    @model_validator(mode='after')
+    def validate_document(self):
+        """Validate path and format consistency after all fields are set."""
+        validate_path_format(self.path, self.is_external)
+        validate_format_consistency(self.format, self.is_external)
+        return self
 
 
 class DocumentUpload(BaseModel):
