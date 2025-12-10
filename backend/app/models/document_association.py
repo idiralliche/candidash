@@ -2,6 +2,7 @@
 DocumentAssociation model - polymorphic association between documents and entities.
 """
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, Enum, Index
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
 from app.database import Base
@@ -23,6 +24,8 @@ class DocumentAssociation(Base):
     entity_type = Column(Enum(EntityType), nullable=False)
     entity_id = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    document = relationship("Document", back_populates="associations")
 
     __table_args__ = (
         Index('ix_document_associations_entity', 'entity_type', 'entity_id'),
