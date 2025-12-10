@@ -1,11 +1,12 @@
 """
 Application model - represents a job application.
 """
-from sqlalchemy import Column, Integer, Date, Float, Boolean, ForeignKey, DateTime, Enum
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, Date, Float, Boolean, ForeignKey, DateTime, Enum, and_
+from sqlalchemy.orm import relationship, foreign
 from sqlalchemy.sql import func
 import enum
 from app.database import Base
+from app.models.document_association import DocumentAssociation, EntityType
 
 
 class ApplicationStatus(str, enum.Enum):
@@ -45,6 +46,15 @@ class Application(Base):
     resume_used = relationship("Document", foreign_keys=[resume_used_id])
     cover_letter = relationship("Document", foreign_keys=[cover_letter_id])
     actions = relationship("Action", back_populates="application", cascade="all, delete-orphan")
+    document_associations = relationship(
+        "DocumentAssociation",
+        primaryjoin=and_(
+            foreign(DocumentAssociation.entity_id) == id,
+            DocumentAssociation.entity_type == EntityType.APPLICATION
+        ),
+        cascade="all, delete-orphan",
+        overlaps="document"
+    )
 
     def __repr__(self):
         return f"<Application(id={self.id}, owner_id={self.owner_id}, opportunity_id={self.opportunity_id}, status={self.status})>"

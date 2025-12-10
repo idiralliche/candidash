@@ -1,10 +1,11 @@
 """
 Contact model - represents a person contact.
 """
-from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, DateTime, and_
+from sqlalchemy.orm import relationship, foreign
 from sqlalchemy.sql import func
 from app.database import Base
+from app.models.document_association import DocumentAssociation, EntityType
 
 
 class Contact(Base):
@@ -42,6 +43,14 @@ class Contact(Base):
     owner = relationship("User")
     company = relationship("Company", back_populates="contacts")
     opportunity_contacts = relationship("OpportunityContact", back_populates="contact")
+    document_associations = relationship(
+        "DocumentAssociation",
+        primaryjoin=and_(
+            foreign(DocumentAssociation.entity_id) == id,
+            DocumentAssociation.entity_type == EntityType.CONTACT
+        ),
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<Contact(id={self.id}, name='{self.first_name} {self.last_name}', owner_id={self.owner_id})>"

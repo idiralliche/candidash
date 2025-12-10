@@ -1,11 +1,12 @@
 """
 Opportunity model - represents a job opportunity.
 """
-from sqlalchemy import Column, Integer, String, Text, Float, ForeignKey, DateTime, Enum
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Text, Float, ForeignKey, DateTime, Enum, and_
+from sqlalchemy.orm import relationship, foreign
 from sqlalchemy.sql import func
 import enum
 from app.database import Base
+from app.models.document_association import DocumentAssociation, EntityType
 
 
 class ApplicationType(str, enum.Enum):
@@ -84,6 +85,14 @@ class Opportunity(Base):
     applications = relationship("Application", back_populates="opportunity", cascade="all, delete-orphan")
     opportunity_contacts = relationship("OpportunityContact", back_populates="opportunity", cascade="all, delete-orphan")
     opportunity_products = relationship("OpportunityProduct", back_populates="opportunity", cascade="all, delete-orphan")
+    document_associations = relationship(
+        "DocumentAssociation",
+        primaryjoin=and_(
+            foreign(DocumentAssociation.entity_id) == id,
+            DocumentAssociation.entity_type == EntityType.OPPORTUNITY
+        ),
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<Opportunity(id={self.id}, job_title='{self.job_title}', type={self.application_type}, owner_id={self.owner_id})>"

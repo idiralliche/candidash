@@ -1,10 +1,11 @@
 """
 Company model - represents a company.
 """
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Index, text
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Index, text, and_
+from sqlalchemy.orm import relationship, foreign
 from sqlalchemy.sql import func
 from app.database import Base
+from app.models.document_association import DocumentAssociation, EntityType
 
 
 class Company(Base):
@@ -49,6 +50,14 @@ class Company(Base):
     opportunities = relationship("Opportunity", back_populates="company")
     contacts = relationship("Contact", back_populates="company")
     products = relationship("Product", back_populates="company", cascade="all, delete-orphan")
+    document_associations = relationship(
+        "DocumentAssociation",
+        primaryjoin=and_(
+            foreign(DocumentAssociation.entity_id) == id,
+            DocumentAssociation.entity_type == EntityType.COMPANY
+        ),
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<Company(id={self.id}, name='{self.name}', owner_id={self.owner_id})>"
