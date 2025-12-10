@@ -40,9 +40,13 @@ def test_complete_application_flow(api_url, auth_headers):
         "opportunity_id": opportunity_id, "product_id": product_id
     }, headers=auth_headers)
 
-    # 6. Create Document
+    # 6. Create Document (EXTERNAL)
     document_id = requests.post(f"{api_url}/documents/", json={
-        "name": "CV.pdf", "type": "resume", "format": "pdf", "path": "/docs/cv.pdf"
+        "name": "CV on Drive",
+        "type": "resume",
+        "format": "external",
+        "path": "https://drive.google.com/file/d/fullflow_cv",
+        "is_external": True
     }, headers=auth_headers).json()['id']
 
     # 7. Create Application
@@ -82,7 +86,15 @@ def test_complete_application_flow(api_url, auth_headers):
 def test_composite_endpoint(api_url, auth_headers):
     """Test the /applications/with-opportunity composite endpoint."""
     company_id = requests.post(f"{api_url}/companies/", json={"name": "Comp Corp"}, headers=auth_headers).json()['id']
-    document_id = requests.post(f"{api_url}/documents/", json={"name": "CV.pdf", "type": "resume", "format": "pdf", "path": "/docs/cv.pdf"}, headers=auth_headers).json()['id']
+
+    # Create EXTERNAL document
+    document_id = requests.post(f"{api_url}/documents/", json={
+        "name": "CV External",
+        "type": "resume",
+        "format": "external",
+        "path": "https://drive.google.com/file/d/composite_cv",
+        "is_external": True
+    }, headers=auth_headers).json()['id']
 
     response = requests.post(f"{api_url}/applications/with-opportunity", json={
         "opportunity": {
