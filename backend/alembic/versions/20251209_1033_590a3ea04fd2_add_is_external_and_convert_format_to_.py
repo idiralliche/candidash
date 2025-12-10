@@ -33,56 +33,56 @@ def upgrade():
     # Step 3: For external documents, set format to 'external'
     op.execute("""
         UPDATE documents
-        SET format = 'external'
+        SET format = 'EXTERNAL'
         WHERE is_external = true
     """)
 
-    # Step 4: Handle invalid formats - detect from filename, fallback to txt
+    # Step 4: Handle invalid formats - detect from filename, fallback to TXT
     op.execute("""
         UPDATE documents
         SET format = CASE
-            WHEN LOWER(name) LIKE '%.pdf' THEN 'pdf'
-            WHEN LOWER(name) LIKE '%.doc' THEN 'doc'
-            WHEN LOWER(name) LIKE '%.docx' THEN 'docx'
-            WHEN LOWER(name) LIKE '%.rtf' THEN 'rtf'
-            WHEN LOWER(name) LIKE '%.txt' THEN 'txt'
-            WHEN LOWER(name) LIKE '%.md' THEN 'md'
-            WHEN LOWER(name) LIKE '%.ppt' THEN 'ppt'
-            WHEN LOWER(name) LIKE '%.pptx' THEN 'pptx'
-            WHEN LOWER(name) LIKE '%.odp' THEN 'odp'
-            WHEN LOWER(name) LIKE '%.xls' THEN 'xls'
-            WHEN LOWER(name) LIKE '%.xlsx' THEN 'xlsx'
-            WHEN LOWER(name) LIKE '%.ods' THEN 'ods'
-            WHEN LOWER(name) LIKE '%.csv' THEN 'csv'
-            WHEN LOWER(name) LIKE '%.tsv' THEN 'tsv'
-            WHEN LOWER(name) LIKE '%.odt' THEN 'odt'
-            WHEN LOWER(name) LIKE '%.jpg' OR LOWER(name) LIKE '%.jpeg' THEN 'jpeg'
-            WHEN LOWER(name) LIKE '%.png' THEN 'png'
-            WHEN LOWER(name) LIKE '%.gif' THEN 'gif'
-            WHEN LOWER(name) LIKE '%.webp' THEN 'webp'
-            WHEN LOWER(name) LIKE '%.json' THEN 'json'
-            ELSE 'txt'
+            WHEN LOWER(name) LIKE '%.pdf' THEN 'PDF'
+            WHEN LOWER(name) LIKE '%.doc' THEN 'DOC'
+            WHEN LOWER(name) LIKE '%.docx' THEN 'DOCX'
+            WHEN LOWER(name) LIKE '%.rtf' THEN 'RTF'
+            WHEN LOWER(name) LIKE '%.txt' THEN 'TXT'
+            WHEN LOWER(name) LIKE '%.md' THEN 'MD'
+            WHEN LOWER(name) LIKE '%.ppt' THEN 'PPT'
+            WHEN LOWER(name) LIKE '%.pptx' THEN 'PPTX'
+            WHEN LOWER(name) LIKE '%.odp' THEN 'ODP'
+            WHEN LOWER(name) LIKE '%.xls' THEN 'XLS'
+            WHEN LOWER(name) LIKE '%.xlsx' THEN 'XLSX'
+            WHEN LOWER(name) LIKE '%.ods' THEN 'ODS'
+            WHEN LOWER(name) LIKE '%.csv' THEN 'CSV'
+            WHEN LOWER(name) LIKE '%.tsv' THEN 'TSV'
+            WHEN LOWER(name) LIKE '%.odt' THEN 'ODT'
+            WHEN LOWER(name) LIKE '%.jpg' OR LOWER(name) LIKE '%.jpeg' THEN 'JPEG'
+            WHEN LOWER(name) LIKE '%.png' THEN 'PNG'
+            WHEN LOWER(name) LIKE '%.gif' THEN 'GIF'
+            WHEN LOWER(name) LIKE '%.webp' THEN 'WEBP'
+            WHEN LOWER(name) LIKE '%.json' THEN 'JSON'
+            ELSE 'TXT'
         END
         WHERE format NOT IN (
-            'pdf', 'doc', 'docx', 'rtf', 'txt', 'md',
-            'ppt', 'pptx', 'odp',
-            'xls', 'xlsx', 'ods', 'csv', 'tsv',
-            'odt',
-            'jpg', 'jpeg', 'png', 'gif', 'webp',
-            'json',
-            'external'
+            'PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'MD',
+            'PPT', 'PPTX', 'ODP',
+            'XLS', 'XLSX', 'ODS', 'CSV', 'TSV',
+            'ODT',
+            'JPG', 'JPEG', 'PNG', 'GIF', 'WEBP',
+            'JSON',
+            'EXTERNAL'
         ) AND is_external = false
     """)
 
     # Step 5: Create the enum type in PostgreSQL
     documentformat_enum = postgresql.ENUM(
-        'pdf', 'doc', 'docx', 'rtf', 'txt', 'md',
-        'ppt', 'pptx', 'odp',
-        'xls', 'xlsx', 'ods', 'csv', 'tsv',
-        'odt',
-        'jpg', 'jpeg', 'png', 'gif', 'webp',
-        'json',
-        'external',
+        'PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'MD',
+        'PPT', 'PPTX', 'ODP',
+        'XLS', 'XLSX', 'ODS', 'CSV', 'TSV',
+        'ODT',
+        'JPG', 'JPEG', 'PNG', 'GIF', 'WEBP',
+        'JSON',
+        'EXTERNAL',
         name='documentformat',
         create_type=True
     )
