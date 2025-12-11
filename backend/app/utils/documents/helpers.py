@@ -10,8 +10,12 @@ from typing import Tuple
 from pathlib import Path
 from fastapi import UploadFile, HTTPException, status
 from app.models.document import DocumentFormat
+from app.models.document_association import DocumentAssociation, EntityType
 from app.config import settings
 from app.services.storage import get_storage_backend
+from typing import Optional
+from sqlalchemy.orm import Session
+from app.models.user import User
 
 
 def get_file_extension_or_400(filename: str) -> str:
@@ -232,3 +236,89 @@ async def delete_local_file_safe(file_path: str) -> None:
         print(f"✓ Deleted local file: {file_path}")
     except Exception as e:
         print(f"⚠ Warning: Could not delete file {file_path}: {e}")
+
+def create_or_update_document_association_or_404(
+    db: Session,
+    document_id: int,
+    entity_type: str,
+    entity_id: int,
+    current_user: User
+) -> Optional[DocumentAssociation]:
+    """
+    Create or return existing document association.
+
+    Validates that document exists and belongs to owner before creating association.
+
+    Args:
+        db: Database session
+        document_id: ID of document to associate
+        entity_type: Type of entity (application, opportunity, company, contact)
+        entity_id: ID of entity
+        current_user:  Current authenticated user (for validation)
+
+    Returns:
+        DocumentAssociation instance or None if document_id is None
+
+    Raises:
+        HTTPException 404: If document doesn't exist or doesn't belong to owner
+    """
+    if document_id is None:
+        return None
+
+    # Validate document exists and belongs to user
+    from app.utils.validators import validate_document_exists_and_owned
+    validate_document_exists_and_owned (
+        db=db,
+        document_id=document_id,
+        current_user=current_user
+    )
+
+    # Check if association already exists
+    existing = db.query(DocumentAssociation).filter(
+        DocumentAssociation.document_id == document_id,
+        DocumentAssociation.entity_type == EntityType(entity_type),
+        DocumentAssociation.entity_id == entity_id
+    ).first()
+
+    if existing:
+        return existing
+
+    # Create new association
+    association = DocumentAssociation(
+        document_id=document_id,
+        entity_type=EntityType(entity_type),
+        entity_id=entity_id
+    )
+    db.add(association)
+    # Note: No commit here, let the caller manage transaction
+
+    return association
+
+
+def remove_document_association(
+    db: Session,
+    document_id: int,
+    entity_type: str,
+    entity_id: int
+) -> None:
+    """
+    Remove document association if it exists.
+
+    Args:
+        db: Database session
+        document_id: ID of document
+        entity_type: Type of entity
+        entity_id: ID of entity
+    """
+    if document_id is None:
+        return
+
+    association = db.query(DocumentAssociation).filter(
+        DocumentAssociation.document_id == document_id,
+        DocumentAssociation.entity_type == EntityType(entity_type),
+        DocumentAssociation.entity_id == entity_id
+    ).first()
+
+    if association:
+        db.delete(association)
+        # Note: No commit here, let the caller manage transaction
