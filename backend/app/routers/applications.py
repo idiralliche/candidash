@@ -22,7 +22,11 @@ from app.utils.validators.ownership_validators import (
     validate_company_exists_and_owned
 )
 from app.utils.db import get_owned_entity_or_404
-from app.utils.db.helpers import JoinSpec
+from app.utils.documents.helpers import (
+    create_or_update_document_association_or_404,
+    remove_document_association
+)
+
 
 router = APIRouter(prefix="/applications", tags=["applications"])
 
@@ -93,24 +97,58 @@ def create_application(
     """
     Create a new application.
 
-    - **opportunity_id**: ID of the opportunity (required)
-    - **application_date**: Date of application (required)
-    - **status**: Status (default: pending)
-    - **resume_used_id**: ID of resume document (optional)
-    - **cover_letter_id**: ID of cover letter document (optional)
+    **Required Fields:**
+    - **opportunity_id**: ID of the opportunity (must exist and belong to user)
+    - **application_date**: Date of application (ISO format)
+
+    **Optional Fields:**
+    - **resume_used_id**: ID of resume document (auto-creates DocumentAssociation)
+    - **cover_letter_id**: ID of cover letter document (auto-creates DocumentAssociation)
+    - **status**: Application status (default: "pending")
+    - **notes**: Additional notes
+
+    **Automatic Associations:**
+    When resume_used_id or cover_letter_id are provided, the system automatically
+    creates DocumentAssociation linking the document to this application.
+
+    **Returns:**
+    - **201**: Application created successfully
+
+    **Raises:**
+    - **400**: Opportunity doesn't exist or belong to user
+    - **404**: Document (resume/cover_letter) doesn't exist or belong to user
+    - **401**: Unauthorized
+    - **422**: Validation error
     """
     # Validate foreign keys ownership
     validate_opportunity_exists_and_owned(db, application.opportunity_id, current_user)
-    if application.resume_used_id is not None:
-        validate_document_exists_and_owned(db, application.resume_used_id, current_user)
-    if application.cover_letter_id is not None:
-        validate_document_exists_and_owned(db, application.cover_letter_id, current_user)
 
+    # Create application
     application_data = application.model_dump()
     application_data['owner_id'] = current_user.id
 
     db_application = ApplicationModel(**application_data)
     db.add(db_application)
+    db.flush()  # Get the application ID without committing
+
+    if application.resume_used_id is not None:
+        create_or_update_document_association_or_404(
+            db=db,
+            document_id=application.resume_used_id,
+            entity_type="application",
+            entity_id=db_application.id,
+            current_user=current_user
+        )
+
+    if application.cover_letter_id is not None:
+        create_or_update_document_association_or_404(
+            db=db,
+            document_id=application.cover_letter_id,
+            entity_type="application",
+            entity_id=db_application.id,
+            current_user=current_user
+        )
+
     db.commit()
     db.refresh(db_application)
     return db_application
@@ -122,29 +160,35 @@ def create_application_with_opportunity(
     db: Session = Depends(get_db)
 ):
     """
-    Create a new application with its opportunity in a single transaction.
+    Create an application and its linked opportunity in a single request.
 
-    This endpoint is useful when creating a new job application where
-    the opportunity doesn't exist yet. Both opportunity and application
-    are created atomically.
+    **Composite Endpoint Benefits:**
+    - Atomicity: Both opportunity and application created in single transaction
+    - Convenience: No need for separate API calls
+    - Consistency: Guaranteed link between opportunity and application
 
-    - **opportunity**: Opportunity details (job_title, application_type, company_id, etc.)
-    - **application**: Application details (application_date, status, resume_used_id, etc.)
+    **Request Structure:**
+    - **opportunity**: OpportunityCreate object (without opportunity_id)
+    - **application_date**: Date of application
+    - **resume_used_id**: Optional resume document (auto-creates DocumentAssociation)
+    - **cover_letter_id**: Optional cover letter document (auto-creates DocumentAssociation)
+    - **status**: Optional status (default: "pending")
+    - **notes**: Optional notes
 
-    Returns the created application with its generated ID and opportunity_id.
-    The opportunity is automatically assigned to the authenticated user.
+    **Automatic Associations:**
+    When resume_used_id or cover_letter_id are provided, the system automatically
+    creates DocumentAssociation linking the documents to the new application.
+
+    **Returns:**
+    - **201**: Application (with embedded opportunity_id) created successfully
+
+    **Raises:**
+    - **400**: Company doesn't exist or belong to user
+    - **404**: Document (resume/cover_letter) doesn't exist or belong to user
+    - **401**: Unauthorized
+    - **422**: Validation error
     """
     try:
-        # Validate documents ownership (resume, cover letter)
-        if data.application.resume_used_id is not None:
-            validate_document_exists_and_owned(
-                db, data.application.resume_used_id, current_user
-            )
-        if data.application.cover_letter_id is not None:
-            validate_document_exists_and_owned(
-                db, data.application.cover_letter_id, current_user
-            )
-
         # Validate company_id if provided in opportunity
         if data.opportunity.company_id is not None:
             validate_company_exists_and_owned(
@@ -165,6 +209,26 @@ def create_application_with_opportunity(
         application_data['opportunity_id'] = db_opportunity.id
         db_application = ApplicationModel(**application_data)
         db.add(db_application)
+        db.flush()  # Get application ID without committing
+
+        # Auto-create document associations if resume_used_id or cover_letter_id provided
+        if data.application.resume_used_id:
+            create_or_update_document_association_or_404(
+                db=db,
+                document_id=data.application.resume_used_id,
+                entity_type="application",
+                entity_id=db_application.id,
+                current_user=current_user
+            )
+
+        if data.application.cover_letter_id:
+            create_or_update_document_association_or_404(
+                db=db,
+                document_id=data.application.cover_letter_id,
+                entity_type="application",
+                entity_id=db_application.id,
+                current_user=current_user
+            )
 
         # Commit both in a single transaction
         db.commit()
@@ -192,10 +256,27 @@ def update_application(
     """
     Update an existing application.
 
-    - **application_id**: The ID of the application to update
-    - All fields are optional
+    **Updatable Fields:**
+    - **opportunity_id**: Change linked opportunity (must exist and belong to user)
+    - **application_date**: Update application date
+    - **resume_used_id**: Change resume (auto-updates DocumentAssociation)
+    - **cover_letter_id**: Change cover letter (auto-updates DocumentAssociation)
+    - **status**: Update status
+    - **notes**: Update notes
 
-    Returns 404 if application doesn't exist or doesn't belong to the authenticated user.
+    **Automatic Association Management:**
+    - Setting resume_used_id/cover_letter_id → creates DocumentAssociation
+    - Changing resume_used_id/cover_letter_id → updates DocumentAssociation
+    - Setting to null → removes DocumentAssociation
+
+    **Returns:**
+    - **200**: Application updated successfully
+
+    **Raises:**
+    - **400**: Opportunity doesn't exist or belong to user
+    - **404**: Application or document not found or doesn't belong to user
+    - **401**: Unauthorized
+    - **422**: Validation error
     """
     db_application = get_owned_entity_or_404(
         db=db,
@@ -210,15 +291,63 @@ def update_application(
     # Validate updated FKs if present
     if "opportunity_id" in update_data:
         validate_opportunity_exists_and_owned(db, update_data["opportunity_id"], current_user)
-    if "resume_used_id" in update_data and update_data["resume_used_id"] is not None:
-        validate_document_exists_and_owned(db, update_data["resume_used_id"], current_user)
-    if "cover_letter_id" in update_data and update_data["cover_letter_id"] is not None:
-        validate_document_exists_and_owned(db, update_data["cover_letter_id"], current_user)
+
+    # Track old document IDs for association cleanup
+    old_resume_id = db_application.resume_used_id
+    old_cover_letter_id = db_application.cover_letter_id
 
     # Update fields (no ownership change allowed)
     for field, value in update_data.items():
         if field != 'owner_id':
             setattr(db_application, field, value)
+
+    db.flush()  # Apply changes without committing
+
+    # Handle resume_used_id association changes
+    if 'resume_used_id' in update_data:
+        new_resume_id = update_data['resume_used_id']
+
+        # Remove old association if resume changed
+        if old_resume_id and old_resume_id != new_resume_id:
+            remove_document_association(
+                db=db,
+                document_id=old_resume_id,
+                entity_type="application",
+                entity_id=application_id
+            )
+
+        # Create/update association if new resume provided
+        if new_resume_id:
+            create_or_update_document_association_or_404(
+                db=db,
+                document_id=new_resume_id,
+                entity_type="application",
+                entity_id=application_id,
+                current_user=current_user
+            )
+
+    # Handle cover_letter_id association changes
+    if 'cover_letter_id' in update_data:
+        new_cover_letter_id = update_data['cover_letter_id']
+
+        # Remove old association if cover letter changed
+        if old_cover_letter_id and old_cover_letter_id != new_cover_letter_id:
+            remove_document_association(
+                db=db,
+                document_id=old_cover_letter_id,
+                entity_type="application",
+                entity_id=application_id
+            )
+
+        # Create/update association if new cover letter provided
+        if new_cover_letter_id:
+            create_or_update_document_association_or_404(
+                db=db,
+                document_id=new_cover_letter_id,
+                entity_type="application",
+                entity_id=application_id,
+                current_user=current_user
+            )
 
     db.commit()
     db.refresh(db_application)
