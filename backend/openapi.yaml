@@ -1582,15 +1582,45 @@ paths:
       description: 'Create a new application.
 
 
-        - **opportunity_id**: ID of the opportunity (required)
+        **Required Fields:**
 
-        - **application_date**: Date of application (required)
+        - **opportunity_id**: ID of the opportunity (must exist and belong to user)
 
-        - **status**: Status (default: pending)
+        - **application_date**: Date of application (ISO format)
 
-        - **resume_used_id**: ID of resume document (optional)
 
-        - **cover_letter_id**: ID of cover letter document (optional)'
+        **Optional Fields:**
+
+        - **resume_used_id**: ID of resume document (auto-creates DocumentAssociation)
+
+        - **cover_letter_id**: ID of cover letter document (auto-creates DocumentAssociation)
+
+        - **status**: Application status (default: "pending")
+
+        - **notes**: Additional notes
+
+
+        **Automatic Associations:**
+
+        When resume_used_id or cover_letter_id are provided, the system automatically
+
+        creates DocumentAssociation linking the document to this application.
+
+
+        **Returns:**
+
+        - **201**: Application created successfully
+
+
+        **Raises:**
+
+        - **400**: Opportunity doesn''t exist or belong to user
+
+        - **404**: Document (resume/cover_letter) doesn''t exist or belong to user
+
+        - **401**: Unauthorized
+
+        - **422**: Validation error'
       operationId: create_application_api_v1_applications__post
       security:
       - OAuth2PasswordBearer: []
@@ -1656,13 +1686,45 @@ paths:
       description: 'Update an existing application.
 
 
-        - **application_id**: The ID of the application to update
+        **Updatable Fields:**
 
-        - All fields are optional
+        - **opportunity_id**: Change linked opportunity (must exist and belong to
+        user)
+
+        - **application_date**: Update application date
+
+        - **resume_used_id**: Change resume (auto-updates DocumentAssociation)
+
+        - **cover_letter_id**: Change cover letter (auto-updates DocumentAssociation)
+
+        - **status**: Update status
+
+        - **notes**: Update notes
 
 
-        Returns 404 if application doesn''t exist or doesn''t belong to the authenticated
-        user.'
+        **Automatic Association Management:**
+
+        - Setting resume_used_id/cover_letter_id → creates DocumentAssociation
+
+        - Changing resume_used_id/cover_letter_id → updates DocumentAssociation
+
+        - Setting to null → removes DocumentAssociation
+
+
+        **Returns:**
+
+        - **200**: Application updated successfully
+
+
+        **Raises:**
+
+        - **400**: Opportunity doesn''t exist or belong to user
+
+        - **404**: Application or document not found or doesn''t belong to user
+
+        - **401**: Unauthorized
+
+        - **422**: Validation error'
       operationId: update_application_api_v1_applications__application_id__put
       security:
       - OAuth2PasswordBearer: []
@@ -1728,26 +1790,54 @@ paths:
       tags:
       - applications
       summary: Create Application With Opportunity
-      description: 'Create a new application with its opportunity in a single transaction.
+      description: 'Create an application and its linked opportunity in a single request.
 
 
-        This endpoint is useful when creating a new job application where
+        **Composite Endpoint Benefits:**
 
-        the opportunity doesn''t exist yet. Both opportunity and application
+        - Atomicity: Both opportunity and application created in single transaction
 
-        are created atomically.
+        - Convenience: No need for separate API calls
 
-
-        - **opportunity**: Opportunity details (job_title, application_type, company_id,
-        etc.)
-
-        - **application**: Application details (application_date, status, resume_used_id,
-        etc.)
+        - Consistency: Guaranteed link between opportunity and application
 
 
-        Returns the created application with its generated ID and opportunity_id.
+        **Request Structure:**
 
-        The opportunity is automatically assigned to the authenticated user.'
+        - **opportunity**: OpportunityCreate object (without opportunity_id)
+
+        - **application_date**: Date of application
+
+        - **resume_used_id**: Optional resume document (auto-creates DocumentAssociation)
+
+        - **cover_letter_id**: Optional cover letter document (auto-creates DocumentAssociation)
+
+        - **status**: Optional status (default: "pending")
+
+        - **notes**: Optional notes
+
+
+        **Automatic Associations:**
+
+        When resume_used_id or cover_letter_id are provided, the system automatically
+
+        creates DocumentAssociation linking the documents to the new application.
+
+
+        **Returns:**
+
+        - **201**: Application (with embedded opportunity_id) created successfully
+
+
+        **Raises:**
+
+        - **400**: Company doesn''t exist or belong to user
+
+        - **404**: Document (resume/cover_letter) doesn''t exist or belong to user
+
+        - **401**: Unauthorized
+
+        - **422**: Validation error'
       operationId: create_application_with_opportunity_api_v1_applications_with_opportunity_post
       requestBody:
         content:
