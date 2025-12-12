@@ -27,7 +27,7 @@ export function Header() {
         </Link>
 
         <Link
-          to="/"
+          to="/register"
           className="rounded-xl bg-primary px-5 py-2 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#e84232] hover:-translate-y-[1px]"
         >
           Créer un compte
@@ -55,7 +55,7 @@ export function Header() {
                 Connexion
               </Link>
               <Link
-                to="/"
+                to="/register"
                 className="flex w-full items-center justify-center rounded-xl bg-primary py-3 text-base font-bold text-white shadow-lg hover:bg-[#e84232]"
                 onClick={() => setIsMenuOpen(false)}
               >
