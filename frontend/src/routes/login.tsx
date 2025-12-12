@@ -46,7 +46,7 @@ function LoginPage() {
     mutation: {
       onSuccess: (data) => {
         localStorage.setItem('token', data.access_token);
-        navigate({ to: '/' });
+        navigate({ to: '/dashboard' });
       },
     },
   });

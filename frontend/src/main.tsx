@@ -12,12 +12,19 @@ import { rootRoute } from './routes/__root';
 import { indexRoute } from './routes/index';
 import { loginRoute } from './routes/login';
 import { registerRoute } from './routes/register';
+import { authRoute } from './routes/_auth';
+import { dashboardRoute } from './routes/dashboard';
 
 // Create Route Tree Manually
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
   registerRoute,
+
+  // Protected Routes
+  authRoute.addChildren([
+    dashboardRoute,
+  ]),
 ]);
 
 // Create Router Instance
