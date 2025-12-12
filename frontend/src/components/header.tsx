@@ -20,7 +20,7 @@ export function Header() {
       {/* Desktop Navigation (Hidden on mobile) */}
       <nav className="hidden items-center gap-3 md:flex">
         <Link
-          to="/"
+          to="/login"
           className="rounded-xl border border-primary px-5 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10"
         >
           Connexion
@@ -48,7 +48,7 @@ export function Header() {
         <div className="absolute left-0 right-0 top-[70px] border-b border-white/5 bg-[#0f1115]/95 px-4 py-6 backdrop-blur-xl md:hidden">
             <nav className="flex flex-col gap-4">
               <Link
-                to="/"
+                to="/login"
                 className="flex w-full items-center justify-center rounded-xl border border-primary py-3 text-base font-bold text-primary hover:bg-primary/10"
                 onClick={() => setIsMenuOpen(false)}
               >

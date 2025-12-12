@@ -10,10 +10,12 @@ import { queryClient } from './lib/query-client';
 // Import Routes
 import { rootRoute } from './routes/__root';
 import { indexRoute } from './routes/index';
+import { loginRoute } from './routes/login';
 
 // Create Route Tree Manually
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  loginRoute,
 ]);
 
 // Create Router Instance
