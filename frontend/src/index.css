@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 16% 7%;
+    --foreground: 220 13% 91%;
+    --card: 220 15% 12%;
+    --card-foreground: 220 13% 91%;
+    --popover: 220 15% 12%;
+    --popover-foreground: 220 13% 91%;
+    --primary: 6 100% 61%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 6 100% 61%;
+    --radius: 1rem;
+
+    /* Charts defaults */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-card/60 backdrop-blur-md border-b border-white/5;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white font-bold py-3 px-6 md:px-8
+           transition-all duration-200 shadow-[0_4px_12px_rgba(255,78,59,0.35)]
+           hover:brightness-110 hover:shadow-[0_8px_20px_rgba(255,78,59,0.4)] hover:-translate-y-[1px]
+           active:scale-95 text-sm sm:text-base whitespace-nowrap inline-flex items-center justify-center;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary font-bold py-3 px-6 md:px-8
+           transition-all duration-200 hover:bg-primary hover:text-white
+           active:scale-95 text-sm sm:text-base whitespace-nowrap inline-flex items-center justify-center;
+  }
+}
