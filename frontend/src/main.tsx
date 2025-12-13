@@ -15,6 +15,9 @@ import { registerRoute } from './routes/register';
 import { authRoute } from './routes/_auth';
 import { dashboardRoute } from './routes/dashboard';
 
+// Import Context Providers
+import { AuthProvider } from './context/auth-provider';
+
 // Create Route Tree Manually
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -40,7 +43,9 @@ declare module '@tanstack/react-router' {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,
 );
