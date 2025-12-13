@@ -20,5 +20,5 @@ Thumbs.db
 documents/*
 !documents/.gitkeep
 
-# Secrets (Ajouté pour la nouvelle gestion Docker)
+# Secrets
 secrets/

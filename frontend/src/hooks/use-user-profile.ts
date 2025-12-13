@@ -6,7 +6,6 @@ export function useUserProfile() {
 
   const query = useGetUserApiV1UsersMeGet({
     query: {
-      // La requête ne part que si on est authentifié localement
       enabled: isAuthenticated,
 
       retry: false,
