@@ -89,6 +89,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/users/me:
+    get:
+      tags:
+      - users
+      summary: Get User
+      description: 'Get current user.
+
+
+        Returns the authenticated user''s informations.'
+      operationId: get_user_api_v1_users_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      security:
+      - OAuth2PasswordBearer: []
   /api/v1/companies/:
     get:
       tags:

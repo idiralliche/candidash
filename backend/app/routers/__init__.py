@@ -13,6 +13,7 @@ from app.routers.opportunity_contacts import router as opportunity_contacts_rout
 from app.routers.opportunity_products import router as opportunity_products_router
 from app.routers.document_associations import router as document_associations_router
 from app.routers.auth import router as auth_router
+from app.routers.users import router as users_router
 
 __all__ = [
     "companies_router",
@@ -27,4 +28,5 @@ __all__ = [
     "opportunity_products_router",
     "document_associations_router",
     "auth_router",
+    "users_router",
 ]
