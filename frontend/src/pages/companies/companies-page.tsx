@@ -1,7 +1,10 @@
+import { Plus, Building2, Globe, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { useCompanies } from '@/hooks/use-companies';
-import { Building2, Globe, MapPin } from 'lucide-react';
+import { FormDialog } from '@/components/form-dialog';
+import { CompanyForm } from '@/components/company-form';
 
 export function CompaniesPage() {
   const { companies, isLoading } = useCompanies();
@@ -12,6 +15,23 @@ export function CompaniesPage() {
         <h1 className="text-3xl font-bold text-white flex items-center gap-2">
           Entreprises
         </h1>
+
+        {/* Using the generic FormDialog component */}
+        <FormDialog
+          title="Nouvelle Entreprise"
+          description="Ajoutez une entreprise pour y associer des contacts et des opportunités."
+          trigger={
+            <Button className="bg-primary hover:bg-[#e84232] text-white">
+              <Plus className="mr-2 h-4 w-4" />
+              Ajouter une entreprise
+            </Button>
+          }
+        >
+          {(close) => (
+            <CompanyForm onSuccess={close} />
+          )}
+        </FormDialog>
+
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -27,7 +47,7 @@ export function CompaniesPage() {
         ) : companies?.length === 0 ? (
           // Empty State
           <div className="col-span-full py-20 text-center text-muted-foreground">
-            Aucune entreprise trouvée.
+            Aucune entreprise trouvée. Commencez par en ajouter une !
           </div>
         ) : (
           // Data Grid
