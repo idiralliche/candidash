@@ -10,7 +10,9 @@ AXIOS_INSTANCE.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
 
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    if (config.headers) {
+      config.headers.set('Authorization', `Bearer ${token}`);
+    }
   }
 
   return config;
@@ -22,10 +24,12 @@ AXIOS_INSTANCE.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Token is invalid or expired: clean up and redirect
+    const originalRequest = error.config;
+
+    // Check if the error response is 401 Unauthorized and the request is not for the login endpoint
+    if (error.response && error.response.status === 401 && !originalRequest.url?.includes('/auth/login')) {
+      // If the token is invalid, we clean up and redirect
       localStorage.removeItem('token');
-      // Using window.location to force a full redirect outside of React Router context
       window.location.href = '/login';
     }
     return Promise.reject(error);
