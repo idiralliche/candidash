@@ -16,6 +16,22 @@ AXIOS_INSTANCE.interceptors.request.use((config) => {
   return config;
 });
 
+// Response interceptor to handle 401 Unauthorized errors globally
+AXIOS_INSTANCE.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Token is invalid or expired: clean up and redirect
+      localStorage.removeItem('token');
+      // Using window.location to force a full redirect outside of React Router context
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const customInstance = <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,
