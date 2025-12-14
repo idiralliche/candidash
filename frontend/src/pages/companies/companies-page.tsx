@@ -11,19 +11,17 @@ export function CompaniesPage() {
 
   return (
     <div className="space-y-8 pt-20">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+      <div className="flex items-center gap-4">
+        <h1 className="text-3xl font-bold text-white">
           Entreprises
         </h1>
 
-        {/* Using the generic FormDialog component */}
         <FormDialog
           title="Nouvelle Entreprise"
           description="Ajoutez une entreprise pour y associer des contacts et des opportunités."
           trigger={
-            <Button className="bg-primary hover:bg-[#e84232] text-white">
-              <Plus className="mr-2 h-4 w-4" />
-              Ajouter une entreprise
+            <Button size="icon" className="h-8 w-8 rounded-full bg-primary hover:bg-[#e84232] text-white">
+              <Plus className="h-5 w-5" />
             </Button>
           }
         >
