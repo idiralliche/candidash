@@ -15,7 +15,8 @@ import { registerRoute } from './routes/register';
 import { authRoute } from './routes/_auth';
 import { dashboardRoute } from './routes/dashboard';
 import { accountRoute } from './routes/account';
-import { companiesRoute } from './routes/companies.tsx';
+import { companiesRoute } from './routes/companies';
+import { opportunitiesRoute } from './routes/opportunities';
 
 // Import Context Providers
 import { AuthProvider } from './context/auth-provider';
@@ -28,7 +29,8 @@ const routeTree = rootRoute.addChildren([
   authRoute.addChildren([
     dashboardRoute,
     accountRoute,
-    companiesRoute
+    companiesRoute,
+    opportunitiesRoute,
   ]),
 ]);
 

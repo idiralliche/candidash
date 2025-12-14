@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Menu, X, User, LayoutDashboard, LogOut } from 'lucide-react';
+import { Menu, X, User, LayoutDashboard, LogOut, Building2, Briefcase } from 'lucide-react'; // Added Icons
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useUserProfile } from '@/hooks/use-user-profile';
@@ -26,14 +26,33 @@ export function Header() {
     setIsMenuOpen(false);
   };
 
+  // Helper for Nav Links styles
+  const navLinkClass = "flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary";
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex h-[70px] items-center justify-between border-b border-white/5 bg-background/80 px-4 backdrop-blur-xl md:px-8">
       {/* Logo */}
-      <Link to="/" className="text-xl font-extrabold tracking-tight text-primary hover:opacity-90 md:text-2xl">
-        CandiDash
-      </Link>
+      <div className="flex items-center gap-8">
+        <Link to="/" className="text-xl font-extrabold tracking-tight text-primary hover:opacity-90 md:text-2xl">
+          CandiDash
+        </Link>
 
-      {/* --- DESKTOP NAVIGATION --- */}
+        {/* --- DESKTOP NAVIGATION LINKS --- */}
+        {isAuthenticated && (
+          <nav className="hidden md:flex items-center gap-6">
+             <Link to="/companies" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
+               <Building2 className="h-4 w-4" />
+               Entreprises
+             </Link>
+             <Link to="/opportunities" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
+               <Briefcase className="h-4 w-4" />
+               Opportunités
+             </Link>
+          </nav>
+        )}
+      </div>
+
+      {/* --- DESKTOP USER MENU --- */}
       <nav className="hidden items-center gap-3 md:flex">
         {isAuthenticated ? (
           <DropdownMenu>
@@ -98,6 +117,25 @@ export function Header() {
                     <span className="text-white font-medium">{user?.first_name} {user?.last_name}</span>
                   </div>
 
+                  {/* Added Mobile Links */}
+                  <Link
+                    to="/companies"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Building2 size={18} />
+                    Entreprises
+                  </Link>
+
+                  <Link
+                    to="/opportunities"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Briefcase size={18} />
+                    Opportunités
+                  </Link>
+
                   <Link
                     to="/dashboard"
                     className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
@@ -126,7 +164,7 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Link
+                   <Link
                     to="/login"
                     className="flex w-full items-center justify-center rounded-xl border border-primary p-3 font-bold text-primary hover:bg-primary/10"
                     onClick={() => setIsMenuOpen(false)}
