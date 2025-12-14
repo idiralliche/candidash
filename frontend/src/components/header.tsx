@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,7 +23,6 @@ export function Header() {
 
   const handleLogout = () => {
     logout();
-    navigate({ to: '/' });
     setIsMenuOpen(false);
   };
 
@@ -70,7 +69,6 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          // ... (Le bloc 'else' reste identique) ...
           <>
             <Link to="/login" className="rounded-xl border border-primary px-5 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10">
               Connexion
@@ -82,17 +80,68 @@ export function Header() {
         )}
       </nav>
 
-      {/* ... (Le menu Mobile doit aussi être mis à jour si tu le souhaites, dis-le moi) ... */}
+      {/* --- MOBILE MENU BUTTON --- */}
       <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-white hover:bg-white/5 md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
+      {/* --- MOBILE MENU CONTENT --- */}
       {isMenuOpen && (
-        // ... Code du menu mobile ...
         <div className="absolute left-0 right-0 top-[70px] border-b border-white/5 bg-[#0f1115]/95 px-4 py-6 backdrop-blur-xl md:hidden">
-            {/* Je te laisse la main pour modifier le menu mobile ou je peux te fournir le code si tu veux */}
-             <nav className="flex flex-col gap-4">
-              {/* ... */}
+            <nav className="flex flex-col gap-4">
+              {isAuthenticated ? (
+                <>
+                  <div className="flex items-center gap-3 px-2 py-2 mb-2 border-b border-white/5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                       <User size={16} />
+                    </div>
+                    <span className="text-white font-medium">{user?.first_name} {user?.last_name}</span>
+                  </div>
+
+                  <Link
+                    to="/dashboard"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <LayoutDashboard size={18} />
+                    Tableau de bord
+                  </Link>
+
+                  <Link
+                    to="/account"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User size={18} />
+                    Mon compte
+                  </Link>
+
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 rounded-lg p-2 text-red-400 hover:bg-red-500/10 w-full text-left"
+                  >
+                    <LogOut size={18} />
+                    Se déconnecter
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="flex w-full items-center justify-center rounded-xl border border-primary p-3 font-bold text-primary hover:bg-primary/10"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Connexion
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="flex w-full items-center justify-center rounded-xl bg-primary p-3 font-bold text-white hover:bg-[#e84232]"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Créer un compte
+                  </Link>
+                </>
+              )}
             </nav>
         </div>
       )}
