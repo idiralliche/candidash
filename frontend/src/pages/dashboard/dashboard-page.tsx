@@ -1,19 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useUserProfile } from '@/hooks/use-user-profile';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export function DashboardPage() {
-  const { user, isLoading } = useUserProfile();
-
   return (
     <div className="space-y-8 pt-20">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-          {isLoading ? (
-            <Skeleton className="h-10 w-64 bg-white/10" />
-          ) : (
-            <span>{user?.first_name} {user?.last_name} : Tableau de bord</span>
-          )}
+          Tableau de bord
         </h1>
       </div>
 
