@@ -21,7 +21,7 @@ export const authRoute = createRoute({
 function AuthLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-20">
         <Outlet />
       </div>
     </div>
