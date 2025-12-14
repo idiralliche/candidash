@@ -13,7 +13,6 @@ interface UseOpportunitiesParams {
 export function useOpportunities(params: UseOpportunitiesParams = {}) {
   const { isAuthenticated } = useAuth();
 
-  // Valeurs par défaut pour la pagination
   const {
     skip = 0,
     limit = 100,
