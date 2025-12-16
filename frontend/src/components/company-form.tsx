@@ -100,13 +100,13 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
 
     const payload = {
       name: values.name,
-      siret: values.siret || undefined,
-      website: values.website || undefined,
-      headquarters: values.headquarters || undefined,
+      siret: values.siret || null,
+      website: values.website || null,
+      headquarters: values.headquarters || null,
       is_intermediary: values.is_intermediary,
-      company_type: values.company_type || undefined,
-      industry: values.industry || undefined,
-      notes: values.notes || undefined,
+      company_type: values.company_type || null,
+      industry: values.industry || null,
+      notes: values.notes || null,
     };
 
     const options = {

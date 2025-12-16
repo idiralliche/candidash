@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Plus, Building2, Globe, MapPin, Briefcase, MoreHorizontal, Trash2, Loader2, Pencil } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Plus, Globe, MapPin, MoreHorizontal, Trash2, Loader2, Pencil, Building2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Sheet,
   SheetContent,
@@ -31,12 +32,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@/components/ui/card';
 
 import { useCompanies } from '@/hooks/use-companies';
 import { useDeleteCompany } from '@/hooks/use-delete-company';
@@ -53,6 +48,14 @@ export function CompaniesPage() {
   const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
+  // Tri alphabétique
+  const sortedCompanies = useMemo(() => {
+    if (!companies) return [];
+    return [...companies].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }, [companies]);
+
   const handleDelete = () => {
     if (!companyToDelete) return;
     deleteCompany({ companyId: companyToDelete.id }, {
@@ -61,15 +64,15 @@ export function CompaniesPage() {
   };
 
   return (
-    <div className="space-y-8 pt-20">
-      {/* HEADER + CREATION BUTTON */}
-      <div className="flex items-center gap-4">
+    <div className="space-y-6 pt-20 h-[calc(100vh-2rem)] flex flex-col">
+      {/* HEADER */}
+      <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-white">Entreprises</h1>
         <FormDialog
           title="Nouvelle Entreprise"
           description="Ajoutez une entreprise pour y associer des contacts et des opportunités."
           trigger={
-            <Button size="icon" className="h-8 w-8 rounded-full bg-primary hover:bg-[#e84232] text-white">
+            <Button size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-[#e84232] text-white shadow-lg shadow-primary/20">
               <Plus className="h-5 w-5" />
             </Button>
           }
@@ -78,107 +81,136 @@ export function CompaniesPage() {
         </FormDialog>
       </div>
 
-      {/* COMPANIES GRID */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {/* CONTENT LIST */}
+      <div className="flex-1 min-h-0 pb-8">
         {isLoading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-             <div key={i} className="flex flex-col rounded-xl bg-[#16181d] p-8 shadow-lg">
-               <div className="mb-4 h-[72px] w-[72px] rounded-xl bg-white/5" />
-               <Skeleton className="mb-3 h-6 w-3/4 bg-white/10" />
-               <Skeleton className="h-4 w-1/2 bg-white/10" />
-             </div>
-          ))
-        ) : companies?.length === 0 ? (
-          <div className="col-span-full py-20 text-center text-muted-foreground">
-            Aucune entreprise trouvée. Commencez par en ajouter une !
+          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
+            {Array.from({ length: 6 }).map((_, i) => (
+               <div key={i} className="flex items-center gap-4 bg-[#16181d] border border-white/5 rounded-xl p-4">
+                  {/* Icône Carrée */}
+                  <Skeleton className="h-10 w-10 rounded-lg bg-white/10 shrink-0" />
+
+                  {/* Infos Texte */}
+                  <div className="flex flex-col gap-2 flex-1 min-w-0">
+                     <Skeleton className="h-5 w-48 bg-white/10" />
+                     <Skeleton className="h-3 w-32 bg-white/5 hidden sm:block" />
+                  </div>
+
+                  {/* Boutons Actions */}
+                  <div className="flex items-center gap-3 pl-4">
+                     <Skeleton className="h-8 w-24 bg-white/5 rounded hidden sm:block" /> {/* Website btn */}
+                     <Skeleton className="h-8 w-8 rounded-full bg-white/5" /> {/* Menu btn */}
+                  </div>
+               </div>
+            ))}
+          </div>
+        ) : sortedCompanies.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
+            <Building2 className="h-12 w-12 opacity-20" />
+            <p>Aucune entreprise trouvée. Commencez par en ajouter une !</p>
           </div>
         ) : (
-          companies?.map((company) => (
-            <Card
-              key={company.id}
-              onClick={() => setSelectedCompany(company)}
-              className="relative flex flex-col items-center border-none bg-[#16181d] p-6 text-center shadow-lg transition-all hover:-translate-y-1 hover:bg-[#1c1f26] cursor-pointer group"
-            >
-              {/* --- ACTIONS MENU --- */}
-              <div className="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost" size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-white/10"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-[#16181d] border-white/10 text-white">
+          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
+            {sortedCompanies.map((company) => (
+              <div
+                key={company.id}
+                onClick={() => setSelectedCompany(company)}
+                className="
+                  group relative flex flex-col sm:flex-row sm:items-center
+                  bg-[#16181d] border border-white/5 rounded-xl p-4 gap-4
+                  transition-all duration-200
+                  hover:bg-[#1c1f26] hover:border-primary/30 hover:shadow-md hover:-translate-y-[1px]
+                  cursor-pointer
+                "
+              >
+                {/* ZONE 1 : IDENTITÉ (Gauche) */}
+                <div className="flex items-center gap-4 min-w-0 sm:w-[40%]">
+                   {/* Petit Carré Icône */}
+                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+                      <Building2 className="h-5 w-5" />
+                   </div>
 
-                    {/* Edit */}
-                    <DropdownMenuItem
-                      className="cursor-pointer focus:bg-white/10 focus:text-white"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingCompany(company);
-                      }}
-                    >
-                      <Pencil className="mr-2 h-4 w-4" />
-                      Modifier
-                    </DropdownMenuItem>
-
-                    {/* Delete */}
-                    <DropdownMenuItem
-                      className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCompanyToDelete(company);
-                      }}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Supprimer
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              {/* Card content */}
-              <CardHeader className="p-0 pb-4 w-full flex flex-col items-center">
-                <div className="mb-4 inline-flex h-[72px] w-[72px] items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
-                  <Building2 className="h-8 w-8" />
+                   {/* Nom & Badge */}
+                   <div className="flex flex-col gap-1 min-w-0">
+                      <h3 className="text-base font-bold text-white truncate group-hover:text-primary transition-colors">
+                          {company.name}
+                      </h3>
+                      {company.industry && (
+                        <Badge variant="secondary" className="w-fit text-[10px] bg-white/5 text-gray-400 hover:bg-white/10 border-none h-5 px-1.5 font-normal">
+                            {company.industry}
+                        </Badge>
+                      )}
+                   </div>
                 </div>
-                <CardTitle className="text-xl font-bold text-white">{company.name}</CardTitle>
-              </CardHeader>
 
-              <CardContent className="space-y-3 p-0 w-full flex flex-col items-center">
-                {company.industry && (
-                  <p className="font-medium text-primary flex items-center gap-2">
-                    <Briefcase className="h-3 w-3" />
-                    {company.industry}
-                  </p>
-                )}
-                {company.headquarters && (
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span className="truncate max-w-[200px]">{company.headquarters}</span>
-                  </div>
-                )}
-                {company.website && (
-                  <div className="pt-2 max-w-full">
-                    <Button
-                      variant="outline" size="sm"
-                      className="h-8 gap-2 border-white/10 bg-white/5 text-xs text-white hover:bg-white/10 hover:text-primary max-w-[200px]"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (company.website) window.open(company.website, '_blank', 'noopener,noreferrer');
-                      }}
-                    >
-                      <Globe className="h-3 w-3 shrink-0" />
-                      Visiter le site
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))
+                {/* ZONE 2 : INFO SECONDAIRES (Distribuées) */}
+                <div className="flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400">
+
+                    {/* Location (Visible si espace dispo) */}
+                    {company.headquarters ? (
+                        <div className="flex items-center gap-2 truncate sm:mx-auto">
+                            <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
+                            <span className="truncate max-w-[150px]">{company.headquarters}</span>
+                        </div>
+                    ) : (
+                        <div className="hidden sm:block sm:mx-auto" /> /* Spacer vide pour garder l'alignement */
+                    )}
+
+                    {/* Site Web (Bouton discret) */}
+                    {company.website && (
+                        <div
+                            className="hidden sm:flex items-center gap-1.5 text-xs text-blue-400/80 hover:text-blue-400 hover:underline px-2 py-1 rounded cursor-pointer z-10"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (company.website) window.open(company.website, '_blank', 'noopener,noreferrer');
+                            }}
+                        >
+                            <Globe className="h-3 w-3" />
+                            Visiter le site
+                        </div>
+                    )}
+                </div>
+
+                {/* ZONE 3 : ACTIONS (Fixé à droite) */}
+                <div className="absolute top-4 right-4 sm:static sm:pl-2">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost" size="icon"
+                                className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white/10"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-[#16181d] border-white/10 text-white z-50">
+                            <DropdownMenuItem
+                                className="cursor-pointer focus:bg-white/10 focus:text-white"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingCompany(company);
+                                }}
+                            >
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Modifier
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCompanyToDelete(company);
+                                }}
+                            >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Supprimer
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
@@ -203,10 +235,10 @@ export function CompaniesPage() {
 
       {/* --- EDIT DIALOG --- */}
       <Dialog open={!!editingCompany} onOpenChange={(open) => !open && setEditingCompany(null)}>
-        <DialogContent>
+        <DialogContent className="bg-[#13151a] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Modifier l'entreprise</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-400">
               Modifiez les informations de l'entreprise.
             </DialogDescription>
           </DialogHeader>
@@ -220,7 +252,7 @@ export function CompaniesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* --- DELETE CONFIRMATION ALERT --- */}
+      {/* --- DELETE ALERT --- */}
       <AlertDialog open={!!companyToDelete} onOpenChange={(open) => !open && setCompanyToDelete(null)}>
         <AlertDialogContent className="bg-[#16181d] border-white/10 text-white">
           <AlertDialogHeader>
