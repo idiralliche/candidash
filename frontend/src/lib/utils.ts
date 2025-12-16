@@ -44,3 +44,17 @@ export function getStatusBadgeVariant(status?: EventStatus) {
     default: return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
   }
 }
+
+/**
+ * Generic helper to find an entity by its ID in a list.
+ *
+ * @param entities -array of entities with an 'id' property
+ * @param id - ID to search for (number or string)
+ * @returns the found entity or undefined if not found
+ */
+export function findEntityById<T extends { id: number }>(entities: T[] | undefined, id: number | string | null | undefined): T | undefined {
+  if (!entities || !id) return undefined;
+  const numId = Number(id);
+  if (isNaN(numId)) return undefined;
+  return entities.find(item => item.id === numId);
+}
