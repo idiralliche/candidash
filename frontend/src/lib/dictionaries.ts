@@ -23,6 +23,22 @@ export const LABELS_REMOTE: Record<string, string> = {
   flexible: "Flexible",
 };
 
+export const LABELS_EVENT_STATUS: Record<string, string> = {
+  pending: "En attente",
+  confirmed: "Confirmé",
+  rescheduled: "Reporté",
+  cancelled: "Annulé",
+  completed: "Terminé",
+};
+
+export const LABELS_COMMUNICATION_METHOD: Record<string, string> = {
+  video: "Visio",
+  phone: "Téléphone",
+  in_person: "En personne",
+  email: "Email",
+  other: "Autre",
+};
+
 /**
  * Helper to safely get a label from a dictionary.
  * Returns the key itself if not found.
