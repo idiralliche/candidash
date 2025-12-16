@@ -70,6 +70,7 @@ from app.schemas.document_association import (
 from app.schemas.token import (
     Token,
     TokenData,
+    TokenPayload,
 )
 from app.schemas.user import (
     User,
@@ -126,6 +127,7 @@ __all__ = [
     "DocumentAssociationInDB",
     "Token",
     "TokenData",
+    "TokenPayload",
     "User",
     "UserCreate",
     "UserUpdate",
