@@ -18,6 +18,7 @@ import { accountRoute } from './routes/account';
 import { companiesRoute } from './routes/companies';
 import { opportunitiesRoute } from './routes/opportunities';
 import { scheduledEventsRoute } from './routes/scheduled-events';
+import { contactsRoute } from './routes/contacts';
 
 // Import Context Providers
 import { AuthProvider } from './context/auth-provider';
@@ -33,6 +34,7 @@ const routeTree = rootRoute.addChildren([
     companiesRoute,
     opportunitiesRoute,
     scheduledEventsRoute,
+    contactsRoute,
   ]),
 ]);
 
