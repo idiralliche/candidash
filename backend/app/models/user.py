@@ -35,6 +35,7 @@ class User(Base):
     actions = relationship("Action", back_populates="owner", cascade="all, delete-orphan")
     applications = relationship("Application", back_populates="owner", cascade="all, delete-orphan")
     products = relationship("Product", back_populates="owner", cascade="all, delete-orphan")
+    refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}')>"
