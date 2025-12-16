@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Plus, Briefcase, MapPin, Building2, MoreHorizontal, Trash2, Loader2, Pencil } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -58,6 +57,14 @@ export function OpportunitiesPage() {
     return companies.find(c => c.id === Number(id));
   };
 
+  // Tri par défaut (Alphabétique par titre)
+  const sortedOpportunities = useMemo(() => {
+    if (!opportunities) return [];
+    return [...opportunities].sort((a, b) =>
+      a.job_title.localeCompare(b.job_title)
+    );
+  }, [opportunities]);
+
   const handleDelete = () => {
     if (!opportunityToDelete) return;
     deleteOpportunity({ opportunityId: opportunityToDelete.id }, {
@@ -66,15 +73,15 @@ export function OpportunitiesPage() {
   };
 
   return (
-    <div className="space-y-8 pt-20">
+    <div className="space-y-6 pt-20 h-[calc(100vh-2rem)] flex flex-col">
       {/* HEADER */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-white">Opportunités</h1>
         <FormDialog
           title="Nouvelle Opportunité"
           description="Ajoutez une nouvelle opportunité à votre pipeline."
           trigger={
-            <Button size="icon" className="h-8 w-8 rounded-full bg-primary hover:bg-[#e84232] text-white">
+            <Button size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-[#e84232] text-white shadow-lg shadow-primary/20">
               <Plus className="h-5 w-5" />
             </Button>
           }
@@ -83,104 +90,131 @@ export function OpportunitiesPage() {
         </FormDialog>
       </div>
 
-      {/* GRID */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {/* CONTENT LIST */}
+      <div className="flex-1 min-h-0 pb-8">
         {isLoading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-             <div key={i} className="flex flex-col rounded-xl bg-[#16181d] p-8 shadow-lg">
-               <div className="mb-4 h-[72px] w-[72px] rounded-xl bg-white/5" />
-               <Skeleton className="mb-3 h-6 w-3/4 bg-white/10" />
-               <Skeleton className="h-4 w-1/2 bg-white/10" />
-             </div>
-          ))
-        ) : opportunities?.length === 0 ? (
-          <div className="col-span-full py-20 text-center text-muted-foreground">
-            Aucune opportunité trouvée. Commencez par en ajouter une !
+          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
+            {Array.from({ length: 6 }).map((_, i) => (
+               <div key={i} className="flex items-center gap-4 bg-[#16181d] border border-white/5 rounded-xl p-4">
+                  {/* Icône Carrée */}
+                  <Skeleton className="h-10 w-10 rounded-lg bg-white/10 shrink-0" />
+
+                  {/* Titre + Entreprise */}
+                  <div className="flex flex-col gap-2 flex-1 min-w-0">
+                     <Skeleton className="h-5 w-56 bg-white/10" />
+                     <Skeleton className="h-3 w-40 bg-white/5" />
+                  </div>
+
+                  {/* Badge + Location (Droite) */}
+                  <div className="flex items-center gap-6 pl-4">
+                     <Skeleton className="h-6 w-24 rounded-full bg-white/5 hidden sm:block" />
+                     <Skeleton className="h-8 w-8 rounded-full bg-white/5" />
+                  </div>
+               </div>
+            ))}
+          </div>
+        ) : sortedOpportunities.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
+            <Briefcase className="h-12 w-12 opacity-20" />
+            <p>Aucune opportunité trouvée. Commencez par en ajouter une !</p>
           </div>
         ) : (
-          opportunities?.map((opportunity) => {
-            const company = getCompany(opportunity.company_id);
+          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
+            {sortedOpportunities.map((opportunity) => {
+              const company = getCompany(opportunity.company_id);
 
-            return (
-              <Card
-                key={opportunity.id}
-                onClick={() => setSelectedOpportunity(opportunity)}
-                className="relative flex flex-col items-center border-none bg-[#16181d] p-6 text-center shadow-lg transition-all hover:-translate-y-1 hover:bg-[#1c1f26] cursor-pointer group"
-              >
-                {/* --- ACTION MENU (TOP RIGHT) --- */}
-                <div className="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-white/10"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-[#16181d] border-white/10 text-white">
+              return (
+                <div
+                  key={opportunity.id}
+                  onClick={() => setSelectedOpportunity(opportunity)}
+                  className="
+                    group relative flex flex-col sm:flex-row sm:items-center
+                    bg-[#16181d] border border-white/5 rounded-xl p-4 gap-4
+                    transition-all duration-200
+                    hover:bg-[#1c1f26] hover:border-primary/30 hover:shadow-md hover:-translate-y-[1px]
+                    cursor-pointer
+                  "
+                >
+                  {/* ZONE 1 : IDENTITÉ (Gauche) */}
+                  <div className="flex items-center gap-4 min-w-0 sm:w-[45%]">
+                     {/* Petit Carré Icône (Émeraude) */}
+                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500/20 transition-colors">
+                        <Briefcase className="h-5 w-5" />
+                     </div>
 
-                      {/* OPTION MODIFIER */}
-                      <DropdownMenuItem
-                        className="cursor-pointer focus:bg-white/10 focus:text-white"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingOpportunity(opportunity);
-                        }}
-                      >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Modifier
-                      </DropdownMenuItem>
+                     {/* Titre & Entreprise */}
+                     <div className="flex flex-col gap-1 min-w-0">
+                        <h3 className="text-base font-bold text-white truncate group-hover:text-primary transition-colors">
+                            {opportunity.job_title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-xs text-gray-400">
+                           <Building2 className="h-3 w-3" />
+                           <span className="truncate">{company?.name || 'Entreprise inconnue'}</span>
+                        </div>
+                     </div>
+                  </div>
 
-                      {/* OPTION SUPPRIMER */}
-                      <DropdownMenuItem
-                        className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpportunityToDelete(opportunity);
-                        }}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Supprimer
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {/* ZONE 2 : INFO (Distribuées) */}
+                  <div className="flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400">
+
+                      {/* Badge Type de candidature */}
+                      <Badge variant="secondary" className="bg-white/5 text-gray-400 hover:bg-white/10 border-none font-normal shrink-0">
+                         {LABELS_APPLICATION[opportunity.application_type] || opportunity.application_type}
+                      </Badge>
+
+                      {/* Location */}
+                      {opportunity.location ? (
+                          <div className="flex items-center gap-2 truncate text-xs sm:mx-auto">
+                              <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
+                              <span className="truncate max-w-[150px]">{opportunity.location}</span>
+                          </div>
+                      ) : (
+                          <div className="hidden sm:block sm:mx-auto" />
+                      )}
+                  </div>
+
+                  {/* ZONE 3 : ACTIONS (Droite) */}
+                  <div className="absolute top-4 right-4 sm:static sm:pl-2">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white/10"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-[#16181d] border-white/10 text-white">
+                          <DropdownMenuItem
+                            className="cursor-pointer focus:bg-white/10 focus:text-white"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingOpportunity(opportunity);
+                            }}
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Modifier
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpportunityToDelete(opportunity);
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Supprimer
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                  </div>
                 </div>
-
-                {/* --- CARD CONTENT --- */}
-                <CardHeader className="p-0 pb-4 w-full flex flex-col items-center">
-                  <div className="mb-4 inline-flex h-[72px] w-[72px] items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
-                    <Briefcase className="h-8 w-8" />
-                  </div>
-                  <CardTitle className="text-xl font-bold text-white">
-                    {opportunity.job_title}
-                  </CardTitle>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
-                     <Building2 className="h-4 w-4" />
-                     <span className="truncate max-w-[200px]">
-                       {company?.name || 'Entreprise inconnue'}
-                     </span>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-3 p-0 w-full">
-                  <div className="flex justify-center pb-2">
-                    <Badge variant="secondary" className="bg-white/5 hover:bg-white/10 text-white">
-                      {LABELS_APPLICATION[opportunity.application_type] || opportunity.application_type}
-                    </Badge>
-                  </div>
-                  {opportunity.location && (
-                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4" />
-                      <span className="truncate max-w-[200px]">{opportunity.location}</span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })
+              );
+            })}
+          </div>
         )}
       </div>
 
@@ -206,10 +240,10 @@ export function OpportunitiesPage() {
 
       {/* --- EDIT DIALOG --- */}
       <Dialog open={!!editingOpportunity} onOpenChange={(open) => !open && setEditingOpportunity(null)}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col bg-[#13151a] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Modifier l'opportunité</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-400">
               Mettez à jour les informations du poste.
             </DialogDescription>
           </DialogHeader>

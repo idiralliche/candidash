@@ -149,27 +149,22 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
       // Required
       job_title: values.job_title,
       application_type: values.application_type,
-
       // Optional
       company_id: companyId,
-      position_type: values.position_type || undefined,
-      source: values.source || undefined,
-      contract_type: values.contract_type || undefined,
-      location: values.location || undefined,
-
-      remote_policy: values.remote_policy || undefined,
-      remote_details: values.remote_details || undefined,
-
+      position_type: values.position_type || null,
+      source: values.source || null,
+      contract_type: values.contract_type || null,
+      location: values.location || null,
+      remote_policy: values.remote_policy || null,
+      remote_details: values.remote_details || null,
       salary_min: salaryMin,
       salary_max: salaryMax,
-      salary_info: values.salary_info || undefined,
-
-      required_skills: values.required_skills || undefined,
-      technologies: values.technologies || undefined,
-
-      job_posting_url: values.job_posting_url || undefined,
-      job_description: values.job_description || undefined,
-      recruitment_process: values.recruitment_process || undefined,
+      salary_info: values.salary_info || null,
+      required_skills: values.required_skills || null,
+      technologies: values.technologies || null,
+      job_posting_url: values.job_posting_url || null,
+      job_description: values.job_description || null,
+      recruitment_process: values.recruitment_process || null,
     };
 
     const options = {
