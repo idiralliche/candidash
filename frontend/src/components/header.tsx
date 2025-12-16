@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Menu, X, User, LayoutDashboard, LogOut, Building2, Briefcase } from 'lucide-react'; // Added Icons
+import { Menu, X, User, LayoutDashboard, LogOut, Building2, Briefcase, CalendarClock } from 'lucide-react'; // Added Icons
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useUserProfile } from '@/hooks/use-user-profile';
@@ -47,6 +47,10 @@ export function Header() {
              <Link to="/opportunities" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
                <Briefcase className="h-4 w-4" />
                Opportunités
+             </Link>
+             <Link to="/scheduled-events" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
+               <CalendarClock className="h-4 w-4" />
+               Agenda
              </Link>
           </nav>
         )}
@@ -134,6 +138,15 @@ export function Header() {
                   >
                     <Briefcase size={18} />
                     Opportunités
+                  </Link>
+
+                  <Link
+                    to="/scheduled-events"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <CalendarClock size={18} />
+                    Agenda
                   </Link>
 
                   <Link
