@@ -28,7 +28,16 @@ class Settings(BaseSettings):
     # Security
     SECRET_KEY: str = ""
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 5
+
+    # JWT Refresh Token & Cookies
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24
+    REFRESH_TOKEN_COOKIE_NAME: str = "refreshToken"
+    REFRESH_TOKEN_COOKIE_PATH: str = "/api/v1/auth/refresh"
+    REFRESH_TOKEN_COOKIE_SECURE: bool = True
+    REFRESH_TOKEN_COOKIE_HTTPONLY: bool = True
+    REFRESH_TOKEN_COOKIE_SAMESITE: str = "lax"
+    ROTATE_REFRESH_TOKENS: bool = True
 
     # Database
     DATABASE_URL: str
@@ -108,6 +117,7 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
         "http://localhost:5173",
+        "http://localhost:8080",
     ]
 
     def __init__(self, **kwargs):
