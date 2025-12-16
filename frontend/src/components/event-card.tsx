@@ -42,12 +42,9 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
       onClick={() => onClick(event)}
       className="group relative flex flex-col border-none bg-[#16181d] transition-all hover:-translate-y-1 hover:bg-[#1c1f26] cursor-pointer shadow-lg overflow-hidden"
     >
-      {/* Bandeau de couleur latérale selon le statut (optionnel, pour le style) */}
-      <div className={`absolute left-0 top-0 bottom-0 w-1 ${getStatusBadgeVariant(event.status).replace('bg-', 'bg-').split(' ')[0]}`} />
-
       <CardContent className="p-4 pl-6 space-y-4">
 
-        {/* HEADER: Date + Menu (Flexbox pour éviter superposition) */}
+        {/* HEADER: Date + Menu */}
         <div className="flex items-start justify-between">
           {/* Date Box */}
           <div className="flex items-center gap-3">

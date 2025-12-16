@@ -49,7 +49,7 @@ export function EventDetails({ event, onClose, onEdit }: EventDetailsProps) {
   const dateStr = format(eventDate, "EEEE d MMMM yyyy", { locale: fr });
   const timeStr = format(eventDate, "HH:mm");
 
-  // Helper pour l'icône de méthode
+  // Helper for communication method icon
   const MethodIcon = (() => {
     switch (event.communication_method) {
       case 'video': return Video;

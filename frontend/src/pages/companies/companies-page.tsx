@@ -48,7 +48,6 @@ export function CompaniesPage() {
   const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
-  // Tri alphabétique
   const sortedCompanies = useMemo(() => {
     if (!companies) return [];
     return [...companies].sort((a, b) =>
@@ -87,16 +86,16 @@ export function CompaniesPage() {
           <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
             {Array.from({ length: 6 }).map((_, i) => (
                <div key={i} className="flex items-center gap-4 bg-[#16181d] border border-white/5 rounded-xl p-4">
-                  {/* Icône Carrée */}
+                  {/* Square Icon */}
                   <Skeleton className="h-10 w-10 rounded-lg bg-white/10 shrink-0" />
 
-                  {/* Infos Texte */}
+                  {/* Infos Text */}
                   <div className="flex flex-col gap-2 flex-1 min-w-0">
                      <Skeleton className="h-5 w-48 bg-white/10" />
                      <Skeleton className="h-3 w-32 bg-white/5 hidden sm:block" />
                   </div>
 
-                  {/* Boutons Actions */}
+                  {/* Actions Button */}
                   <div className="flex items-center gap-3 pl-4">
                      <Skeleton className="h-8 w-24 bg-white/5 rounded hidden sm:block" /> {/* Website btn */}
                      <Skeleton className="h-8 w-8 rounded-full bg-white/5" /> {/* Menu btn */}
@@ -123,14 +122,14 @@ export function CompaniesPage() {
                   cursor-pointer
                 "
               >
-                {/* ZONE 1 : IDENTITÉ (Gauche) */}
+                {/* ZONE 1 : IDENTITY (Left) */}
                 <div className="flex items-center gap-4 min-w-0 sm:w-[40%]">
-                   {/* Petit Carré Icône */}
+                   {/* Little square icon */}
                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20 transition-colors">
                       <Building2 className="h-5 w-5" />
                    </div>
 
-                   {/* Nom & Badge */}
+                   {/* Name & Badge */}
                    <div className="flex flex-col gap-1 min-w-0">
                       <h3 className="text-base font-bold text-white truncate group-hover:text-primary transition-colors">
                           {company.name}
@@ -143,20 +142,20 @@ export function CompaniesPage() {
                    </div>
                 </div>
 
-                {/* ZONE 2 : INFO SECONDAIRES (Distribuées) */}
+                {/* ZONE 2 : SECONDARY INFO (Center) */}
                 <div className="flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400">
 
-                    {/* Location (Visible si espace dispo) */}
+                    {/* Location (Visible if enough space) */}
                     {company.headquarters ? (
                         <div className="flex items-center gap-2 truncate sm:mx-auto">
                             <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
                             <span className="truncate max-w-[150px]">{company.headquarters}</span>
                         </div>
                     ) : (
-                        <div className="hidden sm:block sm:mx-auto" /> /* Spacer vide pour garder l'alignement */
+                        <div className="hidden sm:block sm:mx-auto" /> /* Empty placeholder to keep spacing consistent */
                     )}
 
-                    {/* Site Web (Bouton discret) */}
+                    {/* Website (discrete link) */}
                     {company.website && (
                         <div
                             className="hidden sm:flex items-center gap-1.5 text-xs text-blue-400/80 hover:text-blue-400 hover:underline px-2 py-1 rounded cursor-pointer z-10"
@@ -171,7 +170,7 @@ export function CompaniesPage() {
                     )}
                 </div>
 
-                {/* ZONE 3 : ACTIONS (Fixé à droite) */}
+                {/* ZONE 3 : ACTIONS (Fixed Right) */}
                 <div className="absolute top-4 right-4 sm:static sm:pl-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

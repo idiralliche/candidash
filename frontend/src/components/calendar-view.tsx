@@ -19,18 +19,18 @@ import { getLabel, LABELS_EVENT_STATUS } from '@/lib/dictionaries';
 interface CalendarViewProps {
   events: ScheduledEvent[];
   onSelectEvent: (event: ScheduledEvent) => void;
-  onAddEvent: (date: Date) => void; // 👈 Nouvelle prop pour le bouton "+"
+  onAddEvent: (date: Date) => void;
 }
 
 export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarViewProps) {
   const [startDate, setStartDate] = useState(startOfDay(new Date()));
   const [expandedDate, setExpandedDate] = useState<Date>(startOfDay(new Date()));
 
-  // Générer les 7 jours affichés
+  // Generate the 7 days to show in the current week view
   const daysToShow = Array.from({ length: 7 }).map((_, i) => addDays(startDate, i));
   const lastDayShown = daysToShow[daysToShow.length - 1];
 
-  // Calculer les événements futurs (au-delà de la vue actuelle)
+  // Calculate upcoming events count after the last day shown
   const upcomingEventsCount = events.filter(e => new Date(e.scheduled_date) > endOfDay(lastDayShown)).length;
 
   const nextWeek = () => setStartDate(addWeeks(startDate, 1));
@@ -52,7 +52,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
             {format(startDate, 'MMMM yyyy', { locale: fr })}
           </h2>
 
-          {/* Bouton Aujourd'hui */}
+          {/* "Today" Button */}
           <Button
             variant="outline"
             size="sm"
@@ -79,14 +79,14 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
         </div>
       </div>
 
-      {/* --- 2. LISTE DES JOURS --- */ }
+      {/* --- 2. DAYS LIST --- */}
       <ScrollArea className="flex-1 bg-[#16181d]">
         <div className="p-4 space-y-3">
           {daysToShow.map((day) => {
             const isExpanded = isSameDay(day, expandedDate);
             const isDayToday = isToday(day);
 
-            // Filtrer et trier les événements du jour
+            // Filter and sort events for the current day
             const dayEvents = events.filter(e => isSameDay(new Date(e.scheduled_date), day))
                                     .sort((a, b) => new Date(a.scheduled_date).getTime() - new Date(b.scheduled_date).getTime());
 
@@ -102,10 +102,10 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                   }
                 `}
               >
-                {/* --- ÉTAT DÉPLIÉ (ACTIVE) --- */}
+                {/* --- EXPANDED STATE --- */}
                 {isExpanded ? (
                   <div className="animate-in fade-in zoom-in-95 duration-200">
-                    {/* Header du jour actif */}
+                    {/* Current Day Header */}
                     <div className="bg-blue-500/10 border-b border-blue-500/20 p-3 flex justify-between items-center">
                       <div className="flex items-baseline gap-2">
                         <span className="text-lg font-bold text-blue-400 capitalize">
@@ -118,7 +118,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                         <span className="text-xs text-blue-400/70 font-medium">
                           {dayEvents.length} rdv
                         </span>
-                        {/* Bouton Ajouter (+) */}
+                        {/* Add Button (+) */}
                         <Button
                           size="icon"
                           className="h-6 w-6 rounded-full bg-blue-500 hover:bg-blue-400 text-white"
@@ -147,17 +147,17 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                       ) : (
                         dayEvents.map((event, idx) => (
                           <div key={event.id} className="relative flex gap-4 group">
-                            {/* Ligne verticale */}
+                            {/* Vertical Line */}
                             {idx !== dayEvents.length - 1 && (
                               <div className="absolute left-[54px] top-8 bottom-[-20px] w-[2px] bg-white/5 group-hover:bg-white/10 transition-colors" />
                             )}
 
-                            {/* Heure */}
+                            {/* Hour */}
                             <div className="w-12 pt-1 text-right text-xs font-mono text-gray-400 shrink-0">
                               {format(new Date(event.scheduled_date), 'HH:mm')}
                             </div>
 
-                            {/* Carte */}
+                            {/* Card */}
                             <div className="flex-1 pb-6">
                               <div
                                 onClick={(e) => { e.stopPropagation(); onSelectEvent(event); }}
@@ -193,7 +193,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                     </div>
                   </div>
                 ) : (
-                  /* --- ÉTAT COMPACT --- */
+                  /* --- COLLAPSED STATE --- */
                   <div className="flex items-center p-3 gap-4 h-[72px]">
                     <div className="flex flex-col items-center justify-center min-w-[50px] border-r border-white/5 pr-4 py-1">
                       <span className={`text-xl font-bold leading-none ${isDayToday ? 'text-blue-400' : 'text-white'}`}>

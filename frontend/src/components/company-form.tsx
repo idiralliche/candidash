@@ -117,13 +117,13 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
     };
 
     if (isEditing && initialData) {
-      // MODE UPDATE
+      // UPDATE MODE
       updateCompany({
         companyId: initialData.id,
         data: payload
       }, options);
     } else {
-      // MODE CREATE
+      // CREATE MODE
       createCompany({
         data: payload
       }, options);

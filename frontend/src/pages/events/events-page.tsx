@@ -29,7 +29,7 @@ export function EventsPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [createDate, setCreateDate] = useState<Date | undefined>(undefined);
 
-  // Tri chronologique des événements
+  // Chronological sorting for list view
   const sortedEvents = useMemo(() => {
     if (!events) return [];
     return [...events].sort((a, b) =>
@@ -83,7 +83,7 @@ export function EventsPage() {
       <div className="flex-1 min-h-0">
         {isLoading ? (
           viewMode === "calendar" ? (
-             /* SKELETON CALENDRIER */
+             /* CALENDAR SKELETON */
             <div className="max-w-2xl mx-auto w-full bg-[#16181d] rounded-xl border border-white/10 h-[600px] p-4 space-y-4">
                <div className="flex justify-between items-center mb-6">
                  <Skeleton className="h-8 w-48 bg-white/10" />
@@ -96,7 +96,7 @@ export function EventsPage() {
                </div>
             </div>
           ) : (
-            /* SKELETON LISTE VERTICALE */
+            /* VERTICAL LIST SKELETON */
             <div className="flex flex-col gap-4 max-w-4xl mx-auto w-full">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="flex flex-col gap-3 rounded-xl bg-[#16181d] p-4 border border-white/5">
@@ -116,7 +116,7 @@ export function EventsPage() {
           )
         ) : (
           <>
-            {/* VUE CALENDRIER */}
+            {/* CALENDAR VIEW */}
             {viewMode === "calendar" && (
               <CalendarView
                 events={events || []}
@@ -125,7 +125,7 @@ export function EventsPage() {
               />
             )}
 
-            {/* VUE LISTE */}
+            {/* LIST VIEW */}
             {viewMode === "list" && (
                sortedEvents.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-muted-foreground">

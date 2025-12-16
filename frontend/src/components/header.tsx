@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Menu, X, User, LayoutDashboard, LogOut, Building2, Briefcase, CalendarClock } from 'lucide-react'; // Added Icons
+import { Menu, X, User, LayoutDashboard, LogOut, Building2, Briefcase, CalendarClock } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useUserProfile } from '@/hooks/use-user-profile';

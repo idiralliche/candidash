@@ -85,7 +85,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
     },
   });
 
-  // Reset effect if data changes externally
   useEffect(() => {
     if (initialData) {
       form.reset({

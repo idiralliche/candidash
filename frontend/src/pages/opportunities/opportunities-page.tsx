@@ -57,7 +57,7 @@ export function OpportunitiesPage() {
     return companies.find(c => c.id === Number(id));
   };
 
-  // Tri par défaut (Alphabétique par titre)
+  // Alphabetical sorting for list view (Default)
   const sortedOpportunities = useMemo(() => {
     if (!opportunities) return [];
     return [...opportunities].sort((a, b) =>
@@ -96,16 +96,16 @@ export function OpportunitiesPage() {
           <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
             {Array.from({ length: 6 }).map((_, i) => (
                <div key={i} className="flex items-center gap-4 bg-[#16181d] border border-white/5 rounded-xl p-4">
-                  {/* Icône Carrée */}
+                  {/* Square Icon */}
                   <Skeleton className="h-10 w-10 rounded-lg bg-white/10 shrink-0" />
 
-                  {/* Titre + Entreprise */}
+                  {/* Title + Company */}
                   <div className="flex flex-col gap-2 flex-1 min-w-0">
                      <Skeleton className="h-5 w-56 bg-white/10" />
                      <Skeleton className="h-3 w-40 bg-white/5" />
                   </div>
 
-                  {/* Badge + Location (Droite) */}
+                  {/* Badge + Location (Right) */}
                   <div className="flex items-center gap-6 pl-4">
                      <Skeleton className="h-6 w-24 rounded-full bg-white/5 hidden sm:block" />
                      <Skeleton className="h-8 w-8 rounded-full bg-white/5" />
@@ -135,14 +135,14 @@ export function OpportunitiesPage() {
                     cursor-pointer
                   "
                 >
-                  {/* ZONE 1 : IDENTITÉ (Gauche) */}
+                  {/* ZONE 1 : IDENTITY (Left) */}
                   <div className="flex items-center gap-4 min-w-0 sm:w-[45%]">
-                     {/* Petit Carré Icône (Émeraude) */}
+                     {/* Little square icon */}
                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500/20 transition-colors">
                         <Briefcase className="h-5 w-5" />
                      </div>
 
-                     {/* Titre & Entreprise */}
+                     {/* Title & Company */}
                      <div className="flex flex-col gap-1 min-w-0">
                         <h3 className="text-base font-bold text-white truncate group-hover:text-primary transition-colors">
                             {opportunity.job_title}
@@ -154,10 +154,10 @@ export function OpportunitiesPage() {
                      </div>
                   </div>
 
-                  {/* ZONE 2 : INFO (Distribuées) */}
+                  {/* ZONE 2 : INFO (Center) */}
                   <div className="flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400">
 
-                      {/* Badge Type de candidature */}
+                      {/* Badge Application Type */}
                       <Badge variant="secondary" className="bg-white/5 text-gray-400 hover:bg-white/10 border-none font-normal shrink-0">
                          {LABELS_APPLICATION[opportunity.application_type] || opportunity.application_type}
                       </Badge>
@@ -173,7 +173,7 @@ export function OpportunitiesPage() {
                       )}
                   </div>
 
-                  {/* ZONE 3 : ACTIONS (Droite) */}
+                  {/* ZONE 3 : ACTIONS (Right) */}
                   <div className="absolute top-4 right-4 sm:static sm:pl-2">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
