@@ -11,10 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { EventForm } from '@/components/event-form';
-import { EventDetails } from '@/components/event-details';
-import { EventCard } from '@/components/event-card';
-import { CalendarView } from '@/components/calendar-view';
+import { EventForm } from '@/components/events/event-form';
+import { EventDetails } from '@/components/events/event-details';
+import { EventCard } from '@/components/events/event-card';
+import { CalendarView } from '@/components/companies/calendar-view';
 
 export function EventsPage() {
   const { events, isLoading } = useScheduledEvents();

@@ -36,8 +36,8 @@ import {
 import { useCompanies } from '@/hooks/use-companies';
 import { useDeleteCompany } from '@/hooks/use-delete-company';
 import { FormDialog } from '@/components/form-dialog';
-import { CompanyForm } from '@/components/company-form';
-import { CompanyDetails } from '@/components/company-details';
+import { CompanyForm } from '@/components/companies/company-form';
+import { CompanyDetails } from '@/components/companies/company-details';
 import { Company } from '@/api/model';
 
 export function CompaniesPage() {

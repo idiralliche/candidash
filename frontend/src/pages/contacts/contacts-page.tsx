@@ -33,9 +33,9 @@ import { useDeleteContact } from '@/hooks/use-delete-contact';
 import { Contact } from '@/api/model';
 
 import { FormDialog } from '@/components/form-dialog';
-import { ContactForm } from '@/components/contact-form';
-import { ContactCard } from '@/components/contact-card';
-import { ContactDetails } from '@/components/contact-details';
+import { ContactForm } from '@/components/contacts/contact-form';
+import { ContactCard } from '@/components/contacts/contact-card';
+import { ContactDetails } from '@/components/contacts/contact-details';
 
 export function ContactsPage() {
   const [search, setSearch] = useState('');

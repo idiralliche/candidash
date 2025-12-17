@@ -39,8 +39,8 @@ import { useCompanies } from '@/hooks/use-companies';
 import { LABELS_APPLICATION } from '@/lib/dictionaries';
 
 import { FormDialog } from '@/components/form-dialog';
-import { OpportunityForm } from '@/components/opportunity-form';
-import { OpportunityDetails } from '@/components/opportunity-details';
+import { OpportunityForm } from '@/components/opportunities/opportunity-form';
+import { OpportunityDetails } from '@/components/opportunities/opportunity-details';
 import { Opportunity } from '@/api/model';
 
 export function OpportunitiesPage() {
