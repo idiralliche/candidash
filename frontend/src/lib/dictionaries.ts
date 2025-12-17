@@ -39,6 +39,44 @@ export const LABELS_COMMUNICATION_METHOD: Record<string, string> = {
   other: "Autre",
 };
 
+export const LABELS_DOCUMENT_FORMAT: Record<string, string> = {
+  // Documents
+  pdf: 'PDF',
+  doc: 'Word (DOC)',
+  docx: 'Word (DOCX)',
+  rtf: 'RTF',
+  txt: 'Texte',
+  md: 'Markdown',
+
+  // Presentations
+  ppt: 'PowerPoint (PPT)',
+  pptx: 'PowerPoint (PPTX)',
+  odp: 'OpenDocument Pres.',
+
+  // Spreadsheets
+  xls: 'Excel (XLS)',
+  xlsx: 'Excel (XLSX)',
+  ods: 'OpenDocument Sheet',
+  csv: 'CSV',
+  tsv: 'TSV',
+
+  // LibreOffice
+  odt: 'OpenDocument Text',
+
+  // Images
+  jpg: 'Image (JPG)',
+  jpeg: 'Image (JPEG)',
+  png: 'Image (PNG)',
+  gif: 'Image (GIF)',
+  webp: 'Image (WEBP)',
+
+  // Data
+  json: 'JSON',
+
+  // External
+  external: 'Lien Externe',
+};
+
 /**
  * Helper to safely get a label from a dictionary.
  * Returns the key itself if not found.
