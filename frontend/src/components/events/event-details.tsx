@@ -25,7 +25,7 @@ import {
 import { ScheduledEvent } from '@/api/model';
 import { useDeleteScheduledEvent } from '@/hooks/use-delete-scheduled-event';
 import { LABELS_EVENT_STATUS, LABELS_COMMUNICATION_METHOD, getLabel } from '@/lib/dictionaries';
-import { getStatusBadgeVariant } from '@/lib/utils';
+import { getStatusBadgeVariant } from '@/lib/assign-colors';
 
 interface EventDetailsProps {
   event: ScheduledEvent;

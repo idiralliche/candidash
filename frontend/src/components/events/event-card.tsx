@@ -16,7 +16,7 @@ import {
 
 import { ScheduledEvent } from '@/api/model';
 import { LABELS_EVENT_STATUS, getLabel } from '@/lib/dictionaries';
-import { getStatusBadgeVariant } from '@/lib/utils';
+import { getStatusBadgeVariant } from '@/lib/assign-colors';
 
 interface EventCardProps {
   event: ScheduledEvent;

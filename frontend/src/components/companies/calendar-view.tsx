@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ScheduledEvent } from '@/api/model';
-import { getStatusBadgeVariant } from '@/lib/utils';
+import { getStatusBadgeVariant } from '@/lib/assign-colors';
 import { getLabel, LABELS_EVENT_STATUS } from '@/lib/dictionaries';
 
 interface CalendarViewProps {
