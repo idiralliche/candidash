@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm, UseFormReturn, FieldValues, Path } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, UploadCloud, Link as LinkIcon, Save, Info } from 'lucide-react';
+import { useDropzone } from 'react-dropzone';
+import { Loader2, UploadCloud, Link as LinkIcon, Save, Info, File, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DialogFooter } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { formatBytes } from '@/lib/utils';
 
 import { useCreateDocument } from '@/hooks/use-create-document';
 import { useUpdateDocument } from '@/hooks/use-update-document';
@@ -26,32 +29,28 @@ import { Document } from '@/api/model';
 
 // --- Zod Schemas ---
 
-// Common fields
 const baseSchemaObj = {
   name: z.string().min(1, 'Le nom est requis').max(255),
   type: z.string().min(1, 'Le type est requis'),
   description: z.string().max(5000).optional(),
 };
 
-// 1. Upload (Creation or Migration Ext -> Local) : File required
 const uploadSchema = z.object({
   ...baseSchemaObj,
   file: z.instanceof(FileList).refine((files) => files.length > 0, 'Un fichier est requis'),
 });
 
-// 2. Metadata Only (Update Local -> Local) : No file
 const metadataSchema = z.object({
   ...baseSchemaObj,
 });
 
-// 3. External (Creation or Migration Local -> Ext or Update Ext) : URL required
 const externalSchema = z.object({
   ...baseSchemaObj,
   path: z.string().url('URL invalide (doit commencer par http/https)'),
 });
 
 type UploadFormValues = z.infer<typeof uploadSchema>;
-type MetadataFormValues = z.infer<typeof metadataSchema>; // For local edit
+type MetadataFormValues = z.infer<typeof metadataSchema>;
 type ExternalFormValues = z.infer<typeof externalSchema>;
 
 interface DocumentFormProps {
@@ -63,12 +62,10 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
   const isEditing = !!initialData;
   const isExternalOrigin = initialData?.is_external ?? false;
 
-  // Initial Tab State
   const [tab, setTab] = useState<'upload' | 'external'>(
     isEditing && isExternalOrigin ? 'external' : 'upload'
   );
 
-  // Hooks
   const { createExternal, uploadFile, isPending: isCreating } = useCreateDocument();
   const { mutateAsync: updateDocument, isPending: isUpdating } = useUpdateDocument();
   const { replaceFile, isPending: isReplacing } = useReplaceDocumentFile();
@@ -77,9 +74,6 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
 
   // --- FORMS SETUP ---
 
-  // Determine which schema to use for the "Upload" tab
-  // If editing a local file, we don't ask for a file (Metadata only).
-  // If creating new OR migrating from external, we need a file.
   const isLocalEdit = isEditing && !isExternalOrigin;
   const currentUploadSchema = isLocalEdit ? metadataSchema : uploadSchema;
 
@@ -96,55 +90,63 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
   // --- POPULATE DATA ---
   useEffect(() => {
     if (initialData) {
-      // Populate Upload Form (Metadata)
       uploadForm.reset({
         name: initialData.name,
         type: initialData.type,
         description: initialData.description || '',
       });
 
-      // Populate External Form
       externalForm.reset({
         name: initialData.name,
         type: initialData.type,
         description: initialData.description || '',
-        path: initialData.is_external ? initialData.path : '', // Pre-fill path only if currently external
+        path: initialData.is_external ? initialData.path : '',
       });
     }
   }, [initialData, uploadForm, externalForm]);
 
   // --- HANDLERS ---
 
-  // 1. HANDLE UPLOAD TAB SUBMIT
   const onUploadSubmit = async (values: UploadFormValues | MetadataFormValues) => {
     try {
       if (isEditing) {
         if (isExternalOrigin) {
-          // Case: EXTERNAL -> LOCAL (Migration)
-          // We must use the replace-file endpoint with the binary
-          // Cast values to UploadFormValues because schema guarantees file presence here
+          // --- COMPLEX SCENARIO: EXTERNAL MIGRATION -> LOCAL ---
+
+          // Step 1: File Replacement (Critical)
           const file = (values as UploadFormValues).file[0];
           await replaceFile.mutateAsync({
              documentId: initialData.id,
-             data: { file: file } // Note: replace endpoint doesn't update metadata simultaneously in backend usually, but we keep it simple
+             data: { file: file }
           });
-          // Optimisation: If replaceFile doesn't update metadata (name/type), we might need a second call to updateDocument
-          // But usually replace-file keeps existing metadata. Let's assume metadata update is separate or not needed immediately for migration.
-          // If we want to update metadata too, we would chain updateDocument here.
+
+          // Step 2: Metadata Update (Secondary)
+          try {
+            await updateDocument({
+                documentId: initialData.id,
+                data: {
+                  name: values.name,
+                  type: values.type,
+                  description: values.description || null,
+                }
+            });
+          } catch (metaError) {
+            console.error("Erreur mise à jour metadata après upload", metaError);
+            toast.warning("Fichier converti, mais les infos (nom/desc) n'ont pas pu être mises à jour.");
+          }
         } else {
-          // Case: LOCAL -> LOCAL (Update Metadata only)
+          // --- SIMPLE SCENARIO: LOCAL -> LOCAL (Update Metadata) ---
           await updateDocument({
             documentId: initialData.id,
             data: {
               name: values.name,
               type: values.type,
               description: values.description || null,
-              // No file sent, no is_external change
             }
           });
         }
       } else {
-        // Case: CREATE NEW LOCAL
+        // --- SIMPLE SCENARIO: LOCAL CREATION ---
         const file = (values as UploadFormValues).file[0];
         await uploadFile.mutateAsync({
           data: {
@@ -161,26 +163,20 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
     }
   };
 
-  // 2. HANDLE EXTERNAL TAB SUBMIT
   const onExternalSubmit = async (values: ExternalFormValues) => {
     try {
       if (isEditing) {
-        // Case: EXTERNAL -> EXTERNAL (Update)
-        // OR
-        // Case: LOCAL -> EXTERNAL (Migration)
         await updateDocument({
           documentId: initialData.id,
           data: {
             name: values.name,
             type: values.type,
             description: values.description || null,
-            // Migration magic happens here:
             is_external: true,
             path: values.path
           }
         });
       } else {
-        // Case: CREATE NEW EXTERNAL
         await createExternal.mutateAsync({
           data: {
             name: values.name,
@@ -215,42 +211,28 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
         <Form {...uploadForm}>
           <form onSubmit={uploadForm.handleSubmit(onUploadSubmit)} className="space-y-4">
 
-            {/* FILE INPUT Logic */}
+            {/* DROPZONE AREA */}
             {!isLocalEdit ? (
-               // Show File Input for Create OR External->Local Migration
                <FormField
                control={uploadForm.control}
-               name="file" // This name must match key in uploadSchema
+               name="file"
                render={({ field }) => (
                  <FormItem>
                    <FormLabel className="text-white">
                       {isEditing ? "Nouveau fichier (Remplacement) *" : "Fichier *"}
                    </FormLabel>
                    <FormControl>
-                     <Input
-                       type="file"
-                       className="cursor-pointer file:text-foreground bg-black/20 border-white/10 text-white"
-                       // Ref handling for react-hook-form with file input
-                       ref={field.ref}
-                       name={field.name}
-                       onBlur={field.onBlur}
-                       disabled={field.disabled}
-                       onChange={(event) => {
-                         field.onChange(event.target.files);
-                       }}
+                     <FileUploader
+                        value={field.value}
+                        onChange={field.onChange}
+                        isEditing={isEditing}
                      />
                    </FormControl>
-                   {isEditing && (
-                      <p className="text-xs text-yellow-400">
-                        Attention : Convertira ce lien externe en fichier stocké localement.
-                      </p>
-                   )}
                    <FormMessage />
                  </FormItem>
                )}
              />
             ) : (
-              // Hide File Input for Local->Local Edit
               <Alert className="bg-blue-500/10 border-blue-500/20 text-blue-200 py-2">
                 <Info className="h-4 w-4" />
                 <AlertDescription className="text-xs ml-2">
@@ -315,6 +297,88 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
         </Form>
       </TabsContent>
     </Tabs>
+  );
+}
+
+// --- SUB-COMPONENTS ---
+
+function FileUploader({
+  value,
+  onChange,
+  isEditing
+}: {
+  value: FileList | null;
+  onChange: (files: FileList | null) => void;
+  isEditing: boolean
+}) {
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+       const dataTransfer = new DataTransfer();
+       dataTransfer.items.add(acceptedFiles[0]);
+       onChange(dataTransfer.files);
+    }
+  }, [onChange]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    maxFiles: 1,
+    multiple: false
+  });
+
+  const selectedFile = value && value.length > 0 ? value[0] : null;
+
+  if (selectedFile) {
+    return (
+      <div className="flex items-center justify-between p-4 border border-white/20 rounded-lg bg-black/40">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className="p-2 bg-primary/20 rounded-md">
+            <File className="h-6 w-6 text-primary" />
+          </div>
+          <div className="min-w-0">
+             <p className="text-sm font-medium text-white truncate max-w-[200px] sm:max-w-[300px]">
+               {selectedFile.name}
+             </p>
+             <p className="text-xs text-gray-400">
+               {formatBytes(selectedFile.size)}
+             </p>
+          </div>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={() => onChange(null)}
+          className="text-gray-400 hover:text-red-400 hover:bg-red-500/10"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      {...getRootProps()}
+      className={`
+        border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors
+        min-h-[120px] text-center
+        ${isDragActive ? 'border-primary bg-primary/10' : 'border-white/10 bg-black/20 hover:bg-black/30 hover:border-white/30'}
+      `}
+    >
+      <input {...getInputProps()} />
+      <UploadCloud className={`h-10 w-10 mb-3 ${isDragActive ? 'text-primary' : 'text-gray-400'}`} />
+      <p className="text-sm text-gray-300 font-medium">
+        {isDragActive ? "Relâchez pour ajouter" : "Glissez votre fichier ici"}
+      </p>
+      <p className="text-xs text-gray-500 mt-1">
+        ou cliquez pour parcourir
+      </p>
+      {isEditing && (
+         <p className="text-xs text-yellow-500/80 mt-3 pt-3 border-t border-white/5 w-full">
+           Attention : Convertira ce lien externe en fichier local.
+         </p>
+      )}
+    </div>
   );
 }
 
