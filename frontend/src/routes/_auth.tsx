@@ -1,14 +1,17 @@
 import { createRoute, Outlet, redirect } from '@tanstack/react-router';
 import { rootRoute } from './__root';
+import type { AuthContextType } from '@/context/auth-context';
 
 export const authRoute = createRoute({
   getParentRoute: () => rootRoute,
   id: '_auth',
 
-  // 🔒 SECURITY GUARD
-  beforeLoad: () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+  // 🔒 SECURITY GUARD - Check authentication via context
+  beforeLoad: ({ context }) => {
+    // Type assertion since RouterContext is not properly inferred in beforeLoad
+    const auth = (context as { auth: AuthContextType }).auth;
+
+    if (!auth.isAuthenticated) {
       throw redirect({
         to: '/login',
       });

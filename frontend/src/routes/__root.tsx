@@ -2,8 +2,14 @@ import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Toaster } from '@/components/ui/sonner';
+import type { AuthContextType } from '@/context/auth-context';
 
-export const rootRoute = createRootRoute({
+// Define root route context type
+interface RootRouteContext {
+  auth: AuthContextType;
+}
+
+export const rootRoute = createRootRoute<RootRouteContext>({
   component: RootComponent,
 });
 
