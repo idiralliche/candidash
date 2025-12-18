@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,13 +24,20 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login: authLogin } = useAuth();
+  const { login: authLogin, isAuthenticated } = useAuth();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: '/dashboard' });
+    }
+  }, [isAuthenticated, navigate]);
 
   const { mutate: submitLogin, isPending, error } = useLoginApiV1AuthLoginPost({
     mutation: {
       onSuccess: (data) => {
         authLogin(data.access_token);
-        navigate({ to: '/dashboard' });
+        // Navigation will happen automatically via useEffect above
       },
     },
   });
@@ -49,7 +57,7 @@ export function LoginPage() {
   }
 
   return (
-      <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4 py-12">
+    <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md border-white/10 bg-[#13151a] shadow-2xl">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center text-white">Connexion</CardTitle>
