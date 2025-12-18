@@ -117,7 +117,7 @@ export const tokenManager = TokenManager.getInstance();
 // ============================================================================
 
 export const AXIOS_INSTANCE = axios.create({
-  baseURL: '/api/v1',
+  baseURL: '',
   headers: {
     'Content-Type': 'application/json',
   },
