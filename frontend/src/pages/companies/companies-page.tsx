@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Plus, Globe, MapPin, MoreHorizontal, Trash2, Loader2, Pencil, Building2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Plus, Globe, MapPin, MoreHorizontal, Trash2, Pencil, Building2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,16 +23,8 @@ import {
   DialogTitle,
   DialogDescription
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog';
+
 
 import { useCompanies } from '@/hooks/use-companies';
 import { useDeleteCompany } from '@/hooks/use-delete-company';
@@ -46,6 +39,7 @@ export function CompaniesPage() {
 
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null);
+  const [deleteError, setDeleteError] = useState<string>('');
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
   const sortedCompanies = useMemo(() => {
@@ -55,11 +49,17 @@ export function CompaniesPage() {
     );
   }, [companies]);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!companyToDelete) return;
-    deleteCompany({ companyId: companyToDelete.id }, {
-      onSuccess: () => setCompanyToDelete(null)
-    });
+    setDeleteError('');
+    try {
+      await deleteCompany({ companyId: companyToDelete.id });
+      toast.success('Entreprise supprimée avec succès');
+      setCompanyToDelete(null);
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      setDeleteError('Une erreur est survenue lors de la suppression.');
+    }
   };
 
   return (
@@ -252,30 +252,20 @@ export function CompaniesPage() {
       </Dialog>
 
       {/* --- DELETE ALERT --- */}
-      <AlertDialog open={!!companyToDelete} onOpenChange={(open) => !open && setCompanyToDelete(null)}>
-        <AlertDialogContent className="bg-[#16181d] border-white/10 text-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer l'entreprise ?</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">
-              Cette action est irréversible. L'entreprise
-              <span className="font-bold text-white"> {companyToDelete?.name} </span>
-              sera supprimée définitivement.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-white/10 hover:bg-white/5 hover:text-white text-gray-300">
-              Annuler
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700 text-white border-none"
-            >
-              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Supprimer"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <EntityDeleteDialog
+        open={!!companyToDelete}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCompanyToDelete(null);
+            setDeleteError('');
+          }
+        }}
+        entityType="entreprise"
+        entityLabel={companyToDelete?.name || ''}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+        error={deleteError}
+      />
 
     </div>
   );

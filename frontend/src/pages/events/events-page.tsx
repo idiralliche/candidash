@@ -1,20 +1,37 @@
 import { useState, useMemo } from 'react';
-import { Plus, LayoutGrid, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Plus, LayoutGrid, Calendar as CalendarIcon } from 'lucide-react';
 import { useScheduledEvents } from '@/hooks/use-scheduled-events';
 import { useDeleteScheduledEvent } from '@/hooks/use-delete-scheduled-event';
 import { ScheduledEvent } from '@/api/model';
 
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger
+} from "@/components/ui/tabs";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle
+} from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from "@/components/ui/dialog";
+import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog';
+
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { EventForm } from '@/components/events/event-form';
 import { EventDetails } from '@/components/events/event-details';
 import { EventCard } from '@/components/events/event-card';
-import { CalendarView } from '@/components/companies/calendar-view';
+import { CalendarView } from '@/components/events/calendar-view';
 
 export function EventsPage() {
   const { events, isLoading } = useScheduledEvents();
@@ -24,6 +41,7 @@ export function EventsPage() {
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
   const [selectedEvent, setSelectedEvent] = useState<ScheduledEvent | null>(null);
   const [eventToDelete, setEventToDelete] = useState<ScheduledEvent | null>(null);
+  const [deleteError, setDeleteError] = useState<string>('');
   const [editingEvent, setEditingEvent] = useState<ScheduledEvent | null>(null);
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -37,11 +55,17 @@ export function EventsPage() {
     );
   }, [events]);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!eventToDelete) return;
-    deleteEvent({ eventId: eventToDelete.id }, {
-      onSuccess: () => setEventToDelete(null)
-    });
+    setDeleteError('');
+    try {
+      await deleteEvent({ eventId: eventToDelete.id });
+      toast.success('Événement supprimé avec succès');
+      setEventToDelete(null);
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      setDeleteError('Une erreur est survenue lors de la suppression.');
+    }
   };
 
   const handleOpenCreate = (date?: Date) => {
@@ -200,22 +224,20 @@ export function EventsPage() {
       </Dialog>
 
       {/* --- DELETE ALERT --- */}
-      <AlertDialog open={!!eventToDelete} onOpenChange={(open) => !open && setEventToDelete(null)}>
-        <AlertDialogContent className="bg-[#16181d] border-white/10 text-white">
-            <AlertDialogHeader>
-                <AlertDialogTitle>Supprimer ?</AlertDialogTitle>
-                <AlertDialogDescription className="text-gray-400">
-                    Irréversible.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel className="bg-transparent border-white/10 hover:bg-white/5 text-white">Annuler</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white border-none">
-                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Supprimer"}
-                </AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <EntityDeleteDialog
+        open={!!eventToDelete}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEventToDelete(null);
+            setDeleteError('');
+          }
+        }}
+        entityType="événement"
+        entityLabel={eventToDelete?.title || ''}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+        error={deleteError}
+      />
     </div>
   );
 }

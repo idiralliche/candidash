@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Plus, Search, Users, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Plus, Search, Users } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,16 +18,7 @@ import {
   DialogTitle,
   DialogDescription
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog';
 
 import { useContacts } from '@/hooks/use-contacts';
 import { useDeleteContact } from '@/hooks/use-delete-contact';
@@ -54,6 +46,7 @@ export function ContactsPage() {
 
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [contactToDelete, setContactToDelete] = useState<Contact | null>(null);
+  const [deleteError, setDeleteError] = useState<string>('');
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
   // 1. Client-side filtering
@@ -78,11 +71,17 @@ export function ContactsPage() {
     });
   }, [filteredContacts]);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!contactToDelete) return;
-    deleteContact({ contactId: contactToDelete.id }, {
-      onSuccess: () => setContactToDelete(null)
-    });
+    setDeleteError('');
+    try {
+      await deleteContact({ contactId: contactToDelete.id });
+        toast.success('Contact supprimé avec succès');
+        setContactToDelete(null);
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      setDeleteError('Une erreur est survenue lors de la suppression.');
+    }
   };
 
   return (
@@ -199,30 +198,20 @@ export function ContactsPage() {
       </Dialog>
 
       {/* --- DELETE ALERT --- */}
-      <AlertDialog open={!!contactToDelete} onOpenChange={(open) => !open && setContactToDelete(null)}>
-        <AlertDialogContent className="bg-[#16181d] border-white/10 text-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer ce contact ?</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">
-              Cette action est irréversible.
-              <span className="font-bold text-white"> {contactToDelete?.first_name} {contactToDelete?.last_name} </span>
-              sera retiré de vos listes.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-white/10 hover:bg-white/5 hover:text-white text-gray-300">
-              Annuler
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700 text-white border-none"
-            >
-              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Supprimer"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <EntityDeleteDialog
+        open={!!contactToDelete}
+        onOpenChange={(open) => {
+          if (!open) {
+            setContactToDelete(null);
+            setDeleteError('');
+          }
+        }}
+        entityType="contact"
+        entityLabel={contactToDelete ? `${contactToDelete.first_name} ${contactToDelete.last_name}` : ''}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+        error={deleteError}
+      />
 
     </div>
   );

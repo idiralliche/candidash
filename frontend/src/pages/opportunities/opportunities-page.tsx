@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Plus, Briefcase, MapPin, Building2, MoreHorizontal, Trash2, Loader2, Pencil } from 'lucide-react';
+import { toast } from 'sonner';
+import { Plus, Briefcase, MapPin, Building2, MoreHorizontal, Trash2, Pencil } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,22 +17,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription
 } from "@/components/ui/dialog";
+import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog';
 
 import { useOpportunities } from '@/hooks/use-opportunities';
 import { useDeleteOpportunity } from '@/hooks/use-delete-opportunity';
@@ -50,6 +42,7 @@ export function OpportunitiesPage() {
 
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
   const [opportunityToDelete, setOpportunityToDelete] = useState<Opportunity | null>(null);
+  const [deleteError, setDeleteError] = useState<string>('');
   const [editingOpportunity, setEditingOpportunity] = useState<Opportunity | null>(null);
 
   const getCompany = (id?: string | number | null) => {
@@ -65,11 +58,17 @@ export function OpportunitiesPage() {
     );
   }, [opportunities]);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!opportunityToDelete) return;
-    deleteOpportunity({ opportunityId: opportunityToDelete.id }, {
-      onSuccess: () => setOpportunityToDelete(null)
-    });
+    setDeleteError('');
+    try {
+      await deleteOpportunity({ opportunityId: opportunityToDelete.id });
+      toast.success('Opportunité supprimée avec succès');
+      setOpportunityToDelete(null);
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      setDeleteError('Une erreur est survenue lors de la suppression.');
+    }
   };
 
   return (
@@ -257,31 +256,21 @@ export function OpportunitiesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* --- DELETE CONFIRMATION DIALOG --- */}
-      <AlertDialog open={!!opportunityToDelete} onOpenChange={(open) => !open && setOpportunityToDelete(null)}>
-        <AlertDialogContent className="bg-[#16181d] border-white/10 text-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer l'opportunité ?</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">
-              Cette action est irréversible. L'opportunité
-              <span className="font-bold text-white"> {opportunityToDelete?.job_title} </span>
-              sera supprimée définitivement.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-white/10 hover:bg-white/5 hover:text-white text-gray-300">
-              Annuler
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700 text-white border-none"
-            >
-              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Supprimer"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* --- DELETE ALERT --- */}
+      <EntityDeleteDialog
+        open={!!opportunityToDelete}
+        onOpenChange={(open) => {
+          if (!open) {
+            setOpportunityToDelete(null);
+            setDeleteError('');
+          }
+        }}
+        entityType="opportunité"
+        entityLabel={opportunityToDelete?.job_title || ''}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+        error={deleteError}
+      />
 
     </div>
   );
