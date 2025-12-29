@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 import { useDeleteDocumentApiV1DocumentsDocumentIdDelete } from '@/api/documents/documents';
 import { getGetDocumentsApiV1DocumentsGetQueryKey } from '@/api/documents/documents';
@@ -14,13 +13,10 @@ export function useDeleteDocument() {
         queryClient.invalidateQueries({
           queryKey: getGetDocumentsApiV1DocumentsGetQueryKey(),
         });
-        toast.success("Document supprimé");
       },
       onError: (err) => {
         const error = err as AxiosError<HTTPValidationError>;
-        const detail = error.response?.data?.detail;
-        const message = typeof detail === 'string' ? detail : "Impossible de supprimer le document.";
-        toast.error(message);
+        console.error('Delete document error:', error.response?.data);
       },
     },
   });

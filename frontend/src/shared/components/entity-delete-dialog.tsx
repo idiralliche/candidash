@@ -46,6 +46,7 @@ const genderMap: Record<string, { article: string; suffix: string }> = {
   entreprise: { article: "L'", suffix: "e" },
   opportunité: { article: "L'", suffix: "e" },
   contact: { article: "Le ", suffix: "" },
+  document: { article: "Le ", suffix: "" },
 };
 
 /**
