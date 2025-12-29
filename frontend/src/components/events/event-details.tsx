@@ -1,246 +1,180 @@
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import {
-  CalendarDays, Clock, MapPin, Video, Phone, Mail, FileText,
-  Podcast, Trash2, Pencil, Loader2, Link as LinkIcon, Info,
-  ExternalLink
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
-import { ScheduledEvent } from '@/api/model';
-import { useDeleteScheduledEvent } from '@/hooks/use-delete-scheduled-event';
-import { LABELS_EVENT_STATUS, LABELS_COMMUNICATION_METHOD, getLabel } from '@/lib/dictionaries';
-import { getStatusBadgeVariant } from '@/lib/assign-colors';
+  Calendar, Clock, MapPin, Trash2,
+  Video, Phone, Info, Mail, Podcast, FileText, Link as LinkIcon
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { ScheduledEvent } from "@/api/model";
+import { EntityDetailsSheet } from "@/shared/components/entity-details-sheet";
+import { LABELS_EVENT_STATUS, LABELS_COMMUNICATION_METHOD, getLabel } from "@/lib/dictionaries";
+import { getStatusBadgeVariant } from "@/lib/assign-colors";
 
 interface EventDetailsProps {
   event: ScheduledEvent;
-  onClose?: () => void;
   onEdit?: (event: ScheduledEvent) => void;
+  onDelete?: (event: ScheduledEvent) => void;
 }
 
-export function EventDetails({ event, onClose, onEdit }: EventDetailsProps) {
-  const { mutate: deleteEvent, isPending: isDeleting } = useDeleteScheduledEvent();
+export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
 
-  const handleDelete = () => {
-    deleteEvent({ eventId: event.id }, {
-      onSuccess: () => {
-        if (onClose) onClose();
-      }
-    });
+  // Helper to get icon based on communication method
+  const getMethodIcon = (method?: string) => {
+    switch (method) {
+      case 'video': return <Video className="h-3 w-3" />;
+      case 'phone': return <Phone className="h-3 w-3" />;
+      case 'in_person': return <MapPin className="h-3 w-3" />;
+      case 'email': return <Mail className="h-3 w-3" />;
+      default: return <Podcast className="h-3 w-3" />;
+    }
   };
 
-  // Format date & time
-  const eventDate = new Date(event.scheduled_date);
-  const dateStr = format(eventDate, "EEEE d MMMM yyyy", { locale: fr });
-  const timeStr = format(eventDate, "HH:mm");
-
-  // Helper for communication method icon
-  const MethodIcon = (() => {
-    switch (event.communication_method) {
-      case 'video': return Video;
-      case 'phone': return Phone;
-      case 'in_person': return MapPin;
-      case 'email': return Mail;
-      default: return Podcast;
-    }
-  })();
-
   return (
-    <ScrollArea className="h-full pr-4">
-      <div className="space-y-8 pb-10">
+    <EntityDetailsSheet
+      title={event.title}
+      badge={
+        <div className="flex gap-2 mb-2">
+            {/* Status Badge */}
+            <Badge variant="outline" className={getStatusBadgeVariant(event.status)}>
+              {getLabel(LABELS_EVENT_STATUS, event.status)}
+            </Badge>
 
-        {/* --- 1. HEADER & STATUS --- */}
-        <div className="space-y-4">
-          <div className="flex items-start justify-between gap-4">
-             {/* Title & Badges */}
-             <div className="space-y-2">
-                <div className="flex flex-wrap gap-2">
-                   <Badge variant="outline" className={`${getStatusBadgeVariant(event.status)}`}>
-                      {getLabel(LABELS_EVENT_STATUS, event.status)}
-                   </Badge>
-                   {event.event_type && (
-                      <Badge variant="secondary" className="bg-white/5 text-gray-400 hover:bg-white/10">
-                        {event.event_type}
-                      </Badge>
-                   )}
-                </div>
-                <h2 className="text-2xl font-bold text-white leading-tight">
-                  {event.title}
-                </h2>
-             </div>
+            {/* Type Badge */}
+            {event.event_type && (
+              <Badge variant="secondary" className="bg-[#2c2e33] text-gray-300 border-none hover:bg-[#36383d]">
+                {event.event_type}
+              </Badge>
+            )}
+        </div>
+      }
+      onEdit={onEdit ? () => onEdit(event) : undefined}
+      footer={
+        onDelete && (
+          <Button
+            variant="ghost"
+            className="w-full text-red-500 hover:bg-red-500/10 hover:text-red-400"
+            onClick={() => onDelete(event)}
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete event
+          </Button>
+        )
+      }
+    >
+      <Separator className="bg-white/10 mb-6" />
 
-             {/* Edit Action */}
-             {onEdit && (
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10 border-white/10 bg-white/5 hover:bg-white/10 text-white shrink-0"
-                  onClick={() => onEdit(event)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
+      {/* 1. GRID DATE & TIME */}
+      <div className="grid grid-cols-2 gap-8 mb-6">
+        {/* DATE */}
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase mb-1">
+            <Calendar className="h-3 w-3" />
+            Date
+          </div>
+          <div className="text-white font-medium capitalize">
+            {format(new Date(event.scheduled_date), "EEEE d MMMM yyyy", { locale: fr })}
+          </div>
+        </div>
+
+        {/* TIME & DURATION */}
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase mb-1">
+            <Clock className="h-3 w-3" />
+            Heure & Durée
+          </div>
+          <div className="text-white font-medium">
+             {format(new Date(event.scheduled_date), "HH:mm")}
+             {event.duration_minutes && (
+               <span className="text-gray-500 font-normal ml-1">({event.duration_minutes} min)</span>
              )}
           </div>
         </div>
-
-        <Separator className="bg-white/10" />
-
-        {/* --- 2. KEY PROPERTIES GRID --- */}
-        <div className="grid grid-cols-2 gap-6">
-           <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                 <CalendarDays className="h-3.5 w-3.5" />
-                 Date
-              </div>
-              <p className="text-sm font-medium text-white capitalize">{dateStr}</p>
-           </div>
-
-           <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                 <Clock className="h-3.5 w-3.5" />
-                 Heure & Durée
-              </div>
-              <p className="text-sm font-medium text-white">
-                 {timeStr}
-                 {event.duration_minutes && <span className="text-gray-500 ml-1">({event.duration_minutes} min)</span>}
-              </p>
-           </div>
-
-           <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                 <MethodIcon className="h-3.5 w-3.5" />
-                 Moyen
-              </div>
-              <p className="text-sm font-medium text-white">
-                 {getLabel(LABELS_COMMUNICATION_METHOD, event.communication_method)}
-              </p>
-           </div>
-        </div>
-
-        {/* --- 3. CONNECTION / LOCATION CARD --- */}
-        {(event.event_link || event.location || event.phone_number) && (
-           <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 space-y-3">
-              <h3 className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
-                 <Info className="h-3.5 w-3.5" />
-                 Détails de connexion
-              </h3>
-
-              <div className="space-y-2">
-                 {event.event_link && (
-                    <div className="flex items-start gap-3">
-                       <LinkIcon className="h-4 w-4 text-gray-400 mt-0.5 shrink-0" />
-                       <div className="min-w-0">
-                          <p className="text-xs text-gray-500 mb-0.5">Lien Visio</p>
-                          <a
-                             href={event.event_link}
-                             target="_blank"
-                             rel="noopener noreferrer"
-                             className="text-sm text-blue-400 hover:text-blue-300 hover:underline break-all flex items-center gap-1"
-                          >
-                             {event.event_link}
-                             <ExternalLink className="h-3 w-3" />
-                          </a>
-                       </div>
-                    </div>
-                 )}
-
-                 {event.phone_number && (
-                    <div className="flex items-start gap-3">
-                       <Phone className="h-4 w-4 text-gray-400 mt-0.5 shrink-0" />
-                       <div>
-                          <p className="text-xs text-gray-500 mb-0.5">Téléphone</p>
-                          <p className="text-sm text-white font-mono">{event.phone_number}</p>
-                       </div>
-                    </div>
-                 )}
-
-                 {event.location && (
-                    <div className="flex items-start gap-3">
-                       <MapPin className="h-4 w-4 text-gray-400 mt-0.5 shrink-0" />
-                       <div>
-                          <p className="text-xs text-gray-500 mb-0.5">Adresse / Lieu</p>
-                          <p className="text-sm text-white">{event.location}</p>
-                       </div>
-                    </div>
-                 )}
-              </div>
-           </div>
-        )}
-
-        {/* --- 4. TEXT SECTIONS --- */}
-        {event.instructions && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium text-white flex items-center gap-2">
-               Instructions
-            </h3>
-            <div className="text-sm text-gray-400 bg-[#0f1115] p-4 rounded-lg border border-white/5 whitespace-pre-wrap leading-relaxed">
-              {event.instructions}
-            </div>
-          </div>
-        )}
-
-        {event.notes && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium text-white flex items-center gap-2">
-               <FileText className="h-4 w-4 text-gray-500" />
-               Notes Personnelles
-            </h3>
-            <div className="text-sm text-gray-400 bg-[#0f1115] p-4 rounded-lg border border-white/5 whitespace-pre-wrap leading-relaxed">
-              {event.notes}
-            </div>
-          </div>
-        )}
-
-        <Separator className="bg-white/10" />
-
-        {/* --- 5. FOOTER ACTIONS --- */}
-        <div className="pt-2">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" className="w-full text-red-500 hover:bg-red-500/10 hover:text-red-400 border border-transparent hover:border-red-500/20">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Supprimer l'événement
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="bg-[#16181d] border-white/10 text-white">
-              <AlertDialogHeader>
-                <AlertDialogTitle>Supprimer cet événement ?</AlertDialogTitle>
-                <AlertDialogDescription className="text-gray-400">
-                  Cette action est irréversible. L'événement sera définitivement retiré de votre agenda.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="bg-transparent border-white/10 hover:bg-white/5 hover:text-white text-gray-300">
-                  Annuler
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="bg-red-600 hover:bg-red-700 text-white border-none"
-                >
-                  {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Supprimer"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-
       </div>
-    </ScrollArea>
+
+      {/* 2. COMMUNICATION METHOD */}
+      {event.communication_method && (
+        <div className="mb-6">
+           <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase mb-1">
+              {getMethodIcon(event.communication_method)}
+              Moyen
+           </div>
+           <div className="text-white">
+             {getLabel(LABELS_COMMUNICATION_METHOD, event.communication_method)}
+           </div>
+        </div>
+      )}
+
+      {/* 3. CONNECTION DETAILS (Blue Box) */}
+      {(event.event_link || event.phone_number || event.location) && (
+        <div className="rounded-lg border border-blue-900/30 bg-blue-950/20 p-4 mb-6">
+          <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase mb-3">
+            <Info className="h-3 w-3" />
+            Détails de connexion
+          </div>
+
+          <div className="space-y-3">
+            {/* Link */}
+            {event.event_link && (
+               <div className="flex items-start gap-3">
+                 <LinkIcon className="h-4 w-4 text-gray-500 mt-0.5" />
+                 <div className="min-w-0">
+                   <div className="text-xs text-gray-500 mb-0.5">Lien Visio</div>
+                   <a href={event.event_link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline break-all text-sm block">
+                     {event.event_link}
+                   </a>
+                 </div>
+               </div>
+            )}
+
+            {/* Phone */}
+            {event.phone_number && (
+               <div className="flex items-start gap-3">
+                 <Phone className="h-4 w-4 text-gray-500 mt-0.5" />
+                 <div>
+                   <div className="text-xs text-gray-500 mb-0.5">Téléphone</div>
+                   <p className="text-white text-sm font-mono">{event.phone_number}</p>
+                 </div>
+               </div>
+            )}
+
+            {/* Location */}
+            {event.location && (
+               <div className="flex items-start gap-3">
+                 <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
+                 <div>
+                   <div className="text-xs text-gray-500 mb-0.5">Adresse / Lieu</div>
+                   <p className="text-white text-sm">{event.location}</p>
+                 </div>
+               </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 4. INSTRUCTIONS */}
+      {event.instructions && (
+        <div className="mb-6">
+          <h3 className="text-xs font-bold text-gray-500 uppercase mb-2">Instructions</h3>
+          <div className="text-sm text-gray-200 bg-[#1c1f26] p-3 rounded-md border border-white/5 font-medium">
+            {event.instructions}
+          </div>
+        </div>
+      )}
+
+      {/* 5. PERSONAL NOTES */}
+      {event.notes && (
+        <div className="space-y-2">
+          <h3 className="text-xs font-bold text-gray-500 uppercase flex items-center gap-2">
+            <FileText className="h-3 w-3" />
+            Notes Personnelles
+          </h3>
+          <div className="text-sm text-gray-300 bg-[#0f1115] p-4 rounded-lg border border-white/5 whitespace-pre-wrap leading-relaxed">
+            {event.notes}
+          </div>
+        </div>
+      )}
+    </EntityDetailsSheet>
   );
 }

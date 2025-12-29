@@ -1,35 +1,20 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Plus, LayoutGrid, Calendar as CalendarIcon } from 'lucide-react';
+
 import { useScheduledEvents } from '@/hooks/use-scheduled-events';
 import { useDeleteScheduledEvent } from '@/hooks/use-delete-scheduled-event';
 import { ScheduledEvent } from '@/api/model';
 
 import { Button } from '@/components/ui/button';
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger
-} from "@/components/ui/tabs";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle
-} from '@/components/ui/sheet';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription
-} from "@/components/ui/dialog";
-import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog';
-
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
+import { EntitySheet } from '@/shared/components/entity-sheet'; // <-- NEW
+import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog'; // <-- Déjà existant
 import { EventForm } from '@/components/events/event-form';
-import { EventDetails } from '@/components/events/event-details';
+import { EventDetails } from '@/components/events/event-details'; // <-- NEW
 import { EventCard } from '@/components/events/event-card';
 import { CalendarView } from '@/components/events/calendar-view';
 
@@ -38,14 +23,13 @@ export function EventsPage() {
   const { mutate: deleteEvent, isPending: isDeleting } = useDeleteScheduledEvent();
 
   // State
-  const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
+  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [selectedEvent, setSelectedEvent] = useState<ScheduledEvent | null>(null);
   const [eventToDelete, setEventToDelete] = useState<ScheduledEvent | null>(null);
-  const [deleteError, setDeleteError] = useState<string>('');
   const [editingEvent, setEditingEvent] = useState<ScheduledEvent | null>(null);
-
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [createDate, setCreateDate] = useState<Date | undefined>(undefined);
+  const [deleteError, setDeleteError] = useState<string>('');
 
   // Chronological sorting for list view
   const sortedEvents = useMemo(() => {
@@ -60,17 +44,16 @@ export function EventsPage() {
     setDeleteError('');
     try {
       await deleteEvent({ eventId: eventToDelete.id });
-      toast.success('Événement supprimé avec succès');
+      toast.success('Événement supprimé');
       setEventToDelete(null);
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      setDeleteError('Une erreur est survenue lors de la suppression.');
+    } catch {
+      setDeleteError('Erreur lors de la suppression');
     }
   };
 
   const handleOpenCreate = (date?: Date) => {
-      setCreateDate(date);
-      setIsCreateOpen(true);
+    setCreateDate(date);
+    setIsCreateOpen(true);
   };
 
   return (
@@ -80,7 +63,7 @@ export function EventsPage() {
         <h1 className="text-3xl font-bold text-white">Agenda</h1>
 
         <div className="flex items-center gap-3">
-          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "calendar" | "list")}>
+          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'calendar' | 'list')}>
             <TabsList className="bg-[#16181d] border border-white/10">
               <TabsTrigger value="calendar" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                 <CalendarIcon className="h-4 w-4 mr-2" />
@@ -106,9 +89,9 @@ export function EventsPage() {
       {/* CONTENT */}
       <div className="flex-1 min-h-0">
         {isLoading ? (
-          viewMode === "calendar" ? (
+          viewMode === 'calendar' ? (
              /* CALENDAR SKELETON */
-            <div className="max-w-2xl mx-auto w-full bg-[#16181d] rounded-xl border border-white/10 h-[600px] p-4 space-y-4">
+             <div className="max-w-2xl mx-auto w-full bg-[#16181d] rounded-xl border border-white/10 h-[600px] p-4 space-y-4">
                <div className="flex justify-between items-center mb-6">
                  <Skeleton className="h-8 w-48 bg-white/10" />
                  <Skeleton className="h-8 w-24 bg-white/10" />
@@ -118,95 +101,81 @@ export function EventsPage() {
                    <Skeleton key={i} className="h-[72px] w-full rounded-xl bg-white/5" />
                  ))}
                </div>
-            </div>
+             </div>
           ) : (
-            /* VERTICAL LIST SKELETON */
+            /* LIST SKELETON */
             <div className="flex flex-col gap-4 max-w-4xl mx-auto w-full">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex flex-col gap-3 rounded-xl bg-[#16181d] p-4 border border-white/5">
-                   <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-3">
-                         <Skeleton className="h-14 w-14 rounded-lg bg-white/10" /> {/* Date Box */}
-                         <div className="space-y-2">
-                            <Skeleton className="h-5 w-48 bg-white/10" /> {/* Titre */}
-                            <Skeleton className="h-3 w-32 bg-white/5" />  {/* Heure */}
-                         </div>
-                      </div>
-                      <Skeleton className="h-8 w-8 rounded-full bg-white/5" /> {/* Menu */}
-                   </div>
-                </div>
-              ))}
+               {Array.from({ length: 5 }).map((_, i) => (
+                 <Skeleton key={i} className="h-24 w-full rounded-xl bg-[#16181d] border border-white/5" />
+               ))}
             </div>
           )
         ) : (
-          <>
-            {/* CALENDAR VIEW */}
-            {viewMode === "calendar" && (
-              <CalendarView
-                events={events || []}
-                onSelectEvent={setSelectedEvent}
-                onAddEvent={(date) => handleOpenCreate(date)}
-              />
-            )}
-
-            {/* LIST VIEW */}
-            {viewMode === "list" && (
-               sortedEvents.length === 0 ? (
-                <div className="h-full flex items-center justify-center text-muted-foreground">
-                  Aucun événement. Utilisez le bouton + pour planifier.
-                </div>
-              ) : (
-                <div className="flex flex-col gap-4 pb-8 max-w-4xl mx-auto w-full">
-                  {sortedEvents.map((event) => (
-                    <EventCard
-                      key={event.id}
-                      event={event}
-                      onClick={setSelectedEvent}
-                      onEdit={setEditingEvent}
-                      onDelete={setEventToDelete}
-                    />
-                  ))}
-                </div>
-              )
-            )}
-          </>
+          viewMode === 'calendar' ? (
+            <CalendarView
+              events={events || []}
+              onSelectEvent={setSelectedEvent}
+              onAddEvent={(date) => handleOpenCreate(date)}
+            />
+          ) : (
+            /* LIST VIEW */
+            sortedEvents.length === 0 ? (
+              <div className="h-full flex items-center justify-center text-muted-foreground">
+                Aucun événement. Utilisez le bouton + pour planifier.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4 pb-8 max-w-4xl mx-auto w-full">
+                {sortedEvents.map(event => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    onClick={setSelectedEvent}
+                    onEdit={setEditingEvent}
+                    onDelete={setEventToDelete}
+                  />
+                ))}
+              </div>
+            )
+          )
         )}
       </div>
 
       {/* --- CREATE DIALOG --- */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
         <DialogContent className="bg-[#13151a] border-white/10 text-white sm:max-w-[600px]">
-            <DialogHeader>
-                <DialogTitle>Nouvel Événement</DialogTitle>
-                <DialogDescription className="text-gray-400">
-                    Planifiez un entretien, une relance ou une réunion.
-                </DialogDescription>
-            </DialogHeader>
-            <EventForm
-                onSuccess={() => setIsCreateOpen(false)}
-                defaultDate={createDate}
-            />
+          <DialogHeader>
+            <DialogTitle>Nouvel événement</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Planifiez un entretien, une relance ou une réunion.
+            </DialogDescription>
+          </DialogHeader>
+          <EventForm
+            onSuccess={() => setIsCreateOpen(false)}
+            defaultDate={createDate}
+          />
         </DialogContent>
       </Dialog>
 
-      {/* --- DETAILS SHEET --- */}
-      <Sheet open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
-        <SheetContent className="sm:max-w-xl w-full border-l border-white/10 bg-[#16181d] text-white">
-          <SheetHeader className="pb-4">
-            <SheetTitle>Détails</SheetTitle>
-          </SheetHeader>
-          {selectedEvent && (
-            <EventDetails
-              event={selectedEvent}
-              onClose={() => setSelectedEvent(null)}
-              onEdit={(event) => {
-                setSelectedEvent(null);
-                setEditingEvent(event);
-              }}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
+      {/* --- DETAILS SHEET (NEW) --- */}
+      <EntitySheet
+        open={!!selectedEvent}
+        onOpenChange={(open) => !open && setSelectedEvent(null)}
+        title="Détails"
+      >
+        {selectedEvent && (
+          <EventDetails
+            event={selectedEvent}
+            onEdit={(e) => {
+               setSelectedEvent(null);
+               setEditingEvent(e);
+            }}
+            onDelete={(e) => {
+               setSelectedEvent(null);
+               setEventToDelete(e);
+            }}
+          />
+        )}
+      </EntitySheet>
 
       {/* --- EDIT DIALOG --- */}
       <Dialog open={!!editingEvent} onOpenChange={(open) => !open && setEditingEvent(null)}>
@@ -227,12 +196,12 @@ export function EventsPage() {
       <EntityDeleteDialog
         open={!!eventToDelete}
         onOpenChange={(open) => {
-          if (!open) {
-            setEventToDelete(null);
-            setDeleteError('');
-          }
+            if (!open) {
+                setEventToDelete(null);
+                setDeleteError('');
+            }
         }}
-        entityType="événement"
+        entityType="event"
         entityLabel={eventToDelete?.title || ''}
         onConfirm={handleDelete}
         isDeleting={isDeleting}
