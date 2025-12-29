@@ -5,12 +5,7 @@ import { Plus, Search, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+import { EntitySheet } from '@/shared/components/entity-sheet';
 import {
   Dialog,
   DialogContent,
@@ -76,8 +71,8 @@ export function ContactsPage() {
     setDeleteError('');
     try {
       await deleteContact({ contactId: contactToDelete.id });
-        toast.success('Contact supprimé avec succès');
-        setContactToDelete(null);
+      toast.success('Contact supprimé avec succès');
+      setContactToDelete(null);
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
       setDeleteError('Une erreur est survenue lors de la suppression.');
@@ -160,23 +155,25 @@ export function ContactsPage() {
       </div>
 
       {/* --- DETAILS SHEET --- */}
-      <Sheet open={!!selectedContact} onOpenChange={(open) => !open && setSelectedContact(null)}>
-        <SheetContent className="sm:max-w-xl w-full border-l border-white/10 bg-[#16181d] text-white">
-          <SheetHeader className="pb-4">
-            <SheetTitle>Fiche Contact</SheetTitle>
-          </SheetHeader>
-          {selectedContact && (
-            <ContactDetails
-              contact={selectedContact}
-              onClose={() => setSelectedContact(null)}
-              onEdit={(c) => {
-                setSelectedContact(null);
-                setEditingContact(c);
-              }}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
+      <EntitySheet
+        open={!!selectedContact}
+        onOpenChange={(open) => !open && setSelectedContact(null)}
+        title="Fiche Contact"
+      >
+        {selectedContact && (
+          <ContactDetails
+            contact={selectedContact}
+            onEdit={(c) => {
+              setSelectedContact(null);
+              setEditingContact(c);
+            }}
+            onDelete={(c) => {
+              setSelectedContact(null);
+              setContactToDelete(c);
+            }}
+          />
+        )}
+      </EntitySheet>
 
       {/* --- EDIT DIALOG --- */}
       <Dialog open={!!editingContact} onOpenChange={(open) => !open && setEditingContact(null)}>
