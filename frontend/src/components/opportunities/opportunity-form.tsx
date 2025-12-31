@@ -517,7 +517,7 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
           </div>
         )}
 
-        <div className="pt-4 sticky bottom-0 bg-[#0f1115] pb-2 border-t border-white/5">
+        <div className="pt-4 sticky bottom-0 pb-2">
            <Button type="submit" className="w-full bg-primary hover:bg-[#e84232] text-white" disabled={isPending}>
             {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (isEditing ? "Enregistrer les modifications" : "Ajouter l'opportunité")}
           </Button>
