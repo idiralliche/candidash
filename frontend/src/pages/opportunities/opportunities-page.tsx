@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EntitySheet } from '@/components/shared/entity-sheet';
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
-import { FormDialog } from '@/components/form-dialog';
+import { FormDialog } from '@/components/shared/form-dialog';
 
 // Feature Components
 import { OpportunityForm } from '@/components/opportunities/opportunity-form';

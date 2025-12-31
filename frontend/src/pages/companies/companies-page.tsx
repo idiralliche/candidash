@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 // Shared Components
 import { EntitySheet } from '@/components/shared/entity-sheet';
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
-import { FormDialog } from '@/components/form-dialog';
+import { FormDialog } from '@/components/shared/form-dialog';
 
 // Feature Components
 import { CompanyForm } from '@/components/companies/company-form';

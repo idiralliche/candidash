@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useDocuments } from '@/hooks/use-documents';
 import { useDeleteDocument } from '@/hooks/use-delete-document';
 import { Button } from '@/components/ui/button';
-import { FormDialog } from '@/components/form-dialog';
+import { FormDialog } from '@/components/shared/form-dialog';
 import { Document } from '@/api/model';
 
 // Shared Components

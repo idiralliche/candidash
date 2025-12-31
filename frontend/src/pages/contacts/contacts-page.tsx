@@ -19,7 +19,7 @@ import { useContacts } from '@/hooks/use-contacts';
 import { useDeleteContact } from '@/hooks/use-delete-contact';
 import { Contact } from '@/api/model';
 
-import { FormDialog } from '@/components/form-dialog';
+import { FormDialog } from '@/components/shared/form-dialog';
 import { ContactForm } from '@/components/contacts/contact-form';
 import { ContactCard } from '@/components/contacts/contact-card';
 import { ContactDetails } from '@/components/contacts/contact-details';
