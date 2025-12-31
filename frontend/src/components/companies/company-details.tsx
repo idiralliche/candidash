@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Company } from "@/api/model";
-import { EntityDetailsSheet } from "@/shared/components/entity-details-sheet";
+import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 
 interface CompanyDetailsProps {
   company: Company;

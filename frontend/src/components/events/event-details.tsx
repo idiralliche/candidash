@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScheduledEvent } from "@/api/model";
-import { EntityDetailsSheet } from "@/shared/components/entity-details-sheet";
+import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { LABELS_EVENT_STATUS, LABELS_COMMUNICATION_METHOD, getLabel } from "@/lib/dictionaries";
 import { getStatusBadgeVariant } from "@/lib/assign-colors";
 

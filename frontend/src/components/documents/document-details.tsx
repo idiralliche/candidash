@@ -12,7 +12,7 @@ import { Document } from '@/api/model';
 import { LABELS_DOCUMENT_FORMAT, getLabel } from '@/lib/dictionaries';
 import { getFormatBadgeVariant } from '@/lib/assign-colors';
 import { useDownloadDocument } from '@/hooks/use-download-document';
-import { EntityDetailsSheet } from '@/shared/components/entity-details-sheet';
+import { EntityDetailsSheet } from '@/components/shared/entity-details-sheet';
 
 interface DocumentDetailsProps {
   document: Document;

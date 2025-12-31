@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Contact } from "@/api/model";
 import { useCompanies } from "@/hooks/use-companies";
 import { findEntityById } from "@/lib/utils";
-import { EntityDetailsSheet } from "@/shared/components/entity-details-sheet";
+import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 
 interface ContactDetailsProps {
   contact: Contact;
