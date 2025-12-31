@@ -11,10 +11,12 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
-import { EntitySheet } from '@/shared/components/entity-sheet'; // <-- NEW
-import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog'; // <-- Déjà existant
+import { EntitySheet } from '@/components/shared/entity-sheet';
+import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
+import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
+
 import { EventForm } from '@/components/events/event-form';
-import { EventDetails } from '@/components/events/event-details'; // <-- NEW
+import { EventDetails } from '@/components/events/event-details';
 import { EventCard } from '@/components/events/event-card';
 import { CalendarView } from '@/components/events/calendar-view';
 
@@ -104,10 +106,8 @@ export function EventsPage() {
              </div>
           ) : (
             /* LIST SKELETON */
-            <div className="flex flex-col gap-4 max-w-4xl mx-auto w-full">
-               {Array.from({ length: 5 }).map((_, i) => (
-                 <Skeleton key={i} className="h-24 w-full rounded-xl bg-[#16181d] border border-white/5" />
-               ))}
+            <div className="flex flex-col gap-4 pb-8 max-w-4xl mx-auto w-full">
+              <CardListSkeleton cardHeight="h-24" />
             </div>
           )
         ) : (

@@ -9,14 +9,14 @@ import { FormDialog } from '@/components/form-dialog';
 import { Document } from '@/api/model';
 
 // Shared Components
-import { EntitySheet } from '@/shared/components/entity-sheet';
-import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog';
+import { EntitySheet } from '@/components/shared/entity-sheet';
+import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 
 // Feature Components
 import { DocumentCard } from '@/components/documents/document-card';
 import { DocumentForm } from '@/components/documents/document-form';
 import { DocumentDetails } from '@/components/documents/document-details';
-import { DocumentListSkeleton } from '@/components/documents/document-list-skeleton';
+import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 
 export function DocumentsPage() {
   const { documents, isLoading, isError } = useDocuments();
@@ -87,7 +87,7 @@ export function DocumentsPage() {
       {/* --- Content --- */}
       <div className="min-h-[200px]">
         {isLoading ? (
-          <DocumentListSkeleton />
+          <CardListSkeleton />
         ) : isError ? (
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
             Erreur lors du chargement des documents.

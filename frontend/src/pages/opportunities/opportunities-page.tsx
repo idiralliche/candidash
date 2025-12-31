@@ -9,12 +9,12 @@ import { Opportunity } from '@/api/model';
 import { findEntityById } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 // Shared Components
-import { EntitySheet } from '@/shared/components/entity-sheet';
-import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog';
+import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
+import { EntitySheet } from '@/components/shared/entity-sheet';
+import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 import { FormDialog } from '@/components/form-dialog';
 
 // Feature Components
@@ -75,26 +75,7 @@ export function OpportunitiesPage() {
       {/* CONTENT LIST */}
       <div className="flex-1 min-h-0 pb-8">
         {isLoading ? (
-          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
-            {Array.from({ length: 6 }).map((_, i) => (
-               <div key={i} className="flex items-center gap-4 bg-[#16181d] border border-white/5 rounded-xl p-4">
-                  {/* Square Icon */}
-                  <Skeleton className="h-10 w-10 rounded-lg bg-white/10 shrink-0" />
-
-                  {/* Title + Company */}
-                  <div className="flex flex-col gap-2 flex-1 min-w-0">
-                     <Skeleton className="h-5 w-56 bg-white/10" />
-                     <Skeleton className="h-3 w-40 bg-white/5" />
-                  </div>
-
-                  {/* Badge + Location (Right) */}
-                  <div className="flex items-center gap-6 pl-4">
-                     <Skeleton className="h-6 w-24 rounded-full bg-white/5 hidden sm:block" />
-                     <Skeleton className="h-8 w-8 rounded-full bg-white/5" />
-                  </div>
-               </div>
-            ))}
-          </div>
+          <CardListSkeleton />
         ) : sortedOpportunities.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
             <Briefcase className="h-12 w-12 opacity-20" />

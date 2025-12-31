@@ -7,12 +7,12 @@ import { useDeleteCompany } from '@/hooks/use-delete-company';
 import { Company } from '@/api/model';
 
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 // Shared Components
-import { EntitySheet } from '@/shared/components/entity-sheet';
-import { EntityDeleteDialog } from '@/shared/components/entity-delete-dialog';
+import { EntitySheet } from '@/components/shared/entity-sheet';
+import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 import { FormDialog } from '@/components/form-dialog';
 
 // Feature Components
@@ -72,21 +72,7 @@ export function CompaniesPage() {
       {/* CONTENT LIST */}
       <div className="flex-1 min-h-0 pb-8">
         {isLoading ? (
-          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
-            {Array.from({ length: 6 }).map((_, i) => (
-               <div key={i} className="flex items-center gap-4 bg-[#16181d] border border-white/5 rounded-xl p-4">
-                  <Skeleton className="h-10 w-10 rounded-lg bg-white/10 shrink-0" />
-                  <div className="flex flex-col gap-2 flex-1 min-w-0">
-                     <Skeleton className="h-5 w-48 bg-white/10" />
-                     <Skeleton className="h-3 w-32 bg-white/5 hidden sm:block" />
-                  </div>
-                  <div className="flex items-center gap-3 pl-4">
-                     <Skeleton className="h-8 w-24 bg-white/5 rounded hidden sm:block" />
-                     <Skeleton className="h-8 w-8 rounded-full bg-white/5" />
-                  </div>
-               </div>
-            ))}
-          </div>
+          <CardListSkeleton />
         ) : sortedCompanies.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
             <Building2 className="h-12 w-12 opacity-20" />
