@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { Plus, Search, Users } from 'lucide-react';
 
@@ -17,7 +17,7 @@ import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 
 import { useContacts } from '@/hooks/use-contacts';
 import { useDeleteContact } from '@/hooks/use-delete-contact';
-import { useDebounce } from '@/hooks/use-debounce';
+import { useFilteredEntities } from '@/hooks/use-filtered-entities';
 import { Contact } from '@/api/model';
 
 import { FormDialog } from '@/components/shared/form-dialog';
@@ -27,7 +27,6 @@ import { ContactDetails } from '@/components/contacts/contact-details';
 
 export function ContactsPage() {
   const [search, setSearch] = useState('');
-  const debouncedSearch = useDebounce(search, 300);
 
   const { contacts, isLoading } = useContacts();
   const { mutate: deleteContact, isPending: isDeleting } = useDeleteContact();
@@ -37,27 +36,22 @@ export function ContactsPage() {
   const [deleteError, setDeleteError] = useState<string>('');
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
-  // 1. Client-side filtering
-  const filteredContacts = useMemo(() => {
-    if (!contacts) return [];
-    if (!debouncedSearch.trim()) return contacts;
-
-    const lowerSearch = debouncedSearch.toLowerCase();
-    return contacts.filter(contact => {
-      const fullName = `${contact.first_name} ${contact.last_name}`.toLowerCase();
-      const email = contact.email?.toLowerCase() || '';
-      return fullName.includes(lowerSearch) || email.includes(lowerSearch);
-    });
-  }, [contacts, debouncedSearch]);
-
-  // 2. Alphabetical sorting
-  const sortedContacts = useMemo(() => {
-    return [...filteredContacts].sort((a, b) => {
+  // Filter and sort contacts with relevance-based ordering
+  const filteredContacts = useFilteredEntities({
+    entities: contacts,
+    searchTerm: search,
+    searchFields: (contact) => [
+      contact.first_name,      // Index 0 - PRIORITÉ 1
+      contact.last_name,       // Index 1 - PRIORITÉ 2
+      contact.email || '',     // Index 2 - PRIORITÉ 3
+    ],
+    sortFn: (a, b) => {
+      // Alphabetical sort by last name, first name
       const nameA = `${a.last_name} ${a.first_name}`.toLowerCase();
       const nameB = `${b.last_name} ${b.first_name}`.toLowerCase();
       return nameA.localeCompare(nameB);
-    });
-  }, [filteredContacts]);
+    },
+  });
 
   const handleDelete = async () => {
     if (!contactToDelete) return;
@@ -109,7 +103,7 @@ export function ContactsPage() {
       <div className="flex-1 min-h-0 pb-8">
         {isLoading ? (
           <CardListSkeleton avatarShape="circle" />
-        ) : sortedContacts.length === 0 ? (
+        ) : filteredContacts.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
             <Users className="h-12 w-12 opacity-20" />
             <p>
@@ -118,7 +112,7 @@ export function ContactsPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
-            {sortedContacts.map((contact) => (
+            {filteredContacts.map((contact) => (
               <ContactCard
                 key={contact.id}
                 contact={contact}
