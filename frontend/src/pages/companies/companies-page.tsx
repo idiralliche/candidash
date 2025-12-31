@@ -30,7 +30,7 @@ export function CompaniesPage() {
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const [deleteError, setDeleteError] = useState('');
 
-  // Sorting Logic (Identique à ton code original)
+  // Sorting Logic
   const sortedCompanies = useMemo(() => {
     if (!companies) return [];
     return [...companies].sort((a, b) =>
