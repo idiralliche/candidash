@@ -6,21 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EntitySheet } from '@/components/shared/entity-sheet';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription
-} from "@/components/ui/dialog";
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
+import { FormDialog } from '@/components/shared/form-dialog';
 
 import { useContacts } from '@/hooks/use-contacts';
 import { useDeleteContact } from '@/hooks/use-delete-contact';
 import { useFilteredEntities } from '@/hooks/use-filtered-entities';
 import { Contact } from '@/api/model';
 
-import { FormDialog } from '@/components/shared/form-dialog';
 import { ContactForm } from '@/components/contacts/contact-form';
 import { ContactCard } from '@/components/contacts/contact-card';
 import { ContactDetails } from '@/components/contacts/contact-details';
@@ -41,12 +34,11 @@ export function ContactsPage() {
     entities: contacts,
     searchTerm: search,
     searchFields: (contact) => [
-      contact.first_name,      // Index 0 - PRIORITÉ 1
-      contact.last_name,       // Index 1 - PRIORITÉ 2
-      contact.email || '',     // Index 2 - PRIORITÉ 3
+      contact.first_name,
+      contact.last_name,
+      contact.email || '',
     ],
     sortFn: (a, b) => {
-      // Alphabetical sort by last name, first name
       const nameA = `${a.last_name} ${a.first_name}`.toLowerCase();
       const nameB = `${b.last_name} ${b.first_name}`.toLowerCase();
       return nameA.localeCompare(nameB);
@@ -69,7 +61,7 @@ export function ContactsPage() {
   return (
     <div className="space-y-6 pt-20 h-[calc(100vh-2rem)] flex flex-col">
 
-      {/* --- HEADER --- */}
+      {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-white">Contacts</h1>
 
@@ -99,7 +91,7 @@ export function ContactsPage() {
         </div>
       </div>
 
-      {/* --- CONTENT LIST --- */}
+      {/* CONTENT LIST */}
       <div className="flex-1 min-h-0 pb-8">
         {isLoading ? (
           <CardListSkeleton avatarShape="circle" />
@@ -125,7 +117,7 @@ export function ContactsPage() {
         )}
       </div>
 
-      {/* --- DETAILS SHEET --- */}
+      {/* DETAILS SHEET */}
       <EntitySheet
         open={!!selectedContact}
         onOpenChange={(open) => !open && setSelectedContact(null)}
@@ -146,26 +138,22 @@ export function ContactsPage() {
         )}
       </EntitySheet>
 
-      {/* --- EDIT DIALOG --- */}
-      <Dialog open={!!editingContact} onOpenChange={(open) => !open && setEditingContact(null)}>
-        <DialogContent className="bg-[#13151a] border-white/10 text-white sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Modifier le contact</DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Mettez à jour les coordonnées ou le poste.
-            </DialogDescription>
-          </DialogHeader>
+      {/* EDIT DIALOG - Using FormDialog */}
+      <FormDialog
+        open={!!editingContact}
+        onOpenChange={(open) => !open && setEditingContact(null)}
+        title="Modifier le contact"
+        description="Mettez à jour les coordonnées ou le poste."
+      >
+        {(close) => editingContact && (
+          <ContactForm
+            initialData={editingContact}
+            onSuccess={close}
+          />
+        )}
+      </FormDialog>
 
-          {editingContact && (
-            <ContactForm
-              initialData={editingContact}
-              onSuccess={() => setEditingContact(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* --- DELETE ALERT --- */}
+      {/* DELETE ALERT */}
       <EntityDeleteDialog
         open={!!contactToDelete}
         onOpenChange={(open) => {

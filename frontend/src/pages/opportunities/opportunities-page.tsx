@@ -9,7 +9,6 @@ import { Opportunity } from '@/api/model';
 import { findEntityById } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 // Shared Components
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
@@ -33,7 +32,7 @@ export function OpportunitiesPage() {
   const [editingOpportunity, setEditingOpportunity] = useState<Opportunity | null>(null);
   const [deleteError, setDeleteError] = useState<string>('');
 
-  // Alphabetical sorting for list view (Default)
+  // Alphabetical sorting for list view
   const sortedOpportunities = useMemo(() => {
     if (!opportunities) return [];
     return [...opportunities].sort((a, b) =>
@@ -99,7 +98,7 @@ export function OpportunitiesPage() {
         )}
       </div>
 
-      {/* --- DETAILS SHEET --- */}
+      {/* DETAILS SHEET */}
       <EntitySheet
         open={!!selectedOpportunity}
         onOpenChange={(open) => !open && setSelectedOpportunity(null)}
@@ -121,26 +120,22 @@ export function OpportunitiesPage() {
         )}
       </EntitySheet>
 
-      {/* --- EDIT DIALOG --- */}
-      <Dialog open={!!editingOpportunity} onOpenChange={(open) => !open && setEditingOpportunity(null)}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col bg-[#13151a] border-white/10 text-white">
-          <DialogHeader>
-            <DialogTitle>Modifier l'opportunité</DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Mettez à jour les informations du poste.
-            </DialogDescription>
-          </DialogHeader>
+      {/* EDIT DIALOG - Using FormDialog */}
+      <FormDialog
+        open={!!editingOpportunity}
+        onOpenChange={(open) => !open && setEditingOpportunity(null)}
+        title="Modifier l'opportunité"
+        description="Mettez à jour les informations du poste."
+      >
+        {(close) => editingOpportunity && (
+          <OpportunityForm
+            initialData={editingOpportunity}
+            onSuccess={close}
+          />
+        )}
+      </FormDialog>
 
-          {editingOpportunity && (
-            <OpportunityForm
-              initialData={editingOpportunity}
-              onSuccess={() => setEditingOpportunity(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* --- DELETE ALERT --- */}
+      {/* DELETE ALERT */}
       <EntityDeleteDialog
         open={!!opportunityToDelete}
         onOpenChange={(open) => {

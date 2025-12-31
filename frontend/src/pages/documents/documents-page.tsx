@@ -22,42 +22,41 @@ export function DocumentsPage() {
   const { documents, isLoading, isError } = useDocuments();
   const { mutate: deleteDocument, isPending: isDeleting } = useDeleteDocument();
 
-  // --- State ---
+  // State
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
-  const [documentToUpdate, setDocumentToUpdate] = useState<Document | null>(null);
+  const [editingDocument, setEditingDocument] = useState<Document | null>(null);
   const [documentToDelete, setDocumentToDelete] = useState<Document | null>(null);
   const [deleteError, setDeleteError] = useState('');
 
-  // Sorting
+  // Sorting by date (newest first)
   const sortedDocuments = documents?.slice().sort((a, b) =>
     new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
 
-  // --- Handlers ---
+  // Handlers
   const handleDelete = async () => {
     if (!documentToDelete) return;
     setDeleteError('');
 
-    // Using mutateAsync to handle promise properly with toast
     deleteDocument({ documentId: documentToDelete.id }, {
-        onSuccess: () => {
-             toast.success('Document supprimé avec succès');
-             // Close sheet if we deleted the currently viewed document
-             if (selectedDocument?.id === documentToDelete.id) {
-                setSelectedDocument(null);
-             }
-             setDocumentToDelete(null);
-        },
-        onError: (error) => {
-            console.error('Erreur lors de la suppression:', error);
-            setDeleteError("Erreur lors de la suppression du document.");
+      onSuccess: () => {
+        toast.success('Document supprimé avec succès');
+        // Close sheet if we deleted the currently viewed document
+        if (selectedDocument?.id === documentToDelete.id) {
+          setSelectedDocument(null);
         }
+        setDocumentToDelete(null);
+      },
+      onError: (error) => {
+        console.error('Erreur lors de la suppression:', error);
+        setDeleteError("Erreur lors de la suppression du document.");
+      }
     });
   };
 
   return (
     <div className="space-y-6 pb-20">
-      {/* --- Header --- */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Documents</h1>
@@ -68,23 +67,23 @@ export function DocumentsPage() {
 
         {/* CREATE DIALOG */}
         <FormDialog
-            title="Ajouter un document"
-            description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
-            trigger={
-                <Button
-                    size="icon"
-                    className="h-10 w-10 bg-primary hover:bg-[#e84232] text-white rounded-full shadow-lg transition-transform hover:scale-105"
-                    title="Ajouter un document"
-                >
-                  <Plus className="h-6 w-6" />
-                </Button>
-            }
+          title="Ajouter un document"
+          description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
+          trigger={
+            <Button
+              size="icon"
+              className="h-10 w-10 bg-primary hover:bg-[#e84232] text-white rounded-full shadow-lg transition-transform hover:scale-105"
+              title="Ajouter un document"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          }
         >
-            {(close) => <DocumentForm onSuccess={close} />}
+          {(close) => <DocumentForm onSuccess={close} />}
         </FormDialog>
       </div>
 
-      {/* --- Content --- */}
+      {/* Content */}
       <div className="min-h-[200px]">
         {isLoading ? (
           <CardListSkeleton />
@@ -99,81 +98,75 @@ export function DocumentsPage() {
             </div>
             <h3 className="text-lg font-semibold text-white">Aucun document</h3>
             <div className="mt-4">
-                 <FormDialog
-                    title="Ajouter un document"
-                    trigger={
-                        <Button variant="link" className="text-primary">
-                          Ajouter maintenant
-                        </Button>
-                    }
-                >
-                    {(close) => <DocumentForm onSuccess={close} />}
-                </FormDialog>
+              <FormDialog
+                title="Ajouter un document"
+                trigger={
+                  <Button variant="link" className="text-primary">
+                    Ajouter maintenant
+                  </Button>
+                }
+              >
+                {(close) => <DocumentForm onSuccess={close} />}
+              </FormDialog>
             </div>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-             {sortedDocuments.map((doc) => (
-                <div key={doc.id} onClick={() => setSelectedDocument(doc)} className="cursor-pointer">
-                    <DocumentCard
-                        document={doc}
-                        onEdit={setDocumentToUpdate}
-                        onDelete={setDocumentToDelete}
-                    />
-                </div>
-             ))}
+            {sortedDocuments.map((doc) => (
+              <div key={doc.id} onClick={() => setSelectedDocument(doc)} className="cursor-pointer">
+                <DocumentCard
+                  document={doc}
+                  onEdit={setEditingDocument}
+                  onDelete={setDocumentToDelete}
+                />
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      {/* --- UPDATE DIALOG --- */}
+      {/* EDIT DIALOG - Using FormDialog */}
       <FormDialog
-         title="Modifier le document"
-         open={!!documentToUpdate}
-         onOpenChange={(isOpen) => !isOpen && setDocumentToUpdate(null)}
+        title="Modifier le document"
+        open={!!editingDocument}
+        onOpenChange={(open) => !open && setEditingDocument(null)}
       >
-         {(close) => (
-            documentToUpdate ? (
-                <DocumentForm
-                    initialData={documentToUpdate}
-                    onSuccess={() => {
-                        close();
-                        setDocumentToUpdate(null);
-                    }}
-                />
-            ) : <></>
-         )}
+        {(close) => editingDocument && (
+          <DocumentForm
+            initialData={editingDocument}
+            onSuccess={close}
+          />
+        )}
       </FormDialog>
 
-      {/* --- DETAILS SHEET --- */}
+      {/* DETAILS SHEET */}
       <EntitySheet
         open={!!selectedDocument}
         onOpenChange={(open) => !open && setSelectedDocument(null)}
         title="Détails du document"
       >
         {selectedDocument && (
-            <DocumentDetails
-                document={selectedDocument}
-                onEdit={(doc) => {
-                    setSelectedDocument(null);
-                    setDocumentToUpdate(doc);
-                }}
-                onDelete={(doc) => {
-                    // Trigger the shared delete dialog from the page level
-                    setDocumentToDelete(doc);
-                }}
-            />
+          <DocumentDetails
+            document={selectedDocument}
+            onEdit={(doc) => {
+              setSelectedDocument(null);
+              setEditingDocument(doc);
+            }}
+            onDelete={(doc) => {
+              setDocumentToDelete(doc);
+            }}
+          />
         )}
       </EntitySheet>
 
-      {/* --- DELETE CONFIRMATION --- */}
+      {/* DELETE CONFIRMATION */}
       <EntityDeleteDialog
         open={!!documentToDelete}
         onOpenChange={(open) => {
-            if (!open) {
-                setDocumentToDelete(null);
-                setDeleteError('');
-            }
+          if (!open) {
+            setDocumentToDelete(null);
+            setDeleteError('');
+          }
         }}
         entityType="document"
         entityLabel={documentToDelete?.name || ''}

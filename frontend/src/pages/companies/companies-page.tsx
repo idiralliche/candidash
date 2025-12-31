@@ -8,7 +8,6 @@ import { Company } from '@/api/model';
 
 import { Button } from '@/components/ui/button';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 // Shared Components
 import { EntitySheet } from '@/components/shared/entity-sheet';
@@ -93,7 +92,7 @@ export function CompaniesPage() {
         )}
       </div>
 
-      {/* --- DETAILS SHEET --- */}
+      {/* DETAILS SHEET */}
       <EntitySheet
         open={!!selectedCompany}
         onOpenChange={(open) => !open && setSelectedCompany(null)}
@@ -114,26 +113,22 @@ export function CompaniesPage() {
         )}
       </EntitySheet>
 
-      {/* --- EDIT DIALOG --- */}
-      <Dialog open={!!editingCompany} onOpenChange={(open) => !open && setEditingCompany(null)}>
-        <DialogContent className="bg-[#13151a] border-white/10 text-white">
-          <DialogHeader>
-            <DialogTitle>Modifier l'entreprise</DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Modifiez les informations de l'entreprise.
-            </DialogDescription>
-          </DialogHeader>
+      {/* EDIT DIALOG - Using FormDialog */}
+      <FormDialog
+        open={!!editingCompany}
+        onOpenChange={(open) => !open && setEditingCompany(null)}
+        title="Modifier l'entreprise"
+        description="Modifiez les informations de l'entreprise."
+      >
+        {(close) => editingCompany && (
+          <CompanyForm
+            initialData={editingCompany}
+            onSuccess={close}
+          />
+        )}
+      </FormDialog>
 
-          {editingCompany && (
-            <CompanyForm
-              initialData={editingCompany}
-              onSuccess={() => setEditingCompany(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* --- DELETE ALERT --- */}
+      {/* DELETE ALERT */}
       <EntityDeleteDialog
         open={!!companyToDelete}
         onOpenChange={(open) => {

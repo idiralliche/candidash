@@ -9,11 +9,11 @@ import { ScheduledEvent } from '@/api/model';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 import { EntitySheet } from '@/components/shared/entity-sheet';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
+import { FormDialog } from '@/components/shared/form-dialog';
 
 import { EventForm } from '@/components/events/event-form';
 import { EventDetails } from '@/components/events/event-details';
@@ -141,22 +141,21 @@ export function EventsPage() {
       </div>
 
       {/* --- CREATE DIALOG --- */}
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="bg-[#13151a] border-white/10 text-white sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Nouvel événement</DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Planifiez un entretien, une relance ou une réunion.
-            </DialogDescription>
-          </DialogHeader>
+      <FormDialog
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        title="Nouvel événement"
+        description="Planifiez un entretien, une relance ou une réunion."
+      >
+        {(close) => (
           <EventForm
-            onSuccess={() => setIsCreateOpen(false)}
+            onSuccess={close}
             defaultDate={createDate}
           />
-        </DialogContent>
-      </Dialog>
+        )}
+      </FormDialog>
 
-      {/* --- DETAILS SHEET (NEW) --- */}
+      {/* --- DETAILS SHEET --- */}
       <EntitySheet
         open={!!selectedEvent}
         onOpenChange={(open) => !open && setSelectedEvent(null)}
@@ -178,19 +177,18 @@ export function EventsPage() {
       </EntitySheet>
 
       {/* --- EDIT DIALOG --- */}
-      <Dialog open={!!editingEvent} onOpenChange={(open) => !open && setEditingEvent(null)}>
-        <DialogContent className="bg-[#13151a] border-white/10 text-white sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Modifier l'événement</DialogTitle>
-          </DialogHeader>
-          {editingEvent && (
+      <FormDialog
+        open={!!editingEvent}
+        onOpenChange={(open) => !open && setEditingEvent(null)}
+        title="Modifier l'événement"
+      >
+        {(close) => editingEvent && (
             <EventForm
               initialData={editingEvent}
-              onSuccess={() => setEditingEvent(null)}
+              onSuccess={close}
             />
-          )}
-        </DialogContent>
-      </Dialog>
+        )}
+      </FormDialog>
 
       {/* --- DELETE ALERT --- */}
       <EntityDeleteDialog
