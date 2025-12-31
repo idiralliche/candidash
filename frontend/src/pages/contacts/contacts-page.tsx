@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Plus, Search, Users } from 'lucide-react';
 
@@ -17,6 +17,7 @@ import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 
 import { useContacts } from '@/hooks/use-contacts';
 import { useDeleteContact } from '@/hooks/use-delete-contact';
+import { useDebounce } from '@/hooks/use-debounce';
 import { Contact } from '@/api/model';
 
 import { FormDialog } from '@/components/shared/form-dialog';
@@ -26,15 +27,7 @@ import { ContactDetails } from '@/components/contacts/contact-details';
 
 export function ContactsPage() {
   const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-
-  // Debounce manual implementation
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 300); // 300ms delay
-    return () => clearTimeout(timer);
-  }, [search]);
+  const debouncedSearch = useDebounce(search, 300);
 
   const { contacts, isLoading } = useContacts();
   const { mutate: deleteContact, isPending: isDeleting } = useDeleteContact();
