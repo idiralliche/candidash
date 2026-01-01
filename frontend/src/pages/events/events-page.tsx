@@ -66,7 +66,7 @@ export function EventsPage() {
 
         <div className="flex items-center gap-3">
           <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'calendar' | 'list')}>
-            <TabsList className="bg-[#16181d] border border-white/10">
+            <TabsList className="bg-surface-base border border-white-light">
               <TabsTrigger value="calendar" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                 <CalendarIcon className="h-4 w-4 mr-2" />
                 Calendrier
@@ -93,14 +93,14 @@ export function EventsPage() {
         {isLoading ? (
           viewMode === 'calendar' ? (
              /* CALENDAR SKELETON */
-             <div className="max-w-2xl mx-auto w-full bg-[#16181d] rounded-xl border border-white/10 h-[600px] p-4 space-y-4">
+             <div className="max-w-2xl mx-auto w-full bg-surface-base rounded-xl border border-white-light h-[600px] p-4 space-y-4">
                <div className="flex justify-between items-center mb-6">
-                 <Skeleton className="h-8 w-48 bg-white/10" />
-                 <Skeleton className="h-8 w-24 bg-white/10" />
+                 <Skeleton className="h-8 w-48 bg-white-light " />
+                 <Skeleton className="h-8 w-24 bg-white-light " />
                </div>
                <div className="space-y-2">
                  {Array.from({ length: 7 }).map((_, i) => (
-                   <Skeleton key={i} className="h-[72px] w-full rounded-xl bg-white/5" />
+                   <Skeleton key={i} className="h-[72px] w-full rounded-xl bg-white-subtle " />
                  ))}
                </div>
              </div>

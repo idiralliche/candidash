@@ -30,9 +30,9 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
       onClick={() => onClick(contact)}
       className="
         group relative flex flex-col sm:flex-row sm:items-center
-        bg-[#16181d] border border-white/5 rounded-xl p-4 gap-4
+        bg-surface-base border border-white-subtle rounded-xl p-4 gap-4
         transition-all duration-200
-        hover:bg-[#1c1f26] hover:border-primary/30 hover:shadow-md hover:-translate-y-[1px]
+        hover:bg-surface-hover hover:border-primary/30 hover:shadow-md hover:-translate-y-[1px]
         cursor-pointer
       "
     >
@@ -62,7 +62,7 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
           {/* Company or Status */}
           <div className="flex items-center gap-2">
             {company ? (
-                <div className="flex items-center gap-1.5 text-xs text-gray-300 bg-white/5 px-2 py-1 rounded">
+                <div className="flex items-center gap-1.5 text-xs text-gray-300 bg-white-subtle  px-2 py-1 rounded">
                     <Building2 className="h-3 w-3" />
                     <span className="truncate max-w-[150px]">{company.name}</span>
                 </div>
@@ -90,15 +90,15 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white/10"
+                className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white-light "
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-[#16181d] border-white/10 text-white">
+            <DropdownMenuContent align="end" className="bg-surface-base border-white-light text-white">
               <DropdownMenuItem
-                className="cursor-pointer focus:bg-white/10 focus:text-white"
+                className="cursor-pointer focus:bg-white-light  focus:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
                   onEdit(contact);

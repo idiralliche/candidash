@@ -36,7 +36,7 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
   };
 
   return (
-    <div className="group relative flex flex-col sm:flex-row sm:items-center bg-[#16181d] border border-white/5 rounded-xl p-4 gap-4 transition-all duration-200 hover:bg-[#1c1f26] hover:border-primary/30 hover:shadow-md hover:-translate-y-[1px]">
+    <div className="group relative flex flex-col sm:flex-row sm:items-center bg-surface-base border border-white-subtle rounded-xl p-4 gap-4 transition-all duration-200 hover:bg-surface-hover hover:border-primary/30 hover:shadow-md hover:-translate-y-[1px]">
 
       {/* IDENTITY */}
       <div className="flex items-center gap-4 min-w-0 sm:w-[45%]">
@@ -73,7 +73,7 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white/10 hidden sm:flex"
+            className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white-light  hidden sm:flex"
             onClick={handleDownloadClick}
             disabled={isDownloading}
             title={document.is_external ? "Ouvrir le lien" : "Télécharger"}
@@ -93,16 +93,16 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white/10"
+                className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white-light "
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-[#16181d] border-white/10 text-white">
+            <DropdownMenuContent align="end" className="bg-surface-base border-white-light text-white">
 
               <DropdownMenuItem
-                className="cursor-pointer focus:bg-white/10 focus:text-white"
+                className="cursor-pointer focus:bg-white-light  focus:text-white"
                 onClick={(e) => {
                     e.stopPropagation();
                     onEdit(document);

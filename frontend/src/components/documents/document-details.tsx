@@ -93,12 +93,12 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
         </Button>
       </div>
 
-      <Separator className="bg-white/10 mb-6" />
+      <Separator className="bg-white-light  mb-6" />
 
       {/* DESCRIPTION */}
       <div className="space-y-2">
          <h3 className="font-semibold text-white">Description / Notes</h3>
-         <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-[#0f1115] p-3 rounded-md border border-white/5">
+         <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-surface-deeper p-3 rounded-md border border-white-subtle">
             {document.description || "Aucune description fournie."}
          </div>
       </div>

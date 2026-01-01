@@ -46,7 +46,7 @@ export function OpportunityDetails({
       title={opportunity.job_title}
       // Status Badge (Application Type)
       badge={
-        <Badge variant="outline" className="mb-2 bg-white/5 text-white border-white/10 hover:bg-white/10">
+        <Badge variant="outline" className="mb-2 bg-white-subtle  text-white border-white-light hover:bg-white-light ">
           {getLabel(LABELS_APPLICATION, opportunity.application_type)}
         </Badge>
       }
@@ -74,7 +74,7 @@ export function OpportunityDetails({
             )}
 
             {opportunity.position_type && (
-              <Badge variant="secondary" className="text-xs bg-white/5 hover:bg-white/10">
+              <Badge variant="secondary" className="text-xs bg-white-subtle  hover:bg-white-light ">
                 {opportunity.position_type}
               </Badge>
             )}
@@ -115,14 +115,14 @@ export function OpportunityDetails({
         </div>
       )}
 
-      <Separator className="bg-white/10 mb-6" />
+      <Separator className="bg-white-light  mb-6" />
 
       {/* INFO GRID (Remote & Salary) */}
       <div className="grid grid-cols-1 gap-4 mb-6">
 
         {/* Remote Policy */}
         {opportunity.remote_policy && (
-          <div className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
+          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle  p-3">
             <Laptop className="h-5 w-5 text-purple-400 mt-0.5" />
             <div>
               <p className="font-medium text-white text-sm">Politique Télétravail</p>
@@ -138,7 +138,7 @@ export function OpportunityDetails({
 
         {/* Salary */}
         {(opportunity.salary_min != null || opportunity.salary_max != null) && (
-          <div className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
+          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle  p-3">
             <Banknote className="h-5 w-5 text-green-400 mt-0.5" />
             <div>
               <p className="font-medium text-white text-sm">Rémunération</p>
@@ -156,7 +156,7 @@ export function OpportunityDetails({
         {opportunity.job_description && (
           <div className="space-y-2">
             <h3 className="font-semibold text-white">Description du poste</h3>
-            <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-[#0f1115] p-3 rounded-md border border-white/5">
+            <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-surface-deeper p-3 rounded-md border border-white-subtle">
               {opportunity.job_description}
             </div>
           </div>
@@ -167,7 +167,7 @@ export function OpportunityDetails({
           {opportunity.required_skills && (
             <div className="space-y-2">
               <h3 className="font-semibold text-white text-sm">Compétences requises</h3>
-              <div className="text-xs text-gray-400 whitespace-pre-wrap bg-[#0f1115] p-3 rounded-md border border-white/5 h-full">
+              <div className="text-xs text-gray-400 whitespace-pre-wrap bg-surface-deeper p-3 rounded-md border border-white-subtle h-full">
                 {opportunity.required_skills}
               </div>
             </div>
@@ -177,7 +177,7 @@ export function OpportunityDetails({
           {opportunity.technologies && (
             <div className="space-y-2">
               <h3 className="font-semibold text-white text-sm">Technologies</h3>
-              <div className="text-xs text-gray-400 whitespace-pre-wrap bg-[#0f1115] p-3 rounded-md border border-white/5 h-full">
+              <div className="text-xs text-gray-400 whitespace-pre-wrap bg-surface-deeper p-3 rounded-md border border-white-subtle h-full">
                 {opportunity.technologies}
               </div>
             </div>
@@ -188,7 +188,7 @@ export function OpportunityDetails({
         {opportunity.recruitment_process && (
           <div className="space-y-2">
             <h3 className="font-semibold text-white">Processus de recrutement</h3>
-            <div className="text-sm text-gray-300 whitespace-pre-wrap bg-[#0f1115] p-3 rounded-md border border-white/5">
+            <div className="text-sm text-gray-300 whitespace-pre-wrap bg-surface-deeper p-3 rounded-md border border-white-subtle">
               {opportunity.recruitment_process}
             </div>
           </div>

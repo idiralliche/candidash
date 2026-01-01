@@ -63,7 +63,7 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
         )
       }
     >
-      <Separator className="bg-white/10 mb-6" />
+      <Separator className="bg-white-light  mb-6" />
 
       {/* 1. GRID DATE & TIME */}
       <div className="grid grid-cols-2 gap-8 mb-6">
@@ -157,7 +157,7 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
       {event.instructions && (
         <div className="mb-6">
           <h3 className="text-xs font-bold text-gray-500 uppercase mb-2">Instructions</h3>
-          <div className="text-sm text-gray-200 bg-[#1c1f26] p-3 rounded-md border border-white/5 font-medium">
+          <div className="text-sm text-gray-200 bg-surface-hover p-3 rounded-md border border-white-subtle font-medium">
             {event.instructions}
           </div>
         </div>
@@ -170,7 +170,7 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
             <FileText className="h-3 w-3" />
             Notes Personnelles
           </h3>
-          <div className="text-sm text-gray-300 bg-[#0f1115] p-4 rounded-lg border border-white/5 whitespace-pre-wrap leading-relaxed">
+          <div className="text-sm text-gray-300 bg-surface-deeper p-4 rounded-lg border border-white-subtle whitespace-pre-wrap leading-relaxed">
             {event.notes}
           </div>
         </div>

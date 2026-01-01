@@ -59,7 +59,7 @@ export function FormDialog({
           {trigger}
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-[600px] bg-[#13151a] border-white/10 text-white">
+      <DialogContent className="sm:max-w-[600px] bg-[#13151a] border-white-light text-white">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && (

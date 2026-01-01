@@ -6,33 +6,70 @@
 
 @layer base {
   :root {
-    --background: 220 16% 7%;
-    --foreground: 220 13% 91%;
-    --card: 220 15% 12%;
-    --card-foreground: 220 13% 91%;
-    --popover: 220 15% 12%;
-    --popover-foreground: 220 13% 91%;
-    --primary: 6 100% 61%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 6 100% 61%;
+    /* ================================
+       BASE COLORS (HSL)
+       ================================ */
+
+    /* Surfaces & Backgrounds */
+    --background: 220 16 7; /* Main app background - Very dark blue-gray #0e1014 */
+    --surface-base: 220 14 10; /* Standard card background #16181d */
+    --surface-deeper: 220 12 7; /* Extra-dark background #0f1115 */
+    --surface-hover: 220 16 13; /* Surface hover state #1c1f26 */
+    --surface-elevated: 220 15 12; /* Elevated surfaces (modals, popovers) #1a1d23 */
+
+    /* Text */
+    --foreground: 220 13 91; /* Main text - Off-white */
+    --foreground-muted: 215 20.2 65.1; /* Secondary text - Medium gray */
+    --foreground-subtle: 220 10 50; /* Very subtle text - Dark gray */
+
+    /* Primary Color (Coral Red) */
+    --primary: 6 100 61; /* Main primary color #ff4b38 */
+    --primary-hover: 6 100 55; /* Calculated hover (lightness -6%) */
+    --primary-foreground: 0 0 100; /* Text on primary - Pure white */
+
+    /* Destructive Color */
+    --destructive: 0 62.8 30.6; /* Destructive red #7f1d1d */
+    --destructive-hover: 0 62.8 25; /* Destructive hover */
+    --destructive-foreground: 210 40 98; /* Text on destructive */
+
+    /* Neutral Surfaces (former secondary/muted/accent merged) */
+    --neutral: 217.2 32.6 17.5; /* Neutral surface #1e293b */
+    --neutral-foreground: 210 40 98; /* Text on neutral */
+
+    /* Borders & Separators */
+    --border: 217.2 32.6 17.5; /* Standard borders */
+    --border-subtle: 220 10 15; /* Very subtle borders */
+
+    /* Inputs */
+    --input: 217.2 32.6 17.5; /* Input background */
+    --ring: 6 100 61; /* Focus ring (= primary) */
+
+    /* ================================
+       OPACITIES (Modern tokens)
+       ================================ */
+    --opacity-subtle: 0.05; /* 5% - Very subtle borders */
+    --opacity-light: 0.1; /* 10% - Standard borders */
+    --opacity-medium: 0.2; /* 20% - Light overlays */
+    --opacity-strong: 0.4; /* 40% - Strong overlays */
+
+    /* ================================
+       SEMANTIC COLORS
+       ================================ */
+    --success: 142 71 45; /* Success green */
+    --warning: 38 92 50; /* Warning yellow */
+    --info: 199 89 48; /* Info blue */
+
+    /* ================================
+       RADIUS & OTHERS
+       ================================ */
     --radius: 1rem;
 
-    /* Charts defaults */
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Charts (optional - for later) */
+    --chart-1: 220 70 50;
+    --chart-2: 160 60 45;
+    --chart-3: 30 80 55;
+    --chart-4: 280 65 60;
+    --chart-5: 340 75 55;
   }
 
   body {
@@ -41,20 +78,30 @@
 }
 
 @layer components {
+  /* Glass effect panel */
   .glass-panel {
-    @apply bg-card/60 backdrop-blur-md border-b border-white/5;
+    @apply bg-surface-elevated/60 backdrop-blur-md border-b border-white/[0.05];
   }
 
+  /* Primary button */
   .btn-primary {
     @apply bg-primary text-white font-bold py-3 px-6 md:px-8
-           transition-all duration-200 shadow-[0_4px_12px_rgba(255,78,59,0.35)]
-           hover:brightness-110 hover:shadow-[0_8px_20px_rgba(255,78,59,0.4)] hover:-translate-y-[1px]
-           active:scale-95 text-sm sm:text-base whitespace-nowrap inline-flex items-center justify-center;
+           transition-all duration-200
+           shadow-[0_4px_12px_rgba(255,78,59,0.35)]
+           hover:brightness-110 hover:shadow-[0_8px_20px_rgba(255,78,59,0.4)]
+           hover:-translate-y-[1px]
+           active:scale-95
+           text-sm sm:text-base whitespace-nowrap
+           inline-flex items-center justify-center;
   }
 
+  /* Outline button */
   .btn-outline {
     @apply border-2 border-primary text-primary font-bold py-3 px-6 md:px-8
-           transition-all duration-200 hover:bg-primary hover:text-white
-           active:scale-95 text-sm sm:text-base whitespace-nowrap inline-flex items-center justify-center;
+           transition-all duration-200
+           hover:bg-primary hover:text-white
+           active:scale-95
+           text-sm sm:text-base whitespace-nowrap
+           inline-flex items-center justify-center;
   }
 }

@@ -43,10 +43,10 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#16181d] rounded-xl border border-white/10 shadow-lg overflow-hidden max-w-2xl mx-auto w-full">
+    <div className="flex flex-col h-full bg-surface-base rounded-xl border border-white-light shadow-lg overflow-hidden max-w-2xl mx-auto w-full">
 
       {/* --- 1. HEADER --- */}
-      <div className="flex items-center justify-between p-4 border-b border-white/10 bg-[#1c1f26]">
+      <div className="flex items-center justify-between p-4 border-b border-white-light bg-surface-hover">
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-bold text-white capitalize w-32">
             {format(startDate, 'MMMM yyyy', { locale: fr })}
@@ -68,19 +68,19 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
           </Button>
         </div>
 
-        <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1 border border-white/10">
-          <Button variant="ghost" size="icon" onClick={prevWeek} className="h-7 w-7 hover:bg-white/10 text-white">
+        <div className="flex items-center gap-1 bg-white-subtle  rounded-lg p-1 border border-white-light">
+          <Button variant="ghost" size="icon" onClick={prevWeek} className="h-7 w-7 hover:bg-white-light  text-white">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <div className="w-[1px] h-4 bg-white/10" />
-          <Button variant="ghost" size="icon" onClick={nextWeek} className="h-7 w-7 hover:bg-white/10 text-white">
+          <div className="w-[1px] h-4 bg-white-light " />
+          <Button variant="ghost" size="icon" onClick={nextWeek} className="h-7 w-7 hover:bg-white-light  text-white">
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
       {/* --- 2. DAYS LIST --- */}
-      <ScrollArea className="flex-1 bg-[#16181d]">
+      <ScrollArea className="flex-1 bg-surface-base">
         <div className="p-4 space-y-3">
           {daysToShow.map((day) => {
             const isExpanded = isSameDay(day, expandedDate);
@@ -97,8 +97,8 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                 className={`
                   rounded-xl transition-all duration-300 border cursor-pointer overflow-hidden
                   ${isExpanded
-                    ? 'border-blue-500/50 bg-[#1c1f26] shadow-[0_4px_20px_-5px_rgba(59,130,246,0.15)]' // 🔵 Bleu au lieu de Primary
-                    : 'border-transparent bg-[#1c1f26]/50 hover:bg-[#1c1f26] hover:border-white/5'
+                    ? 'border-blue-500/50 bg-surface-hover shadow-[0_4px_20px_-5px_rgba(59,130,246,0.15)]' // 🔵 Bleu au lieu de Primary
+                    : 'border-transparent bg-surface-hover/50 hover:bg-surface-hover hover:border-white-subtle'
                   }
                 `}
               >
@@ -149,7 +149,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                           <div key={event.id} className="relative flex gap-4 group">
                             {/* Vertical Line */}
                             {idx !== dayEvents.length - 1 && (
-                              <div className="absolute left-[54px] top-8 bottom-[-20px] w-[2px] bg-white/5 group-hover:bg-white/10 transition-colors" />
+                              <div className="absolute left-[54px] top-8 bottom-[-20px] w-[2px] bg-white-subtle  group-hover:bg-white-light  transition-colors" />
                             )}
 
                             {/* Hour */}
@@ -161,7 +161,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                             <div className="flex-1 pb-6">
                               <div
                                 onClick={(e) => { e.stopPropagation(); onSelectEvent(event); }}
-                                className="bg-[#16181d] border border-white/5 p-3 rounded-lg hover:border-blue-500/50 hover:bg-white/5 transition-all group/card relative"
+                                className="bg-surface-base border border-white-subtle p-3 rounded-lg hover:border-blue-500/50 hover:bg-white-subtle  transition-all group/card relative"
                               >
                                 {/* Point Timeline */}
                                 <div className="absolute -left-[21px] top-4 h-2.5 w-2.5 rounded-full bg-blue-500 ring-4 ring-[#1c1f26]" />
@@ -178,7 +178,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                                 </div>
 
                                 {(event.location || event.event_link) && (
-                                  <div className="flex items-center gap-1.5 text-xs text-gray-400 bg-black/20 p-1.5 rounded w-fit">
+                                  <div className="flex items-center gap-1.5 text-xs text-gray-400 bg-black-medium p-1.5 rounded w-fit">
                                     {event.location ? <MapPin size={12} /> : <Clock size={12} />}
                                     <span className="truncate max-w-[200px]">
                                       {event.location || "En ligne / Lien disponible"}
@@ -195,7 +195,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                 ) : (
                   /* --- COLLAPSED STATE --- */
                   <div className="flex items-center p-3 gap-4 h-[72px]">
-                    <div className="flex flex-col items-center justify-center min-w-[50px] border-r border-white/5 pr-4 py-1">
+                    <div className="flex flex-col items-center justify-center min-w-[50px] border-r border-white-subtle pr-4 py-1">
                       <span className={`text-xl font-bold leading-none ${isDayToday ? 'text-blue-400' : 'text-white'}`}>
                         {format(day, 'd')}
                       </span>
@@ -235,7 +235,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
 
           {/* --- 3. FOOTER --- */}
           <div className="pt-4 pb-8 text-center space-y-2">
-            <Button variant="ghost" className="text-xs text-gray-400 hover:text-white w-full bg-white/5 hover:bg-white/10" onClick={nextWeek}>
+            <Button variant="ghost" className="text-xs text-gray-400 hover:text-white w-full bg-white-subtle  hover:bg-white-light " onClick={nextWeek}>
               Voir les jours suivants <ChevronRight className="ml-1 h-3 w-3" />
             </Button>
             <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wider">

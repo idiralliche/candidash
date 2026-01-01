@@ -24,7 +24,7 @@ export function EntitySheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        className={`sm:max-w-xl w-full border-l border-white/10 bg-[#16181d] text-white ${className || ""}`}
+        className={`sm:max-w-xl w-full border-l border-white-light bg-surface-base text-white ${className || ""}`}
       >
         <SheetHeader className="pb-4">
           <SheetTitle>{title}</SheetTitle>

@@ -59,7 +59,7 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
         )
       }
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 border border-white/10 text-muted-foreground mb-4">
+      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white-subtle  border border-white-light text-muted-foreground mb-4">
         <Building2 className="h-6 w-6" />
       </div>
 
@@ -84,14 +84,14 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
         </div>
       )}
 
-      <Separator className="bg-white/10 mb-6" />
+      <Separator className="bg-white-light  mb-6" />
 
       {/* INFO GRID */}
       <div className="grid grid-cols-1 gap-4 mb-6">
 
         {/* Headquarters */}
         {company.headquarters && (
-          <div className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
+          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle  p-3">
             <MapPin className="h-5 w-5 text-red-400 mt-0.5" />
             <div>
               <p className="font-medium text-white text-sm">Siège social</p>
@@ -102,7 +102,7 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
 
         {/* SIRET */}
         {company.siret && (
-          <div className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
+          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle  p-3">
             <Hash className="h-5 w-5 text-yellow-400 mt-0.5" />
             <div>
               <p className="font-medium text-white text-sm">SIRET</p>
@@ -129,7 +129,7 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
             <FileText className="h-4 w-4 text-gray-400" />
             <h3 className="font-semibold text-white">Notes & Informations</h3>
           </div>
-          <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-[#0f1115] p-3 rounded-md border border-white/5">
+          <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-surface-deeper p-3 rounded-md border border-white-subtle">
             {company.notes}
           </div>
         </div>

@@ -14,7 +14,7 @@ export function AccountPage() {
     <div className="space-y-8 pt-20">
       <h1 className="text-3xl font-bold text-white">Mon compte</h1>
 
-      <Card className="max-w-2xl border-white/10 bg-[#13151a]">
+      <Card className="max-w-2xl border-white-light bg-[#13151a]">
         <CardHeader>
           <CardTitle className="text-white">Informations personnelles</CardTitle>
         </CardHeader>
@@ -25,13 +25,13 @@ export function AccountPage() {
 
             {/* Ligne Identité (Prénom + Nom) */}
             <div className="flex items-start gap-3">
-              <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-white/5">
+              <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-white-subtle ">
                 <User className="h-4 w-4 text-primary" />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-gray-400">Identité</span>
                 {isLoading ? (
-                  <Skeleton className="h-6 w-48 bg-white/5 mt-1" />
+                  <Skeleton className="h-6 w-48 bg-white-subtle  mt-1" />
                 ) : (
                   <span className="text-lg font-medium text-white">
                     {user?.first_name} {user?.last_name}
@@ -42,13 +42,13 @@ export function AccountPage() {
 
             {/* Ligne Email */}
             <div className="flex items-start gap-3">
-              <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-white/5">
+              <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-white-subtle ">
                 <Mail className="h-4 w-4 text-primary" />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-gray-400">Email</span>
                 {isLoading ? (
-                  <Skeleton className="h-6 w-64 bg-white/5 mt-1" />
+                  <Skeleton className="h-6 w-64 bg-white-subtle  mt-1" />
                 ) : (
                   <span className="text-lg font-medium text-white">
                     {user?.email}
@@ -59,13 +59,13 @@ export function AccountPage() {
 
             {/* Ligne Date d'inscription */}
             <div className="flex items-start gap-3">
-              <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-white/5">
+              <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-white-subtle ">
                 <Calendar className="h-4 w-4 text-primary" />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-gray-400">Membre depuis le</span>
                 {isLoading ? (
-                  <Skeleton className="h-6 w-32 bg-white/5 mt-1" />
+                  <Skeleton className="h-6 w-32 bg-white-subtle  mt-1" />
                 ) : (
                   <span className="text-lg font-medium text-white">
                     {user?.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}
@@ -76,7 +76,7 @@ export function AccountPage() {
 
           </div>
 
-          <Separator className="bg-white/10" />
+          <Separator className="bg-white-light " />
 
           {/* Bloc Actions (Liens avec icônes, sans soulignage) */}
           <div className="flex flex-col items-start space-y-3">

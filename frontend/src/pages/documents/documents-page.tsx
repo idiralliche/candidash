@@ -72,7 +72,7 @@ export function DocumentsPage() {
           trigger={
             <Button
               size="icon"
-              className="h-10 w-10 bg-primary hover:bg-[#e84232] text-white rounded-full shadow-lg transition-transform hover:scale-105"
+              className="h-10 w-10 bg-primary hover:bg-primary-hover text-white rounded-full shadow-lg transition-transform hover:scale-105"
               title="Ajouter un document"
             >
               <Plus className="h-6 w-6" />
@@ -92,8 +92,8 @@ export function DocumentsPage() {
             Erreur lors du chargement des documents.
           </div>
         ) : !sortedDocuments || sortedDocuments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/5 p-12 text-center">
-            <div className="mb-4 rounded-full bg-white/10 p-4">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white-light bg-white-subtle  p-12 text-center">
+            <div className="mb-4 rounded-full bg-white-light  p-4">
               <FileText className="h-8 w-8 text-gray-400" />
             </div>
             <h3 className="text-lg font-semibold text-white">Aucun document</h3>

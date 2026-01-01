@@ -77,7 +77,7 @@ export function EntityDeleteDialog({
   const { article, suffix } = genderMap[entityType] || { article: "Le ", suffix: "" };
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="bg-[#16181d] border-white/10 text-white">
+      <AlertDialogContent className="bg-surface-base border-white-light text-white">
         <AlertDialogHeader>
           <AlertDialogTitle>Supprimer cette {entityType} ?</AlertDialogTitle>
           <AlertDialogDescription className="text-gray-400">
@@ -89,7 +89,7 @@ export function EntityDeleteDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            className="bg-transparent border-white/10 hover:bg-white/5 hover:text-white text-gray-300"
+            className="bg-transparent border-white-light hover:bg-white-subtle  hover:text-white text-gray-300"
             disabled={isDeleting}
           >
             Annuler

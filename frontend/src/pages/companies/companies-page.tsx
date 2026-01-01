@@ -59,7 +59,7 @@ export function CompaniesPage() {
           title="Nouvelle Entreprise"
           description="Ajoutez une entreprise pour y associer des contacts et des opportunités."
           trigger={
-            <Button size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-[#e84232] text-white shadow-lg shadow-primary/20">
+            <Button size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/20">
               <Plus className="h-5 w-5" />
             </Button>
           }

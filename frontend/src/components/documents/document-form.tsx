@@ -197,7 +197,7 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
   // --- RENDER ---
   return (
     <Tabs value={tab} onValueChange={(v) => setTab(v as 'upload' | 'external')} className="w-full">
-      <TabsList className="grid w-full grid-cols-2 bg-black/20">
+      <TabsList className="grid w-full grid-cols-2 bg-black-medium">
         <TabsTrigger value="upload" className="data-[state=active]:bg-primary data-[state=active]:text-white">
             <UploadCloud className="mr-2 h-4 w-4"/> Fichier Local
         </TabsTrigger>
@@ -245,7 +245,7 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
             <SharedFields form={uploadForm} />
 
             <DialogFooter className="pt-4">
-                <Button type="submit" disabled={isPending} className="w-full sm:w-auto bg-primary hover:bg-[#e84232] text-white">
+                <Button type="submit" disabled={isPending} className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white">
                     {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {isEditing ? (
                         <><Save className="mr-2 h-4 w-4" /> Enregistrer / Convertir</>
@@ -269,7 +269,7 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
                 <FormItem>
                   <FormLabel className="text-white">URL du document *</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://docs.google.com/..." {...field} className="bg-black/20 border-white/10 text-white" />
+                    <Input placeholder="https://docs.google.com/..." {...field} className="bg-black-medium border-white-light text-white" />
                   </FormControl>
                   {isEditing && !isExternalOrigin && (
                       <p className="text-xs text-yellow-400">
@@ -284,7 +284,7 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
             <SharedFields form={externalForm} />
 
             <DialogFooter className="pt-4">
-                <Button type="submit" disabled={isPending} className="w-full sm:w-auto bg-primary hover:bg-[#e84232] text-white">
+                <Button type="submit" disabled={isPending} className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white">
                     {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {isEditing ? (
                         <><Save className="mr-2 h-4 w-4" /> Enregistrer / Convertir</>
@@ -329,7 +329,7 @@ function FileUploader({
 
   if (selectedFile) {
     return (
-      <div className="flex items-center justify-between p-4 border border-white/20 rounded-lg bg-black/40">
+      <div className="flex items-center justify-between p-4 border border-white-medium rounded-lg bg-black-strong">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="p-2 bg-primary/20 rounded-md">
             <File className="h-6 w-6 text-primary" />
@@ -362,7 +362,7 @@ function FileUploader({
       className={`
         border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors
         min-h-[120px] text-center
-        ${isDragActive ? 'border-primary bg-primary/10' : 'border-white/10 bg-black/20 hover:bg-black/30 hover:border-white/30'}
+        ${isDragActive ? 'border-primary bg-primary/10' : 'border-white-light bg-black-medium hover:bg-black/30 hover:border-white/30'}
       `}
     >
       <input {...getInputProps()} />
@@ -374,7 +374,7 @@ function FileUploader({
         ou cliquez pour parcourir
       </p>
       {isEditing && (
-         <p className="text-xs text-yellow-500/80 mt-3 pt-3 border-t border-white/5 w-full">
+         <p className="text-xs text-yellow-500/80 mt-3 pt-3 border-t border-white-subtle w-full">
            Attention : Convertira ce lien externe en fichier local.
          </p>
       )}
@@ -392,7 +392,7 @@ function SharedFields<T extends FieldValues>({ form }: { form: UseFormReturn<T> 
           <FormItem>
             <FormLabel className="text-white">Nom *</FormLabel>
             <FormControl>
-              <Input placeholder="Ex: CV 2024" {...field} className="bg-black/20 border-white/10 text-white" />
+              <Input placeholder="Ex: CV 2024" {...field} className="bg-black-medium border-white-light text-white" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -405,7 +405,7 @@ function SharedFields<T extends FieldValues>({ form }: { form: UseFormReturn<T> 
           <FormItem>
             <FormLabel className="text-white">Type *</FormLabel>
             <FormControl>
-                <Input placeholder="Ex: CV, Lettre, Portfolio..." {...field} className="bg-black/20 border-white/10 text-white" />
+                <Input placeholder="Ex: CV, Lettre, Portfolio..." {...field} className="bg-black-medium border-white-light text-white" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -420,7 +420,7 @@ function SharedFields<T extends FieldValues>({ form }: { form: UseFormReturn<T> 
             <FormControl>
               <Textarea
                 placeholder="Notes..."
-                className="resize-none bg-black/20 border-white/10 text-white min-h-[80px]"
+                className="resize-none bg-black-medium border-white-light text-white min-h-[80px]"
                 {...field}
                 value={(field.value as string) || ''}
               />

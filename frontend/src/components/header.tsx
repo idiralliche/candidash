@@ -30,7 +30,7 @@ export function Header() {
   const navLinkClass = "flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex h-[70px] items-center justify-between border-b border-white/5 bg-background/80 px-4 backdrop-blur-xl md:px-8">
+    <header className="fixed top-0 left-0 right-0 z-50 flex h-[70px] items-center justify-between border-b border-white-subtle bg-background/80 px-4 backdrop-blur-xl md:px-8">
       {/* Logo */}
       <div className="flex items-center gap-8">
         <Link to="/" className="text-xl font-extrabold tracking-tight text-primary hover:opacity-90 md:text-2xl">
@@ -69,29 +69,29 @@ export function Header() {
         {isAuthenticated ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10">
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-white-light bg-white-subtle  hover:bg-white-light ">
                 <User className="h-5 w-5 text-white" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-[#13151a] text-white border-white/10" align="end">
+            <DropdownMenuContent className="w-56 bg-[#13151a] text-white border-white-light" align="end">
 
               <DropdownMenuLabel className="truncate max-w-[200px]" title={`${user?.first_name} ${user?.last_name}`}>
                 {user?.first_name} {user?.last_name}
               </DropdownMenuLabel>
 
-              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuSeparator className="bg-white-light " />
 
-              <DropdownMenuItem className="cursor-pointer focus:bg-white/10 focus:text-white" onClick={() => navigate({ to: '/dashboard' })}>
+              <DropdownMenuItem className="cursor-pointer focus:bg-white-light  focus:text-white" onClick={() => navigate({ to: '/dashboard' })}>
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 <span>Tableau de bord</span>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="cursor-pointer focus:bg-white/10 focus:text-white" onClick={() => navigate({ to: '/account' })}>
+              <DropdownMenuItem className="cursor-pointer focus:bg-white-light  focus:text-white" onClick={() => navigate({ to: '/account' })}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Mon compte</span>
               </DropdownMenuItem>
 
-              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuSeparator className="bg-white-light " />
 
               <DropdownMenuItem className="cursor-pointer text-red-500 focus:bg-red-500/10 focus:text-red-500" onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
@@ -104,7 +104,7 @@ export function Header() {
             <Link to="/login" className="rounded-xl border border-primary px-5 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10">
               Connexion
             </Link>
-            <Link to="/register" className="rounded-xl bg-primary px-5 py-2 text-sm font-bold text-white shadow-lg transition-all hover:bg-[#e84232]">
+            <Link to="/register" className="rounded-xl bg-primary px-5 py-2 text-sm font-bold text-white shadow-lg transition-all hover:bg-primary-hover">
               Créer un compte
             </Link>
           </>
@@ -112,17 +112,17 @@ export function Header() {
       </nav>
 
       {/* --- MOBILE MENU BUTTON --- */}
-      <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-white hover:bg-white/5 md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+      <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-white-light text-white hover:bg-white-subtle  md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
       {/* --- MOBILE MENU CONTENT --- */}
       {isMenuOpen && (
-        <div className="absolute left-0 right-0 top-[70px] border-b border-white/5 bg-[#0f1115]/95 px-4 py-6 backdrop-blur-xl md:hidden">
+        <div className="absolute left-0 right-0 top-[70px] border-b border-white-subtle bg-surface-deeper/95 px-4 py-6 backdrop-blur-xl md:hidden">
             <nav className="flex flex-col gap-4">
               {isAuthenticated ? (
                 <>
-                  <div className="flex items-center gap-3 px-2 py-2 mb-2 border-b border-white/5">
+                  <div className="flex items-center gap-3 px-2 py-2 mb-2 border-b border-white-subtle">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                        <User size={16} />
                     </div>
@@ -132,7 +132,7 @@ export function Header() {
                   {/* Added Mobile Links */}
                   <Link
                     to="/companies"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Building2 size={18} />
@@ -141,7 +141,7 @@ export function Header() {
 
                   <Link
                     to="/opportunities"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Briefcase size={18} />
@@ -150,7 +150,7 @@ export function Header() {
 
                   <Link
                     to="/scheduled-events"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <CalendarClock size={18} />
@@ -159,7 +159,7 @@ export function Header() {
 
                   <Link
                     to="/contacts"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Contact size={18} />
@@ -168,7 +168,7 @@ export function Header() {
 
                   <Link
                     to="/documents"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Files size={18} />
@@ -177,7 +177,7 @@ export function Header() {
 
                   <Link
                     to="/dashboard"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <LayoutDashboard size={18} />
@@ -186,7 +186,7 @@ export function Header() {
 
                   <Link
                     to="/account"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User size={18} />
@@ -212,7 +212,7 @@ export function Header() {
                   </Link>
                   <Link
                     to="/register"
-                    className="flex w-full items-center justify-center rounded-xl bg-primary p-3 font-bold text-white hover:bg-[#e84232]"
+                    className="flex w-full items-center justify-center rounded-xl bg-primary p-3 font-bold text-white hover:bg-primary-hover"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Créer un compte

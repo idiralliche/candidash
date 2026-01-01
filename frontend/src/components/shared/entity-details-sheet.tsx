@@ -48,7 +48,7 @@ export function EntityDetailsSheet({
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 border-white/10 bg-white/5 hover:bg-white/10 text-white shrink-0"
+                className="h-8 w-8 border-white-light bg-white-subtle  hover:bg-white-light  text-white shrink-0"
                 onClick={onEdit}
               >
                 <Pencil className="h-4 w-4" />

@@ -134,7 +134,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                   <FormLabel className="text-white">Prénom *</FormLabel>
                   <FormControl>
-                    <Input placeholder="John" {...field} className="bg-black/20 border-white/10 text-white" />
+                    <Input placeholder="John" {...field} className="bg-black-medium border-white-light text-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,7 +147,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                   <FormLabel className="text-white">Nom *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Doe" {...field} className="bg-black/20 border-white/10 text-white" />
+                    <Input placeholder="Doe" {...field} className="bg-black-medium border-white-light text-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -163,7 +163,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormControl>
                   <div className="relative">
                       <User className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                      <Input placeholder="Talent Acquisition Manager..." {...field} className="pl-9 bg-black/20 border-white/10 text-white" />
+                      <Input placeholder="Talent Acquisition Manager..." {...field} className="pl-9 bg-black-medium border-white-light text-white" />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -183,7 +183,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormLabel className="text-white">Entreprise liée</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
                   <FormControl>
-                    <SelectTrigger className="bg-black/20 border-white/10 text-white">
+                    <SelectTrigger className="bg-black-medium border-white-light text-white">
                       <SelectValue placeholder="Aucune entreprise (Indépendant ou autre)" />
                     </SelectTrigger>
                   </FormControl>
@@ -204,7 +204,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
             control={form.control}
             name="is_independent_recruiter"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white/10 bg-white/5 p-3">
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white-light bg-white-subtle  p-3">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base text-white">Recruteur Indépendant</FormLabel>
                   <FormDescription className="text-xs text-gray-400">
@@ -231,7 +231,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                     <FormControl>
                         <div className="relative">
                             <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                            <Input placeholder="email@exemple.com" {...field} className="pl-9 bg-black/20 border-white/10 text-white" />
+                            <Input placeholder="email@exemple.com" {...field} className="pl-9 bg-black-medium border-white-light text-white" />
                         </div>
                     </FormControl>
                     <FormMessage />
@@ -248,7 +248,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                         <FormControl>
                             <div className="relative">
                                 <Phone className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                                <Input placeholder="+33 6..." {...field} className="pl-9 bg-black/20 border-white/10 text-white" />
+                                <Input placeholder="+33 6..." {...field} className="pl-9 bg-black-medium border-white-light text-white" />
                             </div>
                         </FormControl>
                         <FormMessage />
@@ -264,7 +264,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                         <FormControl>
                             <div className="relative">
                                 <LinkIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                                <Input placeholder="in/username" {...field} className="pl-9 bg-black/20 border-white/10 text-white" />
+                                <Input placeholder="in/username" {...field} className="pl-9 bg-black-medium border-white-light text-white" />
                             </div>
                         </FormControl>
                         <FormMessage />
@@ -284,7 +284,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                     <FormLabel className="text-white text-xs">Contexte de rencontre</FormLabel>
                     <FormControl>
-                    <Textarea placeholder="Ancien collègue, contacté sur LinkedIn..." {...field} className="bg-black/20 border-white/10 text-white min-h-[60px]" />
+                    <Textarea placeholder="Ancien collègue, contacté sur LinkedIn..." {...field} className="bg-black-medium border-white-light text-white min-h-[60px]" />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -297,7 +297,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                     <FormLabel className="text-white text-xs">Notes générales</FormLabel>
                     <FormControl>
-                    <Textarea placeholder="..." {...field} className="bg-black/20 border-white/10 text-white min-h-[80px]" />
+                    <Textarea placeholder="..." {...field} className="bg-black-medium border-white-light text-white min-h-[80px]" />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -312,7 +312,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
         )}
 
         <div className="pt-4 sticky bottom-0 pb-2">
-          <Button type="submit" className="w-full bg-primary hover:bg-[#e84232] text-white" disabled={isPending}>
+          <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white" disabled={isPending}>
             {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (
               isEditing ? "Enregistrer les modifications" : "Ajouter le contact"
             )}

@@ -71,7 +71,7 @@ export function ContactsPage() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
             <Input
               placeholder="Rechercher un nom, un email..."
-              className="pl-9 bg-[#16181d] border-white/10 text-white focus:border-orange-500/50"
+              className="pl-9 bg-surface-base border-white-light text-white focus:border-orange-500/50"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -81,7 +81,7 @@ export function ContactsPage() {
             title="Nouveau Contact"
             description="Ajoutez un interlocuteur (Recruteur, RH, Manager...)."
             trigger={
-              <Button size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-[#e84232] text-white shadow-lg shadow-primary/20">
+              <Button size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/20">
                 <Plus className="h-5 w-5" />
               </Button>
             }

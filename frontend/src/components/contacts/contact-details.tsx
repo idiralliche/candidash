@@ -32,12 +32,12 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
       metadata={
         <>
           {company ? (
-            <div className="flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-gray-200">
+            <div className="flex items-center gap-2 rounded-md border border-white-light bg-white-subtle  px-3 py-1.5 text-sm text-gray-200">
               <Building2 className="h-4 w-4 text-primary" />
               {company.name}
             </div>
           ) : (
-            <div className="flex items-center gap-2 rounded-md border border-white/5 bg-white/5 px-3 py-1.5 text-sm text-gray-500 italic">
+            <div className="flex items-center gap-2 rounded-md border border-white-subtle bg-white-subtle  px-3 py-1.5 text-sm text-gray-500 italic">
               <Building2 className="h-4 w-4" />
               Aucune entreprise liée
             </div>
@@ -64,7 +64,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
         )
       }
     >
-      <Separator className="bg-white/10" />
+      <Separator className="bg-white-light " />
 
       {/* CONTACT DETAILS */}
       <div className="space-y-4">
@@ -73,9 +73,9 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
           {contact.email && (
             <a
               href={`mailto:${contact.email}`}
-              className="flex items-center gap-3 p-3 rounded-lg bg-[#1c1f26] border border-white/5 hover:border-primary/50 transition-colors group"
+              className="flex items-center gap-3 p-3 rounded-lg bg-surface-hover border border-white-subtle hover:border-primary/50 transition-colors group"
             >
-              <div className="p-2 rounded bg-white/5 text-gray-400 group-hover:text-white">
+              <div className="p-2 rounded bg-white-subtle  text-gray-400 group-hover:text-white">
                 <Mail className="h-4 w-4" />
               </div>
               <div className="min-w-0">
@@ -88,9 +88,9 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
           {contact.phone && (
             <a
               href={`tel:${contact.phone}`}
-              className="flex items-center gap-3 p-3 rounded-lg bg-[#1c1f26] border border-white/5 hover:border-primary/50 transition-colors group"
+              className="flex items-center gap-3 p-3 rounded-lg bg-surface-hover border border-white-subtle hover:border-primary/50 transition-colors group"
             >
-              <div className="p-2 rounded bg-white/5 text-gray-400 group-hover:text-white">
+              <div className="p-2 rounded bg-white-subtle  text-gray-400 group-hover:text-white">
                 <Phone className="h-4 w-4" />
               </div>
               <div className="min-w-0">
@@ -105,7 +105,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
               href={contact.linkedin.startsWith("http") ? contact.linkedin : `https://linkedin.com${contact.linkedin}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-3 rounded-lg bg-[#1c1f26] border border-white/5 hover:border-blue-500/50 transition-colors group"
+              className="flex items-center gap-3 p-3 rounded-lg bg-surface-hover border border-white-subtle hover:border-blue-500/50 transition-colors group"
             >
               <div className="p-2 rounded bg-blue-500/10 text-blue-400 group-hover:text-blue-300">
                 <LinkIcon className="h-4 w-4" />
@@ -127,7 +127,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
             <Quote className="h-3 w-3" />
             Contexte de rencontre
           </h3>
-          <div className="text-sm text-gray-300 bg-[#1c1f26] p-4 rounded-lg border border-white/5 italic relative">
+          <div className="text-sm text-gray-300 bg-surface-hover p-4 rounded-lg border border-white-subtle italic relative">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-500/50 rounded-l-lg"></div>
             {contact.relationship_notes}
           </div>
@@ -138,7 +138,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
       {contact.notes && (
         <div className="space-y-2">
           <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Notes</h3>
-          <div className="text-sm text-gray-400 bg-[#0f1115] p-4 rounded-lg border border-white/5 whitespace-pre-wrap leading-relaxed">
+          <div className="text-sm text-gray-400 bg-surface-deeper p-4 rounded-lg border border-white-subtle whitespace-pre-wrap leading-relaxed">
             {contact.notes}
           </div>
         </div>

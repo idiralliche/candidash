@@ -142,7 +142,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
             <FormItem>
               <FormLabel className="text-white">Nom de l'entreprise *</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: TechCorp" {...field} className="bg-black/20 border-white/10 text-white" />
+                <Input placeholder="Ex: TechCorp" {...field} className="bg-black-medium border-white-light text-white" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -154,7 +154,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
           control={form.control}
           name="is_intermediary"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-white/10 p-4 bg-black/20">
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-white-light p-4 bg-black-medium">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -182,7 +182,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
               <FormItem>
                 <FormLabel className="text-white">SIRET</FormLabel>
                 <FormControl>
-                  <Input placeholder="14 chiffres" {...field} maxLength={14} className="bg-black/20 border-white/10 text-white" />
+                  <Input placeholder="14 chiffres" {...field} maxLength={14} className="bg-black-medium border-white-light text-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -197,7 +197,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
               <FormItem>
                 <FormLabel className="text-white">Type d'entreprise</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ex: Startup, PME, Grand Groupe..." {...field} className="bg-black/20 border-white/10 text-white" />
+                  <Input placeholder="Ex: Startup, PME, Grand Groupe..." {...field} className="bg-black-medium border-white-light text-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -214,7 +214,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
               <FormItem>
                 <FormLabel className="text-white">Secteur d'activité</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ex: Fintech, Santé..." {...field} className="bg-black/20 border-white/10 text-white" />
+                  <Input placeholder="Ex: Fintech, Santé..." {...field} className="bg-black-medium border-white-light text-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -229,7 +229,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
               <FormItem>
                 <FormLabel className="text-white">Siège Social</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ville, Pays" {...field} className="bg-black/20 border-white/10 text-white" />
+                  <Input placeholder="Ville, Pays" {...field} className="bg-black-medium border-white-light text-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -245,7 +245,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
             <FormItem>
               <FormLabel className="text-white">Site Web</FormLabel>
               <FormControl>
-                <Input placeholder="https://..." {...field} className="bg-black/20 border-white/10 text-white" />
+                <Input placeholder="https://..." {...field} className="bg-black-medium border-white-light text-white" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -260,7 +260,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
             <FormItem>
               <FormLabel className="text-white">Notes</FormLabel>
               <FormControl>
-                <Textarea placeholder="Informations complémentaires..." {...field} className="bg-black/20 border-white/10 text-white min-h-[80px]" />
+                <Textarea placeholder="Informations complémentaires..." {...field} className="bg-black-medium border-white-light text-white min-h-[80px]" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -274,7 +274,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
         )}
 
         <div className="pt-4 pb-2">
-          <Button type="submit" className="w-full bg-primary hover:bg-[#e84232] text-white" disabled={isPending}>
+          <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white" disabled={isPending}>
             {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (
               isEditing ? "Enregistrer les modifications" : "Ajouter l'entreprise"
             )}

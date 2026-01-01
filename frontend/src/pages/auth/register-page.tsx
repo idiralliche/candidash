@@ -74,7 +74,7 @@ export function RegisterPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md border-white/10 bg-[#13151a] shadow-2xl">
+      <Card className="w-full max-w-md border-white-light bg-[#13151a] shadow-2xl">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center text-white">Créer un compte</CardTitle>
           <CardDescription className="text-center text-gray-400">
@@ -93,7 +93,7 @@ export function RegisterPage() {
                     <FormItem>
                       <FormLabel className="text-white">Prénom</FormLabel>
                       <FormControl>
-                        <Input placeholder="Jean" {...field} className="bg-black/20 border-white/10 text-white" />
+                        <Input placeholder="Jean" {...field} className="bg-black-medium border-white-light text-white" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -106,7 +106,7 @@ export function RegisterPage() {
                     <FormItem>
                       <FormLabel className="text-white">Nom</FormLabel>
                       <FormControl>
-                        <Input placeholder="Dupont" {...field} className="bg-black/20 border-white/10 text-white" />
+                        <Input placeholder="Dupont" {...field} className="bg-black-medium border-white-light text-white" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -121,7 +121,7 @@ export function RegisterPage() {
                   <FormItem>
                     <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="exemple@email.com" {...field} className="bg-black/20 border-white/10 text-white" />
+                      <Input placeholder="exemple@email.com" {...field} className="bg-black-medium border-white-light text-white" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -135,7 +135,7 @@ export function RegisterPage() {
                   <FormItem>
                     <FormLabel className="text-white">Mot de passe</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} className="bg-black/20 border-white/10 text-white" />
+                      <Input type="password" placeholder="••••••••" {...field} className="bg-black-medium border-white-light text-white" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -149,7 +149,7 @@ export function RegisterPage() {
                   <FormItem>
                     <FormLabel className="text-white">Confirmer le mot de passe</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} className="bg-black/20 border-white/10 text-white" />
+                      <Input type="password" placeholder="••••••••" {...field} className="bg-black-medium border-white-light text-white" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -164,7 +164,7 @@ export function RegisterPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-primary text-white hover:bg-[#e84232]"
+                className="w-full bg-primary text-white hover:bg-primary-hover"
                 disabled={isPending}
               >
                 {isPending ? (

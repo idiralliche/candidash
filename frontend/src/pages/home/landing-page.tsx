@@ -42,7 +42,7 @@ export function LandingPage() {
                         <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent" />
                     </div>
 
-                    <div className="hero-glass-card absolute inset-x-6 bottom-3 top-9 flex flex-col gap-4 rounded-t-xl rounded-b-lg border border-white/20 bg-white/10 p-6 backdrop-blur-md shadow-inner">
+                    <div className="hero-glass-card absolute inset-x-6 bottom-3 top-9 flex flex-col gap-4 rounded-t-xl rounded-b-lg border border-white-medium bg-white-light  p-6 backdrop-blur-md shadow-inner">
                         <div className="card-header flex items-center justify-between opacity-80">
                             <div className="h-4 w-24 rounded-full bg-white/40" />
                             <div className="h-8 w-8 rounded-full bg-white/40" />
@@ -56,7 +56,7 @@ export function LandingPage() {
                             <div className="h-10 w-full rounded-lg bg-white/15" />
                             <div className="hidden h-10 w-full rounded-lg bg-white/15 sm:block" />
                         </div>
-                        <div className="card-badge absolute right-[-10px] top-[90px] flex items-center gap-3 rounded-lg bg-[#1e293b] px-4 py-3 shadow-xl border border-white/10">
+                        <div className="card-badge absolute right-[-10px] top-[90px] flex items-center gap-3 rounded-lg bg-[#1e293b] px-4 py-3 shadow-xl border border-white-light">
                             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
                             <CheckCircle2 className="h-4 w-4 text-green-500" />
                             </div>
@@ -76,7 +76,7 @@ export function LandingPage() {
             </h2>
 
             <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-                <div className="flex flex-col items-center rounded-xl bg-[#16181d] p-8 shadow-lg transition-transform hover:-translate-y-1">
+                <div className="flex flex-col items-center rounded-xl bg-surface-base p-8 shadow-lg transition-transform hover:-translate-y-1">
                     <div className="mb-4 inline-flex h-[72px] w-[72px] items-center justify-center rounded-xl text-white">
                         <svg width="38" height="38" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -87,7 +87,7 @@ export function LandingPage() {
                     <p className="text-text-muted">Accédez instantanément à vos CV, lettres et fichiers importants.</p>
                 </div>
 
-                <div className="flex flex-col items-center rounded-xl bg-[#16181d] p-8 shadow-lg transition-transform hover:-translate-y-1">
+                <div className="flex flex-col items-center rounded-xl bg-surface-base p-8 shadow-lg transition-transform hover:-translate-y-1">
                     <div className="mb-4 inline-flex h-[72px] w-[72px] items-center justify-center rounded-xl text-white">
                          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 21h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -99,7 +99,7 @@ export function LandingPage() {
                     <p className="text-text-muted">Centralisez les profils d’entreprise, leurs opportunités et contacts associés.</p>
                 </div>
 
-                <div className="flex flex-col items-center rounded-xl bg-[#16181d] p-8 shadow-lg transition-transform hover:-translate-y-1">
+                <div className="flex flex-col items-center rounded-xl bg-surface-base p-8 shadow-lg transition-transform hover:-translate-y-1">
                     <div className="mb-4 inline-flex h-[72px] w-[72px] items-center justify-center rounded-xl text-white">
                         <svg width="38" height="38" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 12h3l3 8 4-16 3 8h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

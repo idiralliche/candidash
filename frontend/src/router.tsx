@@ -37,7 +37,7 @@ export const router = createRouter({
     auth: undefined!,
   },
   defaultPendingComponent: () => (
-    <div className="flex min-h-screen items-center justify-center bg-[#16181d]">
+    <div className="flex min-h-screen items-center justify-center bg-surface-base">
       <div className="text-center">
         <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
         <p className="text-sm text-gray-400">Chargement...</p>

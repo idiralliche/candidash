@@ -4,7 +4,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-white/5 bg-[#0f1115] py-12 text-sm">
+    <footer className="border-t border-white-subtle bg-surface-deeper py-12 text-sm">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 md:flex-row md:justify-between lg:px-20">
 
         {/* Brand Column */}
@@ -30,7 +30,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-12 max-w-6xl border-t border-white/5 px-6 pt-8 text-center text-gray-600 lg:px-20">
+      <div className="mx-auto mt-12 max-w-6xl border-t border-white-subtle px-6 pt-8 text-center text-gray-600 lg:px-20">
         &copy; {currentYear} CandiDash. Tous droits réservés.
       </div>
     </footer>
