@@ -1,8 +1,15 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import {
+  Link,
+  useNavigate,
+} from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2 } from 'lucide-react';
+import {
+  Loader2,
+  Mail,
+  Lock,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -93,7 +100,7 @@ export function RegisterPage() {
                     <FormItem>
                       <FormLabel className="text-white">Prénom</FormLabel>
                       <FormControl>
-                        <Input placeholder="Jean" {...field} className="bg-black-medium border-white-light text-white" />
+                        <Input placeholder="Jean" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -106,7 +113,7 @@ export function RegisterPage() {
                     <FormItem>
                       <FormLabel className="text-white">Nom</FormLabel>
                       <FormControl>
-                        <Input placeholder="Dupont" {...field} className="bg-black-medium border-white-light text-white" />
+                        <Input placeholder="Dupont" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -121,7 +128,11 @@ export function RegisterPage() {
                   <FormItem>
                     <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="exemple@email.com" {...field} className="bg-black-medium border-white-light text-white" />
+                      <Input
+                        placeholder="exemple@email.com"
+                        leadingIcon={Mail}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -135,7 +146,12 @@ export function RegisterPage() {
                   <FormItem>
                     <FormLabel className="text-white">Mot de passe</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} className="bg-black-medium border-white-light text-white" />
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        leadingIcon={Lock}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -149,7 +165,12 @@ export function RegisterPage() {
                   <FormItem>
                     <FormLabel className="text-white">Confirmer le mot de passe</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} className="bg-black-medium border-white-light text-white" />
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        leadingIcon={Lock}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

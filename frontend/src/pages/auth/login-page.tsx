@@ -2,12 +2,30 @@ import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2 } from 'lucide-react';
+import {
+  Loader2,
+  Mail,
+  Lock,
+} from 'lucide-react';
 import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Link } from '@tanstack/react-router';
 
@@ -78,8 +96,8 @@ export function LoginPage() {
                     <FormControl>
                       <Input
                         placeholder="exemple@email.com"
+                        leadingIcon={Mail}
                         {...field}
-                        className="bg-black-medium border-white-light text-white placeholder:text-gray-600 focus-visible:ring-primary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -97,8 +115,8 @@ export function LoginPage() {
                       <Input
                         type="password"
                         placeholder="••••••••"
+                        leadingIcon={Lock}
                         {...field}
-                        className="bg-black-medium border-white-light text-white placeholder:text-gray-600 focus-visible:ring-primary"
                       />
                     </FormControl>
                     <FormMessage />
