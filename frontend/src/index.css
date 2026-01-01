@@ -16,6 +16,8 @@
     --surface-deeper: 220 12 7; /* Extra-dark background #0f1115 */
     --surface-hover: 220 16 13; /* Surface hover state #1c1f26 */
     --surface-elevated: 220 15 12; /* Elevated surfaces (modals, popovers) #1a1d23 */
+    --surface-modal: 220 15 12; /* Modals & Cards - #13151a */
+    --surface-accent: 215 25 27; /* Surface accent - slate-800 like #1e293b */
 
     /* Text */
     --foreground: 220 13 91; /* Main text - Off-white */
@@ -43,6 +45,10 @@
     /* Inputs */
     --input: 217.2 32.6 17.5; /* Input background */
     --ring: 6 100 61; /* Focus ring (= primary) */
+
+    /* Badges neutral */
+    --badge-neutral: 220 12 18; /* #2c2e33 */
+    --badge-neutral-hover: 220 12 22; /* #36383d */
 
     /* ================================
        OPACITIES (Modern tokens)

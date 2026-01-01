@@ -10,7 +10,7 @@ export function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="border-white-light bg-[#13151a]">
+        <Card className="border-white-light bg-surface-modal">
           <CardHeader>
             <CardTitle className="text-white">Candidatures en cours</CardTitle>
           </CardHeader>
@@ -19,7 +19,7 @@ export function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-white-light bg-[#13151a]">
+        <Card className="border-white-light bg-surface-modal">
           <CardHeader>
             <CardTitle className="text-white">Entretiens prévus</CardTitle>
           </CardHeader>

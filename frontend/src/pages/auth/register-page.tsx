@@ -74,7 +74,7 @@ export function RegisterPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md border-white-light bg-[#13151a] shadow-2xl">
+      <Card className="w-full max-w-md border-white-light bg-surface-modal shadow-2xl">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center text-white">Créer un compte</CardTitle>
           <CardDescription className="text-center text-gray-400">

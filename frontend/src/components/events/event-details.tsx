@@ -43,7 +43,7 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
 
             {/* Type Badge */}
             {event.event_type && (
-              <Badge variant="secondary" className="bg-[#2c2e33] text-gray-300 border-none hover:bg-[#36383d]">
+              <Badge variant="secondary" className="bg-badge-neutral text-gray-300 border-none hover:bg-badge-neutral-hover">
                 {event.event_type}
               </Badge>
             )}

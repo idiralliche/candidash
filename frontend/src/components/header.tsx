@@ -73,7 +73,7 @@ export function Header() {
                 <User className="h-5 w-5 text-white" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-[#13151a] text-white border-white-light" align="end">
+            <DropdownMenuContent className="w-56 bg-surface-modal text-white border-white-light" align="end">
 
               <DropdownMenuLabel className="truncate max-w-[200px]" title={`${user?.first_name} ${user?.last_name}`}>
                 {user?.first_name} {user?.last_name}

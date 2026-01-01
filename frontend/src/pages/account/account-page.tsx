@@ -14,7 +14,7 @@ export function AccountPage() {
     <div className="space-y-8 pt-20">
       <h1 className="text-3xl font-bold text-white">Mon compte</h1>
 
-      <Card className="max-w-2xl border-white-light bg-[#13151a]">
+      <Card className="max-w-2xl border-white-light bg-surface-modal">
         <CardHeader>
           <CardTitle className="text-white">Informations personnelles</CardTitle>
         </CardHeader>

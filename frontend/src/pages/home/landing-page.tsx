@@ -8,7 +8,7 @@ export function LandingPage() {
       <div className="flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
         <section
             id="hero"
-            className="hero-section relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 overflow-hidden rounded-xl bg-[#13151a] px-6 py-16 shadow-2xl ring-1 ring-white/5 lg:grid-cols-2 lg:px-20 lg:py-28"
+            className="hero-section relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 overflow-hidden rounded-xl bg-surface-modal px-6 py-16 shadow-2xl ring-1 ring-white/5 lg:grid-cols-2 lg:px-20 lg:py-28"
             aria-label="Introduction CandiDash"
         >
             {/* TEXT COLUMN */}
@@ -38,7 +38,7 @@ export function LandingPage() {
             {/* VISUAL COLUMN */}
             <div className="flex w-full justify-center lg:justify-end">
                 <figure className="hero-visual relative h-[380px] w-full max-w-[460px] shrink-0 sm:h-[400px]" aria-hidden="true">
-                    <div className="hero-visual-bg absolute inset-0 overflow-hidden rounded-xl bg-[#ff4e3b] shadow-[0_30px_60px_rgba(255,78,59,0.3)]">
+                    <div className="hero-visual-bg absolute inset-0 overflow-hidden rounded-xl bg-primary shadow-[0_30px_60px_rgba(255,78,59,0.3)]">
                         <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent" />
                     </div>
 
@@ -56,7 +56,7 @@ export function LandingPage() {
                             <div className="h-10 w-full rounded-lg bg-white/15" />
                             <div className="hidden h-10 w-full rounded-lg bg-white/15 sm:block" />
                         </div>
-                        <div className="card-badge absolute right-[-10px] top-[90px] flex items-center gap-3 rounded-lg bg-[#1e293b] px-4 py-3 shadow-xl border border-white-light">
+                        <div className="card-badge absolute right-[-10px] top-[90px] flex items-center gap-3 rounded-lg bg-surface-accent px-4 py-3 shadow-xl border border-white-light">
                             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
                             <CheckCircle2 className="h-4 w-4 text-green-500" />
                             </div>

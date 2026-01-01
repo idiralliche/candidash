@@ -29,6 +29,8 @@ export default {
           deeper: "hsl(var(--surface-deeper))", // Replaces bg-0f1115
           hover: "hsl(var(--surface-hover))", // Replaces bg-1c1f26
           elevated: "hsl(var(--surface-elevated))",
+          modal: "hsl(var(--surface-modal))", // Replaces bg-13151a
+          accent: "hsl(var(--surface-accent))", // Replaces bg-1e293b
         },
 
         /* shadcn/ui semantic colors (compatibility) */
@@ -94,6 +96,10 @@ export default {
           4: "hsl(var(--chart-4))",
           5: "hsl(var(--chart-5))",
         },
+
+        // Tokens for badges (replaces #2c2e33 and #36383d)
+        "badge-neutral": "hsl(var(--badge-neutral))",
+        "badge-neutral-hover": "hsl(var(--badge-neutral-hover))",
 
         /* ==========================================
            OPACITIES (replaces white5, black20, etc.)
