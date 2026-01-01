@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Plus, Search, Users } from 'lucide-react';
+import {
+  Plus,
+  Search,
+  Users,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -70,8 +74,8 @@ export function ContactsPage() {
           <div className="relative flex-1 sm:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
             <Input
+              hasIcon
               placeholder="Rechercher un nom, un email..."
-              className="pl-9 bg-surface-base border-white-light text-white focus:border-orange-500/50"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
