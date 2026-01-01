@@ -1,24 +1,54 @@
 import { useForm } from 'react-hook-form';
-import { useEffect, useCallback } from 'react';
+import {
+  useEffect,
+  useCallback,
+} from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2 } from 'lucide-react';
-import { addHours, startOfHour } from 'date-fns';
+import {
+  Loader2,
+  Bell,
+  Tag,
+  Video,
+  Phone,
+  MapPin,
+} from 'lucide-react';
+import {
+  addHours,
+  startOfHour,
+} from 'date-fns';
 
 import { Button } from '@/components/ui/button';
 import {
-  Form, FormControl, FormField, FormItem, FormLabel, FormMessage
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 
 import { useCreateScheduledEvent } from '@/hooks/use-create-scheduled-event';
 import { useUpdateScheduledEvent } from '@/hooks/use-update-scheduled-event';
-import { ScheduledEvent, EventStatus, CommunicationMethod } from '@/api/model';
-import { LABELS_COMMUNICATION_METHOD, LABELS_EVENT_STATUS, getLabel } from '@/lib/dictionaries';
+import {
+  ScheduledEvent,
+  EventStatus,
+  CommunicationMethod,
+} from '@/api/model';
+import {
+  LABELS_COMMUNICATION_METHOD,
+  LABELS_EVENT_STATUS,
+  getLabel,
+} from '@/lib/dictionaries';
 import { toLocalISOString } from '@/lib/utils.ts';
 
 const eventSchema = z.object({
@@ -143,7 +173,12 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
             <FormItem>
               <FormLabel className="text-white">Titre de l'événement *</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Entretien RH, Appel découverte..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                <Input
+                  placeholder="Ex: Entretien RH, Appel découverte..."
+                  leadingIcon={Bell}
+                  className="focus:border-blue-500"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -158,7 +193,11 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
               <FormItem>
                 <FormLabel className="text-white">Date et Heure *</FormLabel>
                 <FormControl>
-                  <Input type="datetime-local" {...field} className="bg-black-medium border-white-light text-white block w-full focus:border-blue-500" />
+                  <Input
+                    type="datetime-local"
+                    className="focus:border-blue-500"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -171,7 +210,11 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
               <FormItem>
                 <FormLabel className="text-white">Durée (minutes)</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                  <Input
+                    type="number"
+                    className="focus:border-blue-500"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -211,7 +254,12 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
               <FormItem>
                 <FormLabel className="text-white">Type</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ex: Technique, Fit..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                   <Input
+                    placeholder="Ex: Technique, Fit..."
+                    leadingIcon={Tag}
+                    className="focus:border-blue-500"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -253,7 +301,12 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                 <FormItem>
                 <FormLabel className="text-white">Lien (Visio)</FormLabel>
                 <FormControl>
-                    <Input placeholder="https://..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                  <Input
+                    placeholder="https://..."
+                    leadingIcon={Video}
+                    className="focus:border-blue-500"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -266,7 +319,12 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                 <FormItem>
                 <FormLabel className="text-white">Téléphone</FormLabel>
                 <FormControl>
-                    <Input placeholder="+33..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                  <Input
+                    placeholder="+33..."
+                    leadingIcon={Phone}
+                    className="focus:border-blue-500"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -281,7 +339,12 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
             <FormItem>
                 <FormLabel className="text-white">Lieu</FormLabel>
                 <FormControl>
-                <Input placeholder="Adresse..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                  <Input
+                    placeholder="Adresse..."
+                    leadingIcon={MapPin}
+                    className="focus:border-blue-500"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
             </FormItem>
@@ -295,7 +358,7 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
             <FormItem>
                 <FormLabel className="text-white">Instructions</FormLabel>
                 <FormControl>
-                <Textarea placeholder="Code porte, étage..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                  <Textarea placeholder="Code porte, étage..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
                 </FormControl>
                 <FormMessage />
             </FormItem>
@@ -309,7 +372,7 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
             <FormItem>
                 <FormLabel className="text-white">Notes privées</FormLabel>
                 <FormControl>
-                <Textarea placeholder="..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                  <Textarea placeholder="..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
                 </FormControl>
                 <FormMessage />
             </FormItem>

@@ -2,7 +2,14 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2 } from 'lucide-react';
+import {
+  Loader2,
+  Globe,
+  MapPin,
+  Briefcase,
+  Hash,
+  Building2,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -142,7 +149,11 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
             <FormItem>
               <FormLabel className="text-white">Nom de l'entreprise *</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: TechCorp" {...field} className="bg-black-medium border-white-light text-white" />
+                <Input
+                  placeholder="Ex: TechCorp"
+                  leadingIcon={Building2}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -182,7 +193,12 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
               <FormItem>
                 <FormLabel className="text-white">SIRET</FormLabel>
                 <FormControl>
-                  <Input placeholder="14 chiffres" {...field} maxLength={14} className="bg-black-medium border-white-light text-white" />
+                  <Input
+                    placeholder="14 chiffres"
+                    leadingIcon={Hash}
+                    maxLength={14}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -197,7 +213,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
               <FormItem>
                 <FormLabel className="text-white">Type d'entreprise</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ex: Startup, PME, Grand Groupe..." {...field} className="bg-black-medium border-white-light text-white" />
+                  <Input placeholder="Ex: Startup, PME, Grand Groupe..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -214,7 +230,11 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
               <FormItem>
                 <FormLabel className="text-white">Secteur d'activité</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ex: Fintech, Santé..." {...field} className="bg-black-medium border-white-light text-white" />
+                  <Input
+                    placeholder="Ex: Fintech, Santé..."
+                    leadingIcon={Briefcase}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -229,7 +249,11 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
               <FormItem>
                 <FormLabel className="text-white">Siège Social</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ville, Pays" {...field} className="bg-black-medium border-white-light text-white" />
+                  <Input
+                    placeholder="Ville, Pays"
+                    leadingIcon={MapPin}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -245,7 +269,11 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
             <FormItem>
               <FormLabel className="text-white">Site Web</FormLabel>
               <FormControl>
-                <Input placeholder="https://..." {...field} className="bg-black-medium border-white-light text-white" />
+                <Input
+                  placeholder="https://..."
+                  leadingIcon={Globe}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

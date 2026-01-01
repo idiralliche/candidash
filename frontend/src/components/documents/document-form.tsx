@@ -1,9 +1,28 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useForm, UseFormReturn, FieldValues, Path } from 'react-hook-form';
+import {
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
+import {
+  useForm,
+  UseFormReturn,
+  FieldValues,
+  Path,
+} from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDropzone } from 'react-dropzone';
-import { Loader2, UploadCloud, Link as LinkIcon, Save, Info, File, X } from 'lucide-react';
+import {
+  Loader2,
+  UploadCloud,
+  Link as LinkIcon,
+  Save,
+  Info,
+  File,
+  X,
+  FileText,
+  Tag,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -17,9 +36,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import { DialogFooter } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Alert,
+  AlertDescription,
+} from '@/components/ui/alert';
 import { formatBytes } from '@/lib/utils';
 
 import { useCreateDocument } from '@/hooks/use-create-document';
@@ -269,7 +296,11 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
                 <FormItem>
                   <FormLabel className="text-white">URL du document *</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://docs.google.com/..." {...field} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      placeholder="https://docs.google.com/..."
+                      leadingIcon={LinkIcon}
+                      {...field}
+                    />
                   </FormControl>
                   {isEditing && !isExternalOrigin && (
                       <p className="text-xs text-yellow-400">
@@ -392,7 +423,11 @@ function SharedFields<T extends FieldValues>({ form }: { form: UseFormReturn<T> 
           <FormItem>
             <FormLabel className="text-white">Nom *</FormLabel>
             <FormControl>
-              <Input placeholder="Ex: CV 2024" {...field} className="bg-black-medium border-white-light text-white" />
+              <Input
+                placeholder="Ex: CV 2024"
+                leadingIcon={FileText}
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -405,7 +440,11 @@ function SharedFields<T extends FieldValues>({ form }: { form: UseFormReturn<T> 
           <FormItem>
             <FormLabel className="text-white">Type *</FormLabel>
             <FormControl>
-                <Input placeholder="Ex: CV, Lettre, Portfolio..." {...field} className="bg-black-medium border-white-light text-white" />
+              <Input
+                placeholder="Ex: CV, Lettre, Portfolio..."
+                leadingIcon={Tag}
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

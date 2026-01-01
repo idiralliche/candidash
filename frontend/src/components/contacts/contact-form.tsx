@@ -2,17 +2,33 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, User, Mail, Phone, Link as LinkIcon } from 'lucide-react';
+import {
+  Loader2,
+  User,
+  Mail,
+  Phone,
+  Link as LinkIcon,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
-  Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from "@/components/ui/switch";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 
 import { useCreateContact } from '@/hooks/use-create-contact';
@@ -134,7 +150,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                   <FormLabel className="text-white">Prénom *</FormLabel>
                   <FormControl>
-                    <Input placeholder="John" {...field} className="bg-black-medium border-white-light text-white" />
+                    <Input placeholder="John" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,7 +163,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                   <FormLabel className="text-white">Nom *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Doe" {...field} className="bg-black-medium border-white-light text-white" />
+                    <Input placeholder="Doe" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -161,10 +177,11 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
               <FormItem>
                 <FormLabel className="text-white">Poste / Titre</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                      <User className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                      <Input placeholder="Talent Acquisition Manager..." {...field} className="pl-9 bg-black-medium border-white-light text-white" />
-                  </div>
+                  <Input
+                    placeholder="Talent Acquisition Manager..."
+                    leadingIcon={User}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -229,10 +246,11 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                     <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
-                        <div className="relative">
-                            <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                            <Input placeholder="email@exemple.com" {...field} className="pl-9 bg-black-medium border-white-light text-white" />
-                        </div>
+                      <Input
+                        placeholder="email@exemple.com"
+                        leadingIcon={Mail}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -246,10 +264,11 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                     <FormItem>
                         <FormLabel className="text-white">Téléphone</FormLabel>
                         <FormControl>
-                            <div className="relative">
-                                <Phone className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                                <Input placeholder="+33 6..." {...field} className="pl-9 bg-black-medium border-white-light text-white" />
-                            </div>
+                          <Input
+                            placeholder="+33 6..."
+                            leadingIcon={Phone}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -262,10 +281,11 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                     <FormItem>
                         <FormLabel className="text-white">LinkedIn</FormLabel>
                         <FormControl>
-                            <div className="relative">
-                                <LinkIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                                <Input placeholder="in/username" {...field} className="pl-9 bg-black-medium border-white-light text-white" />
-                            </div>
+                          <Input
+                            placeholder="in/username"
+                            leadingIcon={LinkIcon}
+                            {...field}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>

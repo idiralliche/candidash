@@ -1,7 +1,17 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2 } from 'lucide-react';
+import {
+  Loader2,
+  Briefcase,
+  Tag,
+  Globe,
+  MapPin,
+  Wifi,
+  Euro,
+  Info,
+  Link as LinkIcon
+} from 'lucide-react';
 import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -198,7 +208,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
                 <FormItem>
                   <FormLabel className="text-white">Titre du poste *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Senior Backend Developer" {...field} maxLength={255} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      placeholder="Ex: Senior Backend Developer"
+                      leadingIcon={Briefcase}
+                      maxLength={255}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -239,7 +254,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
                 <FormItem>
                   <FormLabel className="text-white">Type de poste</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Backend, DevOps..." {...field} maxLength={100} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      placeholder="Ex: Backend, DevOps..."
+                      leadingIcon={Tag}
+                      maxLength={100}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -279,7 +299,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
               <FormItem>
                 <FormLabel className="text-white">Source</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ex: LinkedIn, Malt, Chasseur de tête..." {...field} maxLength={100} className="bg-black-medium border-white-light text-white" />
+                  <Input
+                    placeholder="Ex: LinkedIn, Malt, Chasseur de tête..."
+                    leadingIcon={Globe}
+                    maxLength={100}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -323,7 +348,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
                 <FormItem>
                   <FormLabel className="text-white">Ville / Pays</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Paris" {...field} maxLength={500} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      placeholder="Ex: Paris"
+                      leadingIcon={MapPin}
+                      maxLength={500}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -361,7 +391,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
                 <FormItem>
                   <FormLabel className="text-white">Détails Télétravail</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: 2 jours/semaine, obligatoire le mardi..." {...field} maxLength={5000} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      placeholder="Ex: 2 jours/semaine, obligatoire le mardi..."
+                      leadingIcon={Wifi}
+                      maxLength={5000}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -381,7 +416,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
                 <FormItem>
                   <FormLabel className="text-white">Min (€)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="40000" {...field} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      type="number"
+                      placeholder="40000"
+                      leadingIcon={Euro}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -394,7 +434,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
                 <FormItem>
                   <FormLabel className="text-white">Max (€)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="55000" {...field} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      type="number"
+                      placeholder="55000"
+                      leadingIcon={Euro}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -408,7 +453,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
                 <FormItem>
                   <FormLabel className="text-white">Infos Rémunération</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: + BSPCE, primes, participation..." {...field} maxLength={2000} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      placeholder="Ex: + BSPCE, primes, participation..."
+                      leadingIcon={Info}
+                      maxLength={2000}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -467,7 +517,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
                 <FormItem>
                   <FormLabel className="text-white">Lien de l'offre</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://..." {...field} maxLength={255} className="bg-black-medium border-white-light text-white" />
+                    <Input
+                      placeholder="https://..."
+                      leadingIcon={LinkIcon}
+                      maxLength={255}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
