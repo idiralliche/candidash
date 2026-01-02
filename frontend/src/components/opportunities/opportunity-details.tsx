@@ -57,7 +57,11 @@ export function OpportunityDetails({
       title={opportunity.job_title}
       // Status Badge (Application Type)
       badge={
-        <Badge variant="outline" className="mb-2 bg-white-subtle  text-white border-white-light hover:bg-white-light ">
+        <Badge
+          variant="subtle"
+          palette="gray"
+          className="mb-2"
+        >
           {getLabel(LABELS_APPLICATION, opportunity.application_type)}
         </Badge>
       }
@@ -85,7 +89,11 @@ export function OpportunityDetails({
             )}
 
             {opportunity.position_type && (
-              <Badge variant="secondary" className="text-xs bg-white-subtle  hover:bg-white-light ">
+              <Badge
+                variant="subtle"
+                palette="gray"
+                className="text-xs"
+              >
                 {opportunity.position_type}
               </Badge>
             )}
@@ -96,11 +104,12 @@ export function OpportunityDetails({
       footer={
         onDelete && (
           <Button
-            variant="ghost-destructive"
+            variant="ghost"
+            palette="destructive"
             className="w-full"
             onClick={() => onDelete(opportunity)}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Supprimer l'opportunité
           </Button>
         )
@@ -110,7 +119,8 @@ export function OpportunityDetails({
       {opportunity.job_posting_url && (
         <div className="mb-6">
           <Button
-            variant="outline-blue"
+            variant="outline"
+            palette="blue"
             className="w-full justify-start"
             asChild
           >
@@ -119,21 +129,21 @@ export function OpportunityDetails({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <LinkIcon className="h-4 w-4" />
+              <LinkIcon className="mr-2 h-4 w-4" />
               Voir l'annonce originale
             </a>
           </Button>
         </div>
       )}
 
-      <Separator className="bg-white-light  mb-6" />
+      <Separator className="bg-white-light mb-6" />
 
       {/* INFO GRID (Remote & Salary) */}
       <div className="grid grid-cols-1 gap-4 mb-6">
 
         {/* Remote Policy */}
         {opportunity.remote_policy && (
-          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle  p-3">
+          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle p-3">
             <Laptop className="h-5 w-5 text-purple-400 mt-0.5" />
             <div>
               <p className="font-medium text-white text-sm">Politique Télétravail</p>
@@ -149,7 +159,7 @@ export function OpportunityDetails({
 
         {/* Salary */}
         {(opportunity.salary_min != null || opportunity.salary_max != null) && (
-          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle  p-3">
+          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle p-3">
             <Banknote className="h-5 w-5 text-green-400 mt-0.5" />
             <div>
               <p className="font-medium text-white text-sm">Rémunération</p>
