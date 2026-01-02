@@ -24,7 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ScheduledEvent } from '@/api/model';
-import { getStatusBadgeVariant } from '@/lib/assign-colors';
+import { getStatusPalette } from '@/lib/semantic-ui';
 import {
   getLabel,
   LABELS_EVENT_STATUS
@@ -40,11 +40,8 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
   const [startDate, setStartDate] = useState(startOfDay(new Date()));
   const [expandedDate, setExpandedDate] = useState<Date>(startOfDay(new Date()));
 
-  // Generate the 7 days to show in the current week view
   const daysToShow = Array.from({ length: 7 }).map((_, i) => addDays(startDate, i));
   const lastDayShown = daysToShow[daysToShow.length - 1];
-
-  // Calculate upcoming events count after the last day shown
   const upcomingEventsCount = events.filter(e => new Date(e.scheduled_date) > endOfDay(lastDayShown)).length;
 
   const nextWeek = () => setStartDate(addWeeks(startDate, 1));
@@ -69,10 +66,11 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
           {/* "Today" Button */}
           <Button
             variant="outline"
+            palette="blue"
             size="sm"
             onClick={goToToday}
             disabled={isToday(startDate)}
-            className="h-7 text-xs border-blue-500/30 text-blue-400 hover:bg-blue-500/10 hover:text-blue-300 disabled:opacity-50"
+            className="h-7 text-xs disabled:opacity-50"
           >
             <CalendarIcon className="h-3 w-3" />
             Aujourd'hui
@@ -82,6 +80,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
         <div className="flex items-center gap-1 bg-white-subtle rounded-lg p-1 border border-white-light">
           <Button
             variant="ghost"
+            palette="white"
             size="icon"
             onClick={prevWeek}
             className="h-7 w-7"
@@ -91,6 +90,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
           <div className="w-[1px] h-4 bg-white-light" />
           <Button
             variant="ghost"
+            palette="white"
             size="icon"
             onClick={nextWeek}
             className="h-7 w-7"
@@ -107,7 +107,6 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
             const isExpanded = isSameDay(day, expandedDate);
             const isDayToday = isToday(day);
 
-            // Filter and sort events for the current day
             const dayEvents = events.filter(e => isSameDay(new Date(e.scheduled_date), day))
                                     .sort((a, b) => new Date(a.scheduled_date).getTime() - new Date(b.scheduled_date).getTime());
 
@@ -126,14 +125,17 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                 {/* --- EXPANDED STATE --- */}
                 {isExpanded ? (
                   <div className="animate-in fade-in zoom-in-95 duration-200">
-                    {/* Current Day Header */}
                     <div className="bg-blue-500/10 border-b border-blue-500/20 p-3 flex justify-between items-center">
                       <div className="flex items-baseline gap-2">
                         <span className="text-lg font-bold text-blue-400 capitalize">
                           {format(day, 'EEEE d', { locale: fr })}
                         </span>
                         {isDayToday && (
-                          <Badge className="text-[10px] h-5 px-1.5 bg-blue-500 hover:bg-blue-600 text-white border-none">
+                          <Badge
+                            variant="solid"
+                            palette="blue"
+                            className="text-[10px] h-5 px-1.5"
+                          >
                             Aujourd'hui
                           </Badge>
                         )}
@@ -143,10 +145,12 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                         <span className="text-xs text-blue-400/70 font-medium">
                           {dayEvents.length} rdv
                         </span>
-                        {/* Add Button (+) */}
                         <Button
                           size="icon-xs"
-                          variant="fab-blue"
+                          shape="pill"
+                          variant="solid"
+                          palette="blue"
+                          className="shadow-md"
                           onClick={(e) => {
                             e.stopPropagation();
                             onAddEvent(day);
@@ -172,28 +176,29 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                       ) : (
                         dayEvents.map((event, idx) => (
                           <div key={event.id} className="relative flex gap-4 group">
-                            {/* Vertical Line */}
                             {idx !== dayEvents.length - 1 && (
                               <div className="absolute left-[54px] top-8 bottom-[-20px] w-[2px] bg-white-subtle group-hover:bg-white-light transition-colors" />
                             )}
 
-                            {/* Hour */}
                             <div className="w-12 pt-1 text-right text-xs font-mono text-gray-400 shrink-0">
                               {format(new Date(event.scheduled_date), 'HH:mm')}
                             </div>
 
-                            {/* Card */}
                             <div className="flex-1 pb-6">
                               <div
                                 onClick={(e) => { e.stopPropagation(); onSelectEvent(event); }}
                                 className="bg-surface-base border border-white-subtle p-3 rounded-lg hover:border-blue-500/50 hover:bg-white-subtle transition-all group/card relative"
                               >
-                                {/* Point Timeline */}
                                 <div className="absolute -left-[21px] top-4 h-2.5 w-2.5 rounded-full bg-blue-500 ring-4 ring-[#1c1f26]" />
 
                                 <div className="flex justify-between items-start mb-1">
                                   <h4 className="font-semibold text-gray-200 text-sm">{event.title}</h4>
-                                  <Badge variant="outline" className={`${getStatusBadgeVariant(event.status)} text-[10px] h-5 px-1.5`}>
+
+                                  <Badge
+                                    variant="subtle"
+                                    palette={getStatusPalette(event.status)}
+                                    className="text-[10px] h-5 px-1.5"
+                                  >
                                       {getLabel(LABELS_EVENT_STATUS, event.status)}
                                   </Badge>
                                 </div>
@@ -262,7 +267,8 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
           <div className="pt-4 pb-8 text-center space-y-2">
             <Button
               variant="ghost"
-              className="text-xs w-full"
+              palette="gray"
+              className="text-xs w-full hover:text-white"
               onClick={nextWeek}
             >
               Voir les jours suivants
