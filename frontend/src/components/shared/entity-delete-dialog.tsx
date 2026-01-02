@@ -1,4 +1,3 @@
-// frontend/src/components/shared/entity-delete-dialog.tsx
 import {
   AlertDialog,
   AlertDialogAction,

@@ -1,4 +1,3 @@
-// frontend/src/components/documents/document-form.tsx
 import {
   useState,
   useEffect,

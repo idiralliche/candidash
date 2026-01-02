@@ -1,4 +1,3 @@
-// frontend/src/components/companies/company-form.tsx
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';

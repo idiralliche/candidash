@@ -1,13 +1,24 @@
-import { useState, useMemo } from 'react';
+import {
+  useState,
+  useMemo,
+} from 'react';
 import { toast } from 'sonner';
-import { Plus, LayoutGrid, Calendar as CalendarIcon } from 'lucide-react';
+import {
+  Plus,
+  LayoutGrid,
+  Calendar as CalendarIcon,
+} from 'lucide-react';
 
 import { useScheduledEvents } from '@/hooks/use-scheduled-events';
 import { useDeleteScheduledEvent } from '@/hooks/use-delete-scheduled-event';
 import { ScheduledEvent } from '@/api/model';
 
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { EntitySheet } from '@/components/shared/entity-sheet';
