@@ -46,9 +46,9 @@ export function EntityDetailsSheet({
             {/* EDIT BUTTON */}
             {onEdit && (
               <Button
-                variant="ghost"
+                variant="outline"
+                palette="gray"
                 size="icon"
-                className="border border-white-light"
                 onClick={onEdit}
               >
                 <Pencil className="h-4 w-4" />
