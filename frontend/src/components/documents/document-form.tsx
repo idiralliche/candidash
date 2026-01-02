@@ -224,12 +224,12 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
   // --- RENDER ---
   return (
     <Tabs value={tab} onValueChange={(v) => setTab(v as 'upload' | 'external')} className="w-full">
-      <TabsList className="grid w-full grid-cols-2 bg-black-medium">
+      <TabsList className="grid w-full grid-cols-2 bg-surface-base border border-white-light">
         <TabsTrigger value="upload" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-            <UploadCloud className="h-4 w-4"/> Fichier Local
+            <UploadCloud className="h-4 w-4 mr-2"/> Fichier Local
         </TabsTrigger>
         <TabsTrigger value="external" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-            <LinkIcon className="h-4 w-4"/> Lien Externe
+            <LinkIcon className="h-4 w-4 mr-2"/> Lien Externe
         </TabsTrigger>
       </TabsList>
 
@@ -272,20 +272,22 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
             <SharedFields form={uploadForm} />
 
             <DialogFooter className="pt-4">
+                {/* MIGRATION: Button Solid Primary */}
                 <Button
                   type="submit"
-                  variant="primary"
+                  variant="solid"
+                  palette="primary"
                   className="w-full sm:w-auto"
                   disabled={isPending}
                 >
                     {isPending ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         {isEditing ? "Enregistrement..." : "Upload en cours..."}
                       </>
                     ) : isEditing ? (
                       <>
-                        <Save className="h-4 w-4" />
+                        <Save className="mr-2 h-4 w-4" />
                         Enregistrer / Convertir
                       </>
                     ) : (
@@ -329,18 +331,19 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
             <DialogFooter className="pt-4">
                 <Button
                   type="submit"
-                  variant="primary"
+                  variant="solid"
+                  palette="primary"
                   className="w-full sm:w-auto"
                   disabled={isPending}
                 >
                     {isPending ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         {isEditing ? "Enregistrement..." : "Ajout en cours..."}
                       </>
                     ) : isEditing ? (
                       <>
-                        <Save className="h-4 w-4" />
+                        <Save className="mr-2 h-4 w-4" />
                         Enregistrer / Convertir
                       </>
                     ) : (
@@ -384,7 +387,7 @@ function FileUploader({
 
   if (selectedFile) {
     return (
-      <div className="flex items-center justify-between p-4 border border-white-medium rounded-lg bg-black-strong">
+      <div className="flex items-center justify-between p-4 border border-white-medium rounded-lg bg-surface-base">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="p-2 bg-primary/20 rounded-md">
             <File className="h-6 w-6 text-primary" />
@@ -400,7 +403,8 @@ function FileUploader({
         </div>
         <Button
           type="button"
-          variant="ghost-destructive"
+          variant="ghost"
+          palette="destructive"
           size="icon"
           onClick={() => onChange(null)}
         >
@@ -416,7 +420,7 @@ function FileUploader({
       className={`
         border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors
         min-h-[120px] text-center
-        ${isDragActive ? 'border-primary bg-primary/10' : 'border-white-light bg-black-medium hover:bg-black/30 hover:border-white/30'}
+        ${isDragActive ? 'border-primary bg-primary/10' : 'border-white-light bg-surface-base hover:bg-white/5 hover:border-white/30'}
       `}
     >
       <input {...getInputProps()} />
@@ -482,7 +486,7 @@ function SharedFields<T extends FieldValues>({ form }: { form: UseFormReturn<T> 
             <FormControl>
               <Textarea
                 placeholder="Notes..."
-                className="resize-none bg-black-medium border-white-light text-white min-h-[80px]"
+                className="resize-none bg-surface-base border-white-light text-white min-h-[80px]"
                 {...field}
                 value={(field.value as string) || ''}
               />
