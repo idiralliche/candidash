@@ -165,7 +165,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
           control={form.control}
           name="is_intermediary"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-white-light p-4 bg-black-medium">
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-white-light p-4 bg-surface-base">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -288,7 +288,11 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
             <FormItem>
               <FormLabel className="text-white">Notes</FormLabel>
               <FormControl>
-                <Textarea placeholder="Informations complémentaires..." {...field} className="bg-black-medium border-white-light text-white min-h-[80px]" />
+                <Textarea
+                  placeholder="Informations complémentaires..."
+                  {...field}
+                  className="bg-surface-base border-white-light text-white min-h-[80px]"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -303,13 +307,14 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
 
         <Button
           type="submit"
-          variant="primary"
+          variant="solid"
+          palette="primary"
           className="w-full"
           disabled={isPending}
         >
           {isPending ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {isEditing ? "Enregistrement..." : "Ajout en cours..."}
             </>
           ) : (

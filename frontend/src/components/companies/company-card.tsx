@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DestructiveMenuItem } from "@/components/ui/dropdown-menu-item-destructive";
 import { Company } from "@/api/model";
 
 interface CompanyCardProps {
@@ -49,8 +50,9 @@ export function CompanyCard({ company, onClick, onEdit, onDelete }: CompanyCardP
           </h3>
           {company.industry && (
             <Badge
-              variant="secondary"
-              className="w-fit text-[10px] bg-white-subtle text-gray-400 hover:bg-white-light border-none h-5 px-1.5 font-normal"
+              variant="subtle"
+              palette="gray"
+              className="w-fit font-normal"
             >
               {company.industry}
             </Badge>
@@ -94,6 +96,7 @@ export function CompanyCard({ company, onClick, onEdit, onDelete }: CompanyCardP
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
+              palette="gray"
               size="icon"
               onClick={(e) => e.stopPropagation()}
             >
@@ -114,16 +117,15 @@ export function CompanyCard({ company, onClick, onEdit, onDelete }: CompanyCardP
               <Pencil className="mr-2 h-4 w-4" />
               Modifier
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
-              onClick={(e) => {
+            <DestructiveMenuItem
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onDelete(company);
               }}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Supprimer
-            </DropdownMenuItem>
+            </DestructiveMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
