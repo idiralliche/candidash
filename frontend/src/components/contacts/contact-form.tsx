@@ -200,7 +200,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormLabel className="text-white">Entreprise liée</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
                   <FormControl>
-                    <SelectTrigger className="bg-black-medium border-white-light text-white">
+                    <SelectTrigger className="bg-surface-base border-white-light text-white">
                       <SelectValue placeholder="Aucune entreprise (Indépendant ou autre)" />
                     </SelectTrigger>
                   </FormControl>
@@ -221,7 +221,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
             control={form.control}
             name="is_independent_recruiter"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white-light bg-white-subtle p-3">
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white-light bg-surface-base p-3">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base text-white">Recruteur Indépendant</FormLabel>
                   <FormDescription className="text-xs text-gray-400">
@@ -304,7 +304,11 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                     <FormLabel className="text-white text-xs">Contexte de rencontre</FormLabel>
                     <FormControl>
-                    <Textarea placeholder="Ancien collègue, contacté sur LinkedIn..." {...field} className="bg-black-medium border-white-light text-white min-h-[60px]" />
+                    <Textarea
+                      placeholder="Ancien collègue, contacté sur LinkedIn..."
+                      {...field}
+                      className="bg-surface-base border-white-light text-white min-h-[60px]"
+                    />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -317,7 +321,11 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
                 <FormItem>
                     <FormLabel className="text-white text-xs">Notes générales</FormLabel>
                     <FormControl>
-                    <Textarea placeholder="..." {...field} className="bg-black-medium border-white-light text-white min-h-[80px]" />
+                    <Textarea
+                      placeholder="..."
+                      {...field}
+                      className="bg-surface-base border-white-light text-white min-h-[80px]"
+                    />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -334,13 +342,14 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
         <div className="sticky bottom-0">
           <Button
             type="submit"
-            variant="primary"
+            variant="solid"
+            palette="primary"
             className="w-full"
             disabled={isPending}
           >
             {isPending ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 {isEditing ? "Enregistrement..." : "Ajout en cours..."}
               </>
             ) : (
