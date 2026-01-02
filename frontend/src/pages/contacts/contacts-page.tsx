@@ -85,7 +85,7 @@ export function ContactsPage() {
             title="Nouveau Contact"
             description="Ajoutez un interlocuteur (Recruteur, RH, Manager...)."
             trigger={
-              <Button size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/20">
+              <Button variant="fab" size="icon">
                 <Plus className="h-5 w-5" />
               </Button>
             }

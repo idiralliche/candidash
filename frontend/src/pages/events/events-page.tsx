@@ -79,9 +79,9 @@ export function EventsPage() {
           </Tabs>
 
           <Button
+            variant="fab-blue"
             size="icon"
             onClick={() => handleOpenCreate(undefined)}
-            className="h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20"
           >
             <Plus className="h-5 w-5" />
           </Button>
@@ -199,7 +199,7 @@ export function EventsPage() {
                 setDeleteError('');
             }
         }}
-        entityType="event"
+        entityType="événement"
         entityLabel={eventToDelete?.title || ''}
         onConfirm={handleDelete}
         isDeleting={isDeleting}

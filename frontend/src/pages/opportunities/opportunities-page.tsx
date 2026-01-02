@@ -62,7 +62,7 @@ export function OpportunitiesPage() {
           title="Nouvelle Opportunité"
           description="Ajoutez une nouvelle opportunité à votre pipeline."
           trigger={
-            <Button size="icon" className="h-9 w-9 rounded-full bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/20">
+            <Button variant="fab" size="icon">
               <Plus className="h-5 w-5" />
             </Button>
           }

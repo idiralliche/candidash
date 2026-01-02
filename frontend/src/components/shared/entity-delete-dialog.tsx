@@ -1,3 +1,4 @@
+// frontend/src/components/shared/entity-delete-dialog.tsx
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,12 +42,12 @@ interface EntityDeleteDialogProps {
   error?: string;
 }
 
-const genderMap: Record<string, { article: string; suffix: string }> = {
-  événement: { article: "L'", suffix: "e" },
-  entreprise: { article: "L'", suffix: "e" },
-  opportunité: { article: "L'", suffix: "e" },
-  contact: { article: "Le ", suffix: "" },
-  document: { article: "Le ", suffix: "" },
+const genderMap: Record<string, { article: string; suffix: string; demonstrative: string }> = {
+  événement: { article: "L'", suffix: "e", demonstrative: "cet" },
+  entreprise: { article: "L'", suffix: "e", demonstrative: "cette" },
+  opportunité: { article: "L'", suffix: "e", demonstrative: "cette" },
+  contact: { article: "Le ", suffix: "", demonstrative: "ce" },
+  document: { article: "Le ", suffix: "", demonstrative: "ce" },
 };
 
 /**
@@ -74,12 +75,12 @@ export function EntityDeleteDialog({
   isDeleting,
   error,
 }: EntityDeleteDialogProps) {
-  const { article, suffix } = genderMap[entityType] || { article: "Le ", suffix: "" };
+  const { article, suffix, demonstrative } = genderMap[entityType] || { article: "Le ", suffix: "" };
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="bg-surface-base border-white-light text-white">
         <AlertDialogHeader>
-          <AlertDialogTitle>Supprimer cette {entityType} ?</AlertDialogTitle>
+          <AlertDialogTitle>Supprimer {demonstrative} {entityType} ?</AlertDialogTitle>
           <AlertDialogDescription className="text-gray-400">
             Cette action est irréversible. {article}{entityType}{" "}
             <span className="font-bold text-white">{entityLabel}</span>{" "}
@@ -88,16 +89,12 @@ export function EntityDeleteDialog({
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
-            className="bg-transparent border-white-light hover:bg-white-subtle  hover:text-white text-gray-300"
-            disabled={isDeleting}
-          >
+          <AlertDialogCancel disabled={isDeleting}>
             Annuler
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}
-            className="bg-red-600 hover:bg-red-700 text-white border-none"
             aria-label={`Supprimer ${entityType} : ${entityLabel}`}
           >
             {isDeleting ? (

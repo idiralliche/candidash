@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Plus, FileText } from 'lucide-react';
+import {
+  Plus,
+  FileText
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useDocuments } from '@/hooks/use-documents';
@@ -70,12 +73,8 @@ export function DocumentsPage() {
           title="Ajouter un document"
           description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
           trigger={
-            <Button
-              size="icon"
-              className="h-10 w-10 bg-primary hover:bg-primary-hover text-white rounded-full shadow-lg transition-transform hover:scale-105"
-              title="Ajouter un document"
-            >
-              <Plus className="h-6 w-6" />
+            <Button variant="fab" size="icon">
+              <Plus className="h-5 w-5" />
             </Button>
           }
         >
@@ -100,8 +99,9 @@ export function DocumentsPage() {
             <div className="mt-4">
               <FormDialog
                 title="Ajouter un document"
+                description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
                 trigger={
-                  <Button variant="link" className="text-primary">
+                  <Button variant="link">
                     Ajouter maintenant
                   </Button>
                 }
