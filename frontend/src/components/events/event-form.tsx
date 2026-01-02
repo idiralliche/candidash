@@ -176,7 +176,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                 <Input
                   placeholder="Ex: Entretien RH, Appel découverte..."
                   leadingIcon={Bell}
-                  className="focus:border-blue-500"
                   {...field}
                 />
               </FormControl>
@@ -195,7 +194,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                 <FormControl>
                   <Input
                     type="datetime-local"
-                    className="focus:border-blue-500"
                     {...field}
                   />
                 </FormControl>
@@ -212,7 +210,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                 <FormControl>
                   <Input
                     type="number"
-                    className="focus:border-blue-500"
                     {...field}
                   />
                 </FormControl>
@@ -231,11 +228,11 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                 <FormLabel className="text-white">Statut *</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                   <FormControl>
-                    <SelectTrigger className="bg-black-medium border-white-light text-white">
+                    <SelectTrigger className="bg-surface-base border-white-light text-white">
                       <SelectValue placeholder="Sélectionner un statut" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="bg-surface-hover border-white-light text-white">
+                  <SelectContent className="bg-surface-base border-white-light text-white">
                     {Object.keys(LABELS_EVENT_STATUS).map((key) => (
                       <SelectItem key={key} value={key}>
                         {getLabel(LABELS_EVENT_STATUS, key)}
@@ -257,7 +254,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                    <Input
                     placeholder="Ex: Technique, Fit..."
                     leadingIcon={Tag}
-                    className="focus:border-blue-500"
                     {...field}
                   />
                 </FormControl>
@@ -276,11 +272,11 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
               <FormLabel className="text-white">Moyen de communication</FormLabel>
               <Select onValueChange={field.onChange} value={field.value || ""}>
                 <FormControl>
-                  <SelectTrigger className="bg-black-medium border-white-light text-white">
+                  <SelectTrigger className="bg-surface-base border-white-light text-white">
                     <SelectValue placeholder="Choisir..." />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent className="bg-surface-hover border-white-light text-white">
+                <SelectContent className="bg-surface-base border-white-light text-white">
                   {Object.keys(LABELS_COMMUNICATION_METHOD).map((key) => (
                     <SelectItem key={key} value={key}>
                       {getLabel(LABELS_COMMUNICATION_METHOD, key)}
@@ -304,7 +300,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                   <Input
                     placeholder="https://..."
                     leadingIcon={Video}
-                    className="focus:border-blue-500"
                     {...field}
                   />
                 </FormControl>
@@ -322,7 +317,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                   <Input
                     placeholder="+33..."
                     leadingIcon={Phone}
-                    className="focus:border-blue-500"
                     {...field}
                   />
                 </FormControl>
@@ -342,7 +336,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
                   <Input
                     placeholder="Adresse..."
                     leadingIcon={MapPin}
-                    className="focus:border-blue-500"
                     {...field}
                   />
                 </FormControl>
@@ -358,7 +351,7 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
             <FormItem>
                 <FormLabel className="text-white">Instructions</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Code porte, étage..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                  <Textarea placeholder="Code porte, étage..." {...field} className="bg-surface-base border-white-light text-white" />
                 </FormControl>
                 <FormMessage />
             </FormItem>
@@ -372,7 +365,7 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
             <FormItem>
                 <FormLabel className="text-white">Notes privées</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="..." {...field} className="bg-black-medium border-white-light text-white focus:border-blue-500" />
+                  <Textarea placeholder="..." {...field} className="bg-surface-base border-white-light text-white" />
                 </FormControl>
                 <FormMessage />
             </FormItem>
@@ -389,12 +382,14 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
         <div className="sticky bottom-0">
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white"
+            variant="solid"
+            palette="blue"
+            className="w-full"
             disabled={isPending}
           >
             {isPending ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 {isEditing ? "Enregistrement..." : "Planification..."}
               </>
             ) : (
