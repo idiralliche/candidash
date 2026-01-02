@@ -1,3 +1,4 @@
+// frontend/src/components/contacts/contact-form.tsx
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -221,7 +222,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
             control={form.control}
             name="is_independent_recruiter"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white-light bg-white-subtle  p-3">
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white-light bg-white-subtle p-3">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base text-white">Recruteur Indépendant</FormLabel>
                   <FormDescription className="text-xs text-gray-400">
@@ -331,9 +332,19 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
           </div>
         )}
 
-        <div className="pt-4 sticky bottom-0 pb-2">
-          <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white" disabled={isPending}>
-            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {isEditing ? "Enregistrement..." : "Ajout en cours..."}
+              </>
+            ) : (
               isEditing ? "Enregistrer les modifications" : "Ajouter le contact"
             )}
           </Button>

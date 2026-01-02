@@ -386,9 +386,18 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
           </div>
         )}
 
-        <div className="pt-4 sticky bottom-0 pb-2">
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white" disabled={isPending}>
-            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {isEditing ? "Enregistrement..." : "Planification..."}
+              </>
+            ) : (
               isEditing ? "Enregistrer les modifications" : "Planifier l'événement"
             )}
           </Button>

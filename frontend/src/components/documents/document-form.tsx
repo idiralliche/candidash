@@ -1,3 +1,4 @@
+// frontend/src/components/documents/document-form.tsx
 import {
   useState,
   useEffect,
@@ -19,9 +20,9 @@ import {
   Save,
   Info,
   File,
-  X,
   FileText,
   Tag,
+  Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -226,10 +227,10 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
     <Tabs value={tab} onValueChange={(v) => setTab(v as 'upload' | 'external')} className="w-full">
       <TabsList className="grid w-full grid-cols-2 bg-black-medium">
         <TabsTrigger value="upload" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-            <UploadCloud className="mr-2 h-4 w-4"/> Fichier Local
+            <UploadCloud className="h-4 w-4"/> Fichier Local
         </TabsTrigger>
         <TabsTrigger value="external" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-            <LinkIcon className="mr-2 h-4 w-4"/> Lien Externe
+            <LinkIcon className="h-4 w-4"/> Lien Externe
         </TabsTrigger>
       </TabsList>
 
@@ -272,12 +273,24 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
             <SharedFields form={uploadForm} />
 
             <DialogFooter className="pt-4">
-                <Button type="submit" disabled={isPending} className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white">
-                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {isEditing ? (
-                        <><Save className="mr-2 h-4 w-4" /> Enregistrer / Convertir</>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-full sm:w-auto"
+                  disabled={isPending}
+                >
+                    {isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {isEditing ? "Enregistrement..." : "Upload en cours..."}
+                      </>
+                    ) : isEditing ? (
+                      <>
+                        <Save className="h-4 w-4" />
+                        Enregistrer / Convertir
+                      </>
                     ) : (
-                        "Uploader"
+                      "Uploader"
                     )}
                 </Button>
             </DialogFooter>
@@ -315,12 +328,24 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
             <SharedFields form={externalForm} />
 
             <DialogFooter className="pt-4">
-                <Button type="submit" disabled={isPending} className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white">
-                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {isEditing ? (
-                        <><Save className="mr-2 h-4 w-4" /> Enregistrer / Convertir</>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-full sm:w-auto"
+                  disabled={isPending}
+                >
+                    {isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {isEditing ? "Enregistrement..." : "Ajout en cours..."}
+                      </>
+                    ) : isEditing ? (
+                      <>
+                        <Save className="h-4 w-4" />
+                        Enregistrer / Convertir
+                      </>
                     ) : (
-                        "Ajouter le lien"
+                      "Ajouter le lien"
                     )}
                 </Button>
             </DialogFooter>
@@ -376,12 +401,11 @@ function FileUploader({
         </div>
         <Button
           type="button"
-          variant="ghost"
+          variant="ghost-destructive"
           size="icon"
           onClick={() => onChange(null)}
-          className="text-gray-400 hover:text-red-400 hover:bg-red-500/10"
         >
-          <X className="h-5 w-5" />
+          <Trash2 className="h-5 w-5" />
         </Button>
       </div>
     );

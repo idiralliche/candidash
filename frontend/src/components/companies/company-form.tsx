@@ -1,3 +1,4 @@
+// frontend/src/components/companies/company-form.tsx
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -301,13 +302,21 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
           </div>
         )}
 
-        <div className="pt-4 pb-2">
-          <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white" disabled={isPending}>
-            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (
-              isEditing ? "Enregistrer les modifications" : "Ajouter l'entreprise"
-            )}
-          </Button>
-        </div>
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full"
+          disabled={isPending}
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {isEditing ? "Enregistrement..." : "Ajout en cours..."}
+            </>
+          ) : (
+            isEditing ? "Enregistrer les modifications" : "Ajouter l'entreprise"
+          )}
+        </Button>
       </form>
     </Form>
   );
