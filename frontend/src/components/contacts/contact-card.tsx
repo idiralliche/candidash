@@ -9,12 +9,14 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { IconBox } from '@/components/ui/icon-box';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { DestructiveMenuItem } from "@/components/ui/dropdown-menu-item-destructive";
 
 import { Contact } from '@/api/model';
 import { useCompanies } from '@/hooks/use-companies';
@@ -46,10 +48,13 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
     >
       {/* ZONE 1 : IDENTITY (Left) */}
       <div className="flex items-center gap-4 min-w-0 sm:w-[45%]">
-         {/* Avatar Initials */}
-         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 font-bold border border-orange-500/20 group-hover:bg-orange-500/20 transition-colors">
-            {initials}
-         </div>
+        <IconBox
+          palette="orange"
+          shape="circle"
+          groupHover
+        >
+          {initials}
+        </IconBox>
 
          {/* Name & Position */}
          <div className="flex flex-col gap-0.5 min-w-0">
@@ -70,12 +75,16 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
           {/* Company or Status */}
           <div className="flex items-center gap-2">
             {company ? (
-                <div className="flex items-center gap-1.5 text-xs text-gray-300 bg-white-subtle  px-2 py-1 rounded">
+                <div className="flex items-center gap-1.5 text-xs text-gray-300 bg-white-subtle px-2 py-1 rounded">
                     <Building2 className="h-3 w-3" />
                     <span className="truncate max-w-[150px]">{company.name}</span>
                 </div>
             ) : contact.is_independent_recruiter ? (
-                <Badge variant="secondary" className="bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border-purple-500/20 text-[10px] font-normal">
+                <Badge
+                  variant="subtle"
+                  palette="purple"
+                  className="text-[10px] font-normal"
+                >
                     Recruteur Indép.
                 </Badge>
             ) : (
@@ -97,6 +106,7 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
+                palette="gray"
                 size="icon"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -105,7 +115,7 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-surface-base border-white-light text-white">
               <DropdownMenuItem
-                className="cursor-pointer focus:bg-white-light  focus:text-white"
+                className="cursor-pointer focus:bg-white-light focus:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
                   onEdit(contact);
@@ -115,16 +125,15 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
                 Modifier
               </DropdownMenuItem>
 
-              <DropdownMenuItem
-                className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
-                onClick={(e) => {
+              <DestructiveMenuItem
+                onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   onDelete(contact);
                 }}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Supprimer
-              </DropdownMenuItem>
+              </DestructiveMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
       </div>

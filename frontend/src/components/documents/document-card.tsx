@@ -13,22 +13,21 @@ import { fr } from 'date-fns/locale';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { IconBox } from '@/components/ui/icon-box';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { DestructiveMenuItem } from "@/components/ui/dropdown-menu-item-destructive";
 
 import { Document } from '@/api/model';
 import {
   LABELS_DOCUMENT_FORMAT,
   getLabel,
 } from '@/lib/dictionaries';
-import {
-  getFormatBadgeVariant,
-  getIconColorClass,
-} from '@/lib/assign-colors'
+import { getFormatPalette } from '@/lib/semantic-ui';
 import { useDownloadDocument } from '@/hooks/use-download-document';
 
 interface DocumentCardProps {
@@ -39,6 +38,8 @@ interface DocumentCardProps {
 
 export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) {
   const { downloadDocument, isDownloading } = useDownloadDocument();
+
+  const palette = getFormatPalette(document.format);
 
   const getIcon = () => {
     if (document.is_external) return <LinkIcon className="h-5 w-5" />;
@@ -55,9 +56,12 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
 
       {/* IDENTITY */}
       <div className="flex items-center gap-4 min-w-0 sm:w-[45%]">
-         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${getIconColorClass(document.format)} transition-colors`}>
+         <IconBox
+           palette={palette}
+           groupHover
+         >
             {getIcon()}
-         </div>
+         </IconBox>
 
          <div className="flex flex-col gap-0.5 min-w-0">
             <h3 className="text-base font-bold text-white truncate group-hover:text-primary transition-colors">
@@ -72,7 +76,11 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
       {/* CONTEXT */}
       <div className="flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={`${getFormatBadgeVariant(document.format)} text-[10px] px-2 py-0.5 h-5`}>
+            <Badge
+              variant="subtle"
+              palette={palette}
+              className="text-[10px] px-2 py-0.5 h-5"
+            >
                 {getLabel(LABELS_DOCUMENT_FORMAT, document.format)}
             </Badge>
           </div>
@@ -87,6 +95,7 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
           {/* Quick Download Button */}
           <Button
             variant="ghost"
+            palette="gray"
             size="icon"
             className="hidden sm:flex"
             onClick={handleDownloadClick}
@@ -107,6 +116,7 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
+                palette="gray"
                 size="icon"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -116,7 +126,7 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
             <DropdownMenuContent align="end" className="bg-surface-base border-white-light text-white">
 
               <DropdownMenuItem
-                className="cursor-pointer focus:bg-white-light  focus:text-white"
+                className="cursor-pointer focus:bg-white-light focus:text-white"
                 onClick={(e) => {
                     e.stopPropagation();
                     onEdit(document);
@@ -126,16 +136,15 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
                 Modifier
               </DropdownMenuItem>
 
-              <DropdownMenuItem
-                className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
-                onClick={(e) => {
+              <DestructiveMenuItem
+                onClick={(e: React.MouseEvent) => {
                     e.stopPropagation();
                     onDelete(document);
                 }}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Supprimer
-              </DropdownMenuItem>
+              </DestructiveMenuItem>
 
             </DropdownMenuContent>
           </DropdownMenu>

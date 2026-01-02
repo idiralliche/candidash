@@ -22,13 +22,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { DestructiveMenuItem } from "@/components/ui/dropdown-menu-item-destructive";
 
 import { ScheduledEvent } from '@/api/model';
 import {
   LABELS_EVENT_STATUS,
   getLabel,
 } from '@/lib/dictionaries';
-import { getStatusBadgeVariant } from '@/lib/assign-colors';
+import { getStatusPalette } from '@/lib/semantic-ui';
 
 interface EventCardProps {
   event: ScheduledEvent;
@@ -60,7 +61,7 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
         <div className="flex items-start justify-between">
           {/* Date Box */}
           <div className="flex items-center gap-3">
-            <div className="flex flex-col items-center justify-center h-14 w-14 rounded-lg bg-white-subtle  border border-white-light text-white">
+            <div className="flex flex-col items-center justify-center h-14 w-14 rounded-lg bg-white-subtle border border-white-light text-white">
               <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
                 {format(date, 'MMM', { locale: fr })}
               </span>
@@ -70,9 +71,14 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
             </div>
 
             <div className="space-y-1">
-              <Badge variant="outline" className={`${getStatusBadgeVariant(event.status)} text-[10px] px-2 py-0.5 h-5`}>
+              <Badge
+                variant="subtle"
+                palette={getStatusPalette(event.status)}
+                className="text-[10px] px-2 py-0.5 h-5"
+              >
                 {getLabel(LABELS_EVENT_STATUS, event.status)}
               </Badge>
+
               <div className="flex items-center gap-2 text-xs text-gray-400">
                 <Clock className="h-3 w-3" />
                 {format(date, 'HH:mm')}
@@ -86,6 +92,7 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
+                palette="gray"
                 size="icon"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -95,16 +102,16 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
             <DropdownMenuContent align="end" className="bg-surface-base border-white-light text-white z-50">
               <DropdownMenuItem
                 onClick={(e) => { e.stopPropagation(); onEdit(event); }}
-                className="cursor-pointer focus:bg-white-light "
+                className="cursor-pointer focus:bg-white-light focus:text-white"
               >
                 <Pencil className="mr-2 h-4 w-4" /> Modifier
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(e) => { e.stopPropagation(); onDelete(event); }}
-                className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
+
+              <DestructiveMenuItem
+                onClick={(e: React.MouseEvent) => { e.stopPropagation(); onDelete(event); }}
               >
                 <Trash2 className="mr-2 h-4 w-4" /> Supprimer
-              </DropdownMenuItem>
+              </DestructiveMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -119,7 +126,7 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
               {event.event_type || "Événement"}
             </span>
             {event.communication_method && (
-              <div className="flex items-center gap-1.5 bg-white-subtle  px-2 py-1 rounded-full text-xs">
+              <div className="flex items-center gap-1.5 bg-white-subtle px-2 py-1 rounded-full text-xs">
                 {getIconForMethod(event.communication_method)}
                 <span className="capitalize">{event.communication_method.replace('_', ' ')}</span>
               </div>

@@ -8,12 +8,15 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IconBox } from "@/components/ui/icon-box";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DestructiveMenuItem } from "@/components/ui/dropdown-menu-item-destructive";
+
 import {
   Opportunity,
   Company,
@@ -51,10 +54,12 @@ export function OpportunityCard({
     >
       {/* ZONE 1 : IDENTITY (Left) */}
       <div className="flex items-center gap-4 min-w-0 sm:w-[45%]">
-        {/* Little square icon */}
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500/20 transition-colors">
+        <IconBox
+          palette="green"
+          groupHover
+        >
           <Briefcase className="h-5 w-5" />
-        </div>
+        </IconBox>
 
         {/* Title & Company */}
         <div className="flex flex-col gap-1 min-w-0">
@@ -74,8 +79,9 @@ export function OpportunityCard({
       <div className="flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400">
         {/* Badge Application Type */}
         <Badge
-          variant="secondary"
-          className="bg-white-subtle  text-gray-400 hover:bg-white-light  border-none font-normal shrink-0"
+          variant="subtle"
+          palette="gray"
+          className="font-normal shrink-0"
         >
           {getLabel(LABELS_APPLICATION, opportunity.application_type)}
         </Badge>
@@ -99,6 +105,7 @@ export function OpportunityCard({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
+              palette="gray"
               size="icon"
               onClick={(e) => e.stopPropagation()}
             >
@@ -110,7 +117,7 @@ export function OpportunityCard({
             className="bg-surface-base border-white-light text-white"
           >
             <DropdownMenuItem
-              className="cursor-pointer focus:bg-white-light  focus:text-white"
+              className="cursor-pointer focus:bg-white-light focus:text-white"
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(opportunity);
@@ -120,16 +127,15 @@ export function OpportunityCard({
               Modifier
             </DropdownMenuItem>
 
-            <DropdownMenuItem
-              className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
-              onClick={(e) => {
+            <DestructiveMenuItem
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onDelete(opportunity);
               }}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Supprimer
-            </DropdownMenuItem>
+            </DestructiveMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
