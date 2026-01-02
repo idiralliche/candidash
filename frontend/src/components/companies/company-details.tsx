@@ -1,6 +1,12 @@
 import {
-  Building2, MapPin, Globe, FileText, CheckCircle2,
-  Hash, Briefcase, Trash2
+  Building2,
+  MapPin,
+  Globe,
+  FileText,
+  CheckCircle2,
+  Hash,
+  Briefcase,
+  Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,11 +55,11 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
       footer={
         onDelete && (
            <Button
-             variant="ghost"
-             className="w-full text-red-500 hover:bg-red-500/10 hover:text-red-400"
+             variant="ghost-destructive"
+             className="w-full"
              onClick={() => onDelete(company)}
            >
-             <Trash2 className="mr-2 h-4 w-4" />
+             <Trash2 className="h-4 w-4" />
              Supprimer l'entreprise
            </Button>
         )
@@ -67,17 +73,16 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
       {company.website && (
         <div className="mb-6">
            <Button
-             variant="outline"
-             className="w-full justify-start text-blue-400 hover:text-blue-300 border-blue-500/20 bg-blue-500/10 h-auto py-2"
+             variant="outline-blue"
+             className="w-full justify-start"
              asChild
            >
              <a
                href={company.website}
                target="_blank"
                rel="noopener noreferrer"
-               className="flex items-center"
              >
-               <Globe className="mr-2 h-4 w-4 shrink-0" />
+               <Globe className="h-4 w-4" />
                <span className="truncate">{company.website}</span>
              </a>
            </Button>

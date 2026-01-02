@@ -1,4 +1,12 @@
-import { MoreHorizontal, Pencil, Trash2, Building2, Mail, Phone, Link as LinkIcon } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Building2,
+  Mail,
+  Phone,
+  Link as LinkIcon,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -90,7 +98,6 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white-light "
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-4 w-4" />
@@ -109,7 +116,7 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+                className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete(contact);

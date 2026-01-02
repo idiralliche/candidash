@@ -1,10 +1,19 @@
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
-  MoreHorizontal, Clock, MapPin, Video, Phone, Pencil, Trash2
+  MoreHorizontal,
+  Clock,
+  MapPin,
+  Video,
+  Phone,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 
-import { Card, CardContent } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +24,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { ScheduledEvent } from '@/api/model';
-import { LABELS_EVENT_STATUS, getLabel } from '@/lib/dictionaries';
+import {
+  LABELS_EVENT_STATUS,
+  getLabel,
+} from '@/lib/dictionaries';
 import { getStatusBadgeVariant } from '@/lib/assign-colors';
 
 interface EventCardProps {
@@ -73,8 +85,8 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant="ghost" size="icon"
-                className="h-8 w-8 -mr-2 text-muted-foreground hover:text-white hover:bg-white-light "
+                variant="ghost"
+                size="icon"
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-4 w-4" />
@@ -89,7 +101,7 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={(e) => { e.stopPropagation(); onDelete(event); }}
-                className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+                className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
               >
                 <Trash2 className="mr-2 h-4 w-4" /> Supprimer
               </DropdownMenuItem>

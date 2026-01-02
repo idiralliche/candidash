@@ -1,5 +1,11 @@
 import {
-  FileText, Calendar, Link as LinkIcon, Download, HardDrive, Loader2, Trash2
+  FileText,
+  Calendar,
+  Link as LinkIcon,
+  Download,
+  HardDrive,
+  Loader2,
+  Trash2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -9,7 +15,10 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
 import { Document } from '@/api/model';
-import { LABELS_DOCUMENT_FORMAT, getLabel } from '@/lib/dictionaries';
+import {
+  LABELS_DOCUMENT_FORMAT,
+  getLabel,
+} from '@/lib/dictionaries';
 import { getFormatBadgeVariant } from '@/lib/assign-colors';
 import { useDownloadDocument } from '@/hooks/use-download-document';
 import { EntityDetailsSheet } from '@/components/shared/entity-details-sheet';
@@ -56,11 +65,11 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
       footer={
         onDelete && (
           <Button
-            variant="ghost"
-            className="w-full text-red-500 hover:bg-red-500/10 hover:text-red-400"
+            variant="ghost-destructive"
+            className="w-full"
             onClick={() => onDelete(document)}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
             Supprimer le document
           </Button>
         )
@@ -69,24 +78,24 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
       {/* ACTIONS (Download/Link) */}
       <div className="mb-6">
         <Button
-            variant="outline"
-            className="w-full justify-start text-blue-400 hover:text-blue-300 border-blue-500/20 bg-blue-500/10"
+            variant="outline-blue"
+            className="w-full justify-start"
             onClick={() => downloadDocument(document)}
             disabled={isDownloading}
         >
             {isDownloading ? (
                 <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Téléchargement...
                 </>
             ) : document.is_external ? (
                 <>
-                    <LinkIcon className="mr-2 h-4 w-4" />
+                    <LinkIcon className="h-4 w-4" />
                     Ouvrir le lien
                 </>
             ) : (
                 <>
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className="h-4 w-4" />
                     Télécharger le fichier
                 </>
             )}

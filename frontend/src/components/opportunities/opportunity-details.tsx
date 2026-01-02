@@ -1,14 +1,25 @@
 import {
-  Building2, MapPin, Banknote, Laptop, Calendar,
-  Link as LinkIcon, Trash2
+  Building2,
+  MapPin,
+  Banknote,
+  Laptop,
+  Calendar,
+  Link as LinkIcon,
+  Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Opportunity, Company } from "@/api/model";
+import {
+  Opportunity,
+  Company,
+} from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import {
-  LABELS_APPLICATION, LABELS_CONTRACT, LABELS_REMOTE, getLabel
+  LABELS_APPLICATION,
+  LABELS_CONTRACT,
+  LABELS_REMOTE,
+  getLabel,
 } from "@/lib/dictionaries";
 
 interface OpportunityDetailsProps {
@@ -85,11 +96,11 @@ export function OpportunityDetails({
       footer={
         onDelete && (
           <Button
-            variant="ghost"
-            className="w-full text-red-500 hover:bg-red-500/10 hover:text-red-400"
+            variant="ghost-destructive"
+            className="w-full"
             onClick={() => onDelete(opportunity)}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
             Supprimer l'opportunité
           </Button>
         )
@@ -99,8 +110,8 @@ export function OpportunityDetails({
       {opportunity.job_posting_url && (
         <div className="mb-6">
           <Button
-            variant="outline"
-            className="w-full justify-start text-blue-400 hover:text-blue-300 border-blue-500/20 bg-blue-500/10"
+            variant="outline-blue"
+            className="w-full justify-start"
             asChild
           >
             <a
@@ -108,7 +119,7 @@ export function OpportunityDetails({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <LinkIcon className="mr-2 h-4 w-4" />
+              <LinkIcon className="h-4 w-4" />
               Voir l'annonce originale
             </a>
           </Button>

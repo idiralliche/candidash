@@ -1,4 +1,12 @@
-import { Building2, Mail, Phone, Link as LinkIcon, Trash2, ExternalLink, Quote } from "lucide-react";
+import {
+  Building2,
+  Mail,
+  Phone,
+  Link as LinkIcon,
+  Trash2,
+  ExternalLink,
+  Quote,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -54,11 +62,11 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
       footer={
         onDelete && (
           <Button
-            variant="ghost"
-            className="w-full text-red-500 hover:bg-red-500/10 hover:text-red-400"
+            variant="ghost-destructive"
+            className="w-full"
             onClick={() => onDelete(contact)}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
             Supprimer le contact
           </Button>
         )

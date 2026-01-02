@@ -1,4 +1,11 @@
-import { Briefcase, Building2, MapPin, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import {
+  Briefcase,
+  Building2,
+  MapPin,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,8 +14,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Opportunity, Company } from "@/api/model";
-import { LABELS_APPLICATION, getLabel } from "@/lib/dictionaries";
+import {
+  Opportunity,
+  Company,
+} from "@/api/model";
+import {
+  LABELS_APPLICATION,
+  getLabel,
+} from "@/lib/dictionaries";
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -87,7 +100,6 @@ export function OpportunityCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white-light "
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="h-4 w-4" />
@@ -109,7 +121,7 @@ export function OpportunityCard({
             </DropdownMenuItem>
 
             <DropdownMenuItem
-              className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+              className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(opportunity);

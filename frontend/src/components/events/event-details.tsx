@@ -1,15 +1,28 @@
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
-  Calendar, Clock, MapPin, Trash2,
-  Video, Phone, Info, Mail, Podcast, FileText, Link as LinkIcon
+  Calendar,
+  Clock,
+  MapPin,
+  Trash2,
+  Video,
+  Phone,
+  Info,
+  Mail,
+  Podcast,
+  FileText,
+  Link as LinkIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScheduledEvent } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
-import { LABELS_EVENT_STATUS, LABELS_COMMUNICATION_METHOD, getLabel } from "@/lib/dictionaries";
+import {
+  LABELS_EVENT_STATUS,
+  LABELS_COMMUNICATION_METHOD,
+  getLabel,
+} from "@/lib/dictionaries";
 import { getStatusBadgeVariant } from "@/lib/assign-colors";
 
 interface EventDetailsProps {
@@ -53,12 +66,12 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
       footer={
         onDelete && (
           <Button
-            variant="ghost"
-            className="w-full text-red-500 hover:bg-red-500/10 hover:text-red-400"
+            variant="ghost-destructive"
+            className="w-full"
             onClick={() => onDelete(event)}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete event
+            <Trash2 className="h-4 w-4" />
+            Supprimer l'événement
           </Button>
         )
       }

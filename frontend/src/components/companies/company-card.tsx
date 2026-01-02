@@ -1,4 +1,11 @@
-import { Building2, MapPin, Globe, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import {
+  Building2,
+  MapPin,
+  Globe,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +50,7 @@ export function CompanyCard({ company, onClick, onEdit, onDelete }: CompanyCardP
           {company.industry && (
             <Badge
               variant="secondary"
-              className="w-fit text-[10px] bg-white-subtle  text-gray-400 hover:bg-white-light  border-none h-5 px-1.5 font-normal"
+              className="w-fit text-[10px] bg-white-subtle text-gray-400 hover:bg-white-light border-none h-5 px-1.5 font-normal"
             >
               {company.industry}
             </Badge>
@@ -88,7 +95,6 @@ export function CompanyCard({ company, onClick, onEdit, onDelete }: CompanyCardP
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white-light "
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="h-4 w-4" />
@@ -96,10 +102,10 @@ export function CompanyCard({ company, onClick, onEdit, onDelete }: CompanyCardP
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="bg-surface-base border-white-light text-white z-50"
+            className="bg-surface-base border-white-light text-white"
           >
             <DropdownMenuItem
-              className="cursor-pointer focus:bg-white-light  focus:text-white"
+              className="cursor-pointer focus:bg-white-light focus:text-white"
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(company);
@@ -109,7 +115,7 @@ export function CompanyCard({ company, onClick, onEdit, onDelete }: CompanyCardP
               Modifier
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+              className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(company);

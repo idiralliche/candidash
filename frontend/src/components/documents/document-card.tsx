@@ -1,4 +1,13 @@
-import { MoreHorizontal, Trash2, FileText, Link as LinkIcon, Download, Calendar, Loader2, Pencil } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Trash2,
+  FileText,
+  Link as LinkIcon,
+  Download,
+  Calendar,
+  Loader2,
+  Pencil,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -12,8 +21,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { Document } from '@/api/model';
-import { LABELS_DOCUMENT_FORMAT, getLabel } from '@/lib/dictionaries';
-import { getFormatBadgeVariant, getIconColorClass } from '@/lib/assign-colors'
+import {
+  LABELS_DOCUMENT_FORMAT,
+  getLabel,
+} from '@/lib/dictionaries';
+import {
+  getFormatBadgeVariant,
+  getIconColorClass,
+} from '@/lib/assign-colors'
 import { useDownloadDocument } from '@/hooks/use-download-document';
 
 interface DocumentCardProps {
@@ -73,7 +88,7 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white-light  hidden sm:flex"
+            className="hidden sm:flex"
             onClick={handleDownloadClick}
             disabled={isDownloading}
             title={document.is_external ? "Ouvrir le lien" : "Télécharger"}
@@ -93,7 +108,6 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-gray-500 hover:text-white hover:bg-white-light "
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-4 w-4" />
@@ -113,7 +127,7 @@ export function DocumentCard({ document, onDelete, onEdit }: DocumentCardProps) 
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                className="text-red-500 focus:bg-red-500/10 focus:text-red-500 cursor-pointer"
+                className="text-red-600 focus:bg-red-600/10 focus:text-red-600 cursor-pointer"
                 onClick={(e) => {
                     e.stopPropagation();
                     onDelete(document);
