@@ -6,7 +6,7 @@ import {
   Users,
 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Fab } from '@/components/ui/fab';
 import { Input } from '@/components/ui/input';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EntitySheet } from '@/components/shared/entity-sheet';
@@ -71,11 +71,10 @@ export function ContactsPage() {
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {/* Search Bar */}
-          <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+          <div className="flex-1 sm:w-64">
             <Input
-              hasIcon
               placeholder="Rechercher un nom, un email..."
+              leadingIcon={Search}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -85,9 +84,9 @@ export function ContactsPage() {
             title="Nouveau Contact"
             description="Ajoutez un interlocuteur (Recruteur, RH, Manager...)."
             trigger={
-              <Button variant="fab" size="icon">
+              <Fab>
                 <Plus className="h-5 w-5" />
-              </Button>
+              </Fab>
             }
           >
             {(close) => <ContactForm onSuccess={close} />}
@@ -142,7 +141,7 @@ export function ContactsPage() {
         )}
       </EntitySheet>
 
-      {/* EDIT DIALOG - Using FormDialog */}
+      {/* EDIT DIALOG */}
       <FormDialog
         open={!!editingContact}
         onOpenChange={(open) => !open && setEditingContact(null)}

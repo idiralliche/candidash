@@ -6,7 +6,7 @@ import { useCompanies } from '@/hooks/use-companies';
 import { useDeleteCompany } from '@/hooks/use-delete-company';
 import { Company } from '@/api/model';
 
-import { Button } from '@/components/ui/button';
+import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 
 // Shared Components
@@ -59,9 +59,9 @@ export function CompaniesPage() {
           title="Nouvelle Entreprise"
           description="Ajoutez une entreprise pour y associer des contacts et des opportunités."
           trigger={
-            <Button variant="fab" size="icon">
+            <Fab>
               <Plus className="h-5 w-5" />
-            </Button>
+            </Fab>
           }
         >
           {(close) => <CompanyForm onSuccess={close} />}
@@ -113,7 +113,7 @@ export function CompaniesPage() {
         )}
       </EntitySheet>
 
-      {/* EDIT DIALOG - Using FormDialog */}
+      {/* EDIT DIALOG */}
       <FormDialog
         open={!!editingCompany}
         onOpenChange={(open) => !open && setEditingCompany(null)}

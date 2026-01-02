@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useDocuments } from '@/hooks/use-documents';
 import { useDeleteDocument } from '@/hooks/use-delete-document';
 import { Button } from '@/components/ui/button';
+import { Fab } from '@/components/ui/fab';
 import { FormDialog } from '@/components/shared/form-dialog';
 import { Document } from '@/api/model';
 
@@ -73,9 +74,9 @@ export function DocumentsPage() {
           title="Ajouter un document"
           description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
           trigger={
-            <Button variant="fab" size="icon">
+            <Fab>
               <Plus className="h-5 w-5" />
-            </Button>
+            </Fab>
           }
         >
           {(close) => <DocumentForm onSuccess={close} />}
@@ -91,8 +92,8 @@ export function DocumentsPage() {
             Erreur lors du chargement des documents.
           </div>
         ) : !sortedDocuments || sortedDocuments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white-light bg-white-subtle  p-12 text-center">
-            <div className="mb-4 rounded-full bg-white-light  p-4">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white-light bg-surface-base p-12 text-center">
+            <div className="mb-4 rounded-full bg-white-light p-4">
               <FileText className="h-8 w-8 text-gray-400" />
             </div>
             <h3 className="text-lg font-semibold text-white">Aucun document</h3>
@@ -101,7 +102,7 @@ export function DocumentsPage() {
                 title="Ajouter un document"
                 description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
                 trigger={
-                  <Button variant="link">
+                  <Button variant="link" palette="primary">
                     Ajouter maintenant
                   </Button>
                 }
@@ -125,7 +126,7 @@ export function DocumentsPage() {
         )}
       </div>
 
-      {/* EDIT DIALOG - Using FormDialog */}
+      {/* EDIT DIALOG */}
       <FormDialog
         title="Modifier le document"
         open={!!editingDocument}

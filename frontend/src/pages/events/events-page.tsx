@@ -13,7 +13,7 @@ import { useScheduledEvents } from '@/hooks/use-scheduled-events';
 import { useDeleteScheduledEvent } from '@/hooks/use-delete-scheduled-event';
 import { ScheduledEvent } from '@/api/model';
 
-import { Button } from '@/components/ui/button';
+import { Fab } from '@/components/ui/fab';
 import {
   Tabs,
   TabsList,
@@ -89,13 +89,12 @@ export function EventsPage() {
             </TabsList>
           </Tabs>
 
-          <Button
-            variant="fab-blue"
-            size="icon"
+          <Fab
+            palette="blue"
             onClick={() => handleOpenCreate(undefined)}
           >
             <Plus className="h-5 w-5" />
-          </Button>
+          </Fab>
         </div>
       </div>
 
@@ -151,7 +150,7 @@ export function EventsPage() {
         )}
       </div>
 
-      {/* --- CREATE DIALOG --- */}
+      {/* CREATE DIALOG */}
       <FormDialog
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
@@ -166,7 +165,7 @@ export function EventsPage() {
         )}
       </FormDialog>
 
-      {/* --- DETAILS SHEET --- */}
+      {/* DETAILS SHEET */}
       <EntitySheet
         open={!!selectedEvent}
         onOpenChange={(open) => !open && setSelectedEvent(null)}
@@ -187,7 +186,7 @@ export function EventsPage() {
         )}
       </EntitySheet>
 
-      {/* --- EDIT DIALOG --- */}
+      {/* EDIT DIALOG */}
       <FormDialog
         open={!!editingEvent}
         onOpenChange={(open) => !open && setEditingEvent(null)}
@@ -201,7 +200,7 @@ export function EventsPage() {
         )}
       </FormDialog>
 
-      {/* --- DELETE ALERT --- */}
+      {/* DELETE ALERT */}
       <EntityDeleteDialog
         open={!!eventToDelete}
         onOpenChange={(open) => {

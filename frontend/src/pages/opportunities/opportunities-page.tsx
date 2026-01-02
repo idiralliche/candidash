@@ -11,7 +11,7 @@ import { useCompanies } from '@/hooks/use-companies';
 import { Opportunity } from '@/api/model';
 import { findEntityById } from '@/lib/utils';
 
-import { Button } from '@/components/ui/button';
+import { Fab } from '@/components/ui/fab';
 
 // Shared Components
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
@@ -65,9 +65,9 @@ export function OpportunitiesPage() {
           title="Nouvelle Opportunité"
           description="Ajoutez une nouvelle opportunité à votre pipeline."
           trigger={
-            <Button variant="fab" size="icon">
+            <Fab>
               <Plus className="h-5 w-5" />
-            </Button>
+            </Fab>
           }
         >
           {(close) => <OpportunityForm onSuccess={close} />}
@@ -123,7 +123,7 @@ export function OpportunitiesPage() {
         )}
       </EntitySheet>
 
-      {/* EDIT DIALOG - Using FormDialog */}
+      {/* EDIT DIALOG */}
       <FormDialog
         open={!!editingOpportunity}
         onOpenChange={(open) => !open && setEditingOpportunity(null)}
