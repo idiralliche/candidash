@@ -8,6 +8,7 @@ import {
   Quote,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { IconBox } from "@/components/ui/icon-box";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Contact } from "@/api/model";
@@ -19,7 +20,6 @@ interface ContactDetailsProps {
   contact: Contact;
   onEdit?: (contact: Contact) => void;
   onDelete?: (contact: Contact) => void;
-  // onClose removed - not needed
 }
 
 export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProps) {
@@ -33,26 +33,34 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
       title={`${contact.first_name} ${contact.last_name}`}
       subtitle={contact.position || "Poste inconnu"}
       badge={
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-orange-500/10 text-2xl font-bold text-orange-500 border border-orange-500/20">
+        <IconBox
+          palette="orange"
+          size="xl"
+          shape="circle"
+          border="thick"
+        >
           {initials}
-        </div>
+        </IconBox>
       }
       metadata={
         <>
           {company ? (
-            <div className="flex items-center gap-2 rounded-md border border-white-light bg-white-subtle  px-3 py-1.5 text-sm text-gray-200">
+            <div className="flex items-center gap-2 rounded-md border border-white-light bg-white-subtle px-3 py-1.5 text-sm text-gray-200">
               <Building2 className="h-4 w-4 text-primary" />
               {company.name}
             </div>
           ) : (
-            <div className="flex items-center gap-2 rounded-md border border-white-subtle bg-white-subtle  px-3 py-1.5 text-sm text-gray-500 italic">
+            <div className="flex items-center gap-2 rounded-md border border-white-subtle bg-white-subtle px-3 py-1.5 text-sm text-gray-500 italic">
               <Building2 className="h-4 w-4" />
               Aucune entreprise liée
             </div>
           )}
 
           {contact.is_independent_recruiter && (
-            <Badge variant="secondary" className="bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            <Badge
+              variant="subtle"
+              palette="purple"
+            >
               Recruteur Indépendant
             </Badge>
           )}
@@ -62,17 +70,18 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
       footer={
         onDelete && (
           <Button
-            variant="ghost-destructive"
+            variant="ghost"
+            palette="destructive"
             className="w-full"
             onClick={() => onDelete(contact)}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Supprimer le contact
           </Button>
         )
       }
     >
-      <Separator className="bg-white-light " />
+      <Separator className="bg-white-light mb-6" />
 
       {/* CONTACT DETAILS */}
       <div className="space-y-4">
@@ -83,7 +92,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
               href={`mailto:${contact.email}`}
               className="flex items-center gap-3 p-3 rounded-lg bg-surface-hover border border-white-subtle hover:border-primary/50 transition-colors group"
             >
-              <div className="p-2 rounded bg-white-subtle  text-gray-400 group-hover:text-white">
+              <div className="p-2 rounded bg-white-subtle text-gray-400 group-hover:text-white">
                 <Mail className="h-4 w-4" />
               </div>
               <div className="min-w-0">
@@ -98,7 +107,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
               href={`tel:${contact.phone}`}
               className="flex items-center gap-3 p-3 rounded-lg bg-surface-hover border border-white-subtle hover:border-primary/50 transition-colors group"
             >
-              <div className="p-2 rounded bg-white-subtle  text-gray-400 group-hover:text-white">
+              <div className="p-2 rounded bg-white-subtle text-gray-400 group-hover:text-white">
                 <Phone className="h-4 w-4" />
               </div>
               <div className="min-w-0">

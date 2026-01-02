@@ -13,6 +13,7 @@ import {
   FileText,
   Link as LinkIcon,
 } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -23,7 +24,8 @@ import {
   LABELS_COMMUNICATION_METHOD,
   getLabel,
 } from "@/lib/dictionaries";
-import { getStatusBadgeVariant } from "@/lib/assign-colors";
+
+import { getStatusPalette } from '@/lib/semantic-ui';
 
 interface EventDetailsProps {
   event: ScheduledEvent;
@@ -50,13 +52,20 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
       badge={
         <div className="flex gap-2 mb-2">
             {/* Status Badge */}
-            <Badge variant="outline" className={getStatusBadgeVariant(event.status)}>
+            <Badge
+              variant="subtle"
+              palette={getStatusPalette(event.status)}
+            >
               {getLabel(LABELS_EVENT_STATUS, event.status)}
             </Badge>
 
             {/* Type Badge */}
             {event.event_type && (
-              <Badge variant="secondary" className="bg-badge-neutral text-gray-300 border-none hover:bg-badge-neutral-hover">
+              <Badge
+                variant="subtle"
+                palette="gray"
+                className="border-none"
+              >
                 {event.event_type}
               </Badge>
             )}
@@ -66,17 +75,18 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
       footer={
         onDelete && (
           <Button
-            variant="ghost-destructive"
+            variant="ghost"
+            palette="destructive"
             className="w-full"
             onClick={() => onDelete(event)}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Supprimer l'événement
           </Button>
         )
       }
     >
-      <Separator className="bg-white-light  mb-6" />
+      <Separator className="bg-white-light mb-6" />
 
       {/* 1. GRID DATE & TIME */}
       <div className="grid grid-cols-2 gap-8 mb-6">

@@ -19,7 +19,7 @@ import {
   LABELS_DOCUMENT_FORMAT,
   getLabel,
 } from '@/lib/dictionaries';
-import { getFormatBadgeVariant } from '@/lib/assign-colors';
+import { getFormatPalette } from '@/lib/semantic-ui';
 import { useDownloadDocument } from '@/hooks/use-download-document';
 import { EntityDetailsSheet } from '@/components/shared/entity-details-sheet';
 
@@ -37,7 +37,11 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
       title={document.name}
       // Badge Format
       badge={
-        <Badge variant="outline" className={`${getFormatBadgeVariant(document.format)} mb-2`}>
+        <Badge
+          variant="subtle"
+          palette={getFormatPalette(document.format)}
+          className="mb-2"
+        >
           {getLabel(LABELS_DOCUMENT_FORMAT, document.format)}
         </Badge>
       }
@@ -65,11 +69,12 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
       footer={
         onDelete && (
           <Button
-            variant="ghost-destructive"
+            variant="ghost"
+            palette="destructive"
             className="w-full"
             onClick={() => onDelete(document)}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Supprimer le document
           </Button>
         )
@@ -78,31 +83,32 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
       {/* ACTIONS (Download/Link) */}
       <div className="mb-6">
         <Button
-            variant="outline-blue"
+            variant="outline"
+            palette="blue"
             className="w-full justify-start"
             onClick={() => downloadDocument(document)}
             disabled={isDownloading}
         >
             {isDownloading ? (
                 <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Téléchargement...
                 </>
             ) : document.is_external ? (
                 <>
-                    <LinkIcon className="h-4 w-4" />
+                    <LinkIcon className="mr-2 h-4 w-4" />
                     Ouvrir le lien
                 </>
             ) : (
                 <>
-                    <Download className="h-4 w-4" />
+                    <Download className="mr-2 h-4 w-4" />
                     Télécharger le fichier
                 </>
             )}
         </Button>
       </div>
 
-      <Separator className="bg-white-light  mb-6" />
+      <Separator className="bg-white-light mb-6" />
 
       {/* DESCRIPTION */}
       <div className="space-y-2">
