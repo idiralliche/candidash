@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import {
-  Plus,
-  Search,
-  Users,
-} from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
 
 import { Fab } from '@/components/ui/fab';
-import { Input } from '@/components/ui/input';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
+import { EmptyState } from '@/components/shared/empty-state';
+
+// Layout Components
+import { PageLayout } from '@/components/layouts/page-layout';
+import { PageHeader } from '@/components/layouts/page-header';
+import { PageContent } from '@/components/layouts/page-content';
+
+// Shared Components
 import { EntitySheet } from '@/components/shared/entity-sheet';
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 import { FormDialog } from '@/components/shared/form-dialog';
@@ -63,23 +66,15 @@ export function ContactsPage() {
   };
 
   return (
-    <div className="space-y-6 pt-20 h-[calc(100vh-2rem)] flex flex-col">
-
-      {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-white">Contacts</h1>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* Search Bar */}
-          <div className="flex-1 sm:w-64">
-            <Input
-              placeholder="Rechercher un nom, un email..."
-              leadingIcon={Search}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
+    <PageLayout>
+      <PageHeader
+        title="Contacts"
+        search={{
+          value: search,
+          onChange: setSearch,
+          placeholder: "Rechercher un nom, un email...",
+        }}
+        action={
           <FormDialog
             title="Nouveau Contact"
             description="Ajoutez un interlocuteur (Recruteur, RH, Manager...)."
@@ -91,22 +86,23 @@ export function ContactsPage() {
           >
             {(close) => <ContactForm onSuccess={close} />}
           </FormDialog>
-        </div>
-      </div>
+        }
+      />
 
-      {/* CONTENT LIST */}
-      <div className="flex-1 min-h-0 pb-8">
+      <PageContent>
         {isLoading ? (
           <CardListSkeleton avatarShape="circle" />
         ) : filteredContacts.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
-            <Users className="h-12 w-12 opacity-20" />
-            <p>
-              {search ? "Aucun contact ne correspond à votre recherche." : "Votre carnet d'adresses est vide."}
-            </p>
-          </div>
+          <EmptyState
+            icon={Users}
+            message={
+              search
+                ? "Aucun contact ne correspond à votre recherche."
+                : "Votre carnet d'adresses est vide."
+            }
+          />
         ) : (
-          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
+          <div className="flex flex-col gap-3">
             {filteredContacts.map((contact) => (
               <ContactCard
                 key={contact.id}
@@ -118,7 +114,7 @@ export function ContactsPage() {
             ))}
           </div>
         )}
-      </div>
+      </PageContent>
 
       {/* DETAILS SHEET */}
       <EntitySheet
@@ -171,7 +167,6 @@ export function ContactsPage() {
         isDeleting={isDeleting}
         error={deleteError}
       />
-
-    </div>
+    </PageLayout>
   );
 }

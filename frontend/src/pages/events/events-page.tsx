@@ -1,7 +1,4 @@
-import {
-  useState,
-  useMemo,
-} from 'react';
+import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import {
   Plus,
@@ -14,22 +11,26 @@ import { useDeleteScheduledEvent } from '@/hooks/use-delete-scheduled-event';
 import { ScheduledEvent } from '@/api/model';
 
 import { Fab } from '@/components/ui/fab';
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ViewTabs } from '@/components/ui/view-tabs';
+import { EmptyState } from '@/components/shared/empty-state';
 
+// Layout Components
+import { PageLayout } from '@/components/layouts/page-layout';
+import { PageHeader } from '@/components/layouts/page-header';
+import { PageContent } from '@/components/layouts/page-content';
+
+// Shared Components
 import { EntitySheet } from '@/components/shared/entity-sheet';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 import { FormDialog } from '@/components/shared/form-dialog';
 
+// Feature Components
 import { EventForm } from '@/components/events/event-form';
 import { EventDetails } from '@/components/events/event-details';
 import { EventCard } from '@/components/events/event-card';
 import { CalendarView } from '@/components/events/calendar-view';
+import { CalendarSkeleton } from '@/components/events/calendar-skeleton';
 
 export function EventsPage() {
   const { events, isLoading } = useScheduledEvents();
@@ -70,85 +71,64 @@ export function EventsPage() {
   };
 
   return (
-    <div className="space-y-6 pt-20 h-[calc(100vh-2rem)] flex flex-col">
-      {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-white">Agenda</h1>
-
-        <div className="flex items-center gap-3">
-          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'calendar' | 'list')}>
-            <TabsList className="bg-surface-base border border-white-light">
-              <TabsTrigger value="calendar" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-                <CalendarIcon className="h-4 w-4 mr-2" />
-                Calendrier
-              </TabsTrigger>
-              <TabsTrigger value="list" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-                <LayoutGrid className="h-4 w-4 mr-2" />
-                Liste
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          <Fab
-            palette="blue"
-            onClick={() => handleOpenCreate(undefined)}
-          >
+    <PageLayout>
+      <PageHeader
+        title="Agenda"
+        tabs={
+          <ViewTabs
+            value={viewMode}
+            onValueChange={(v) => setViewMode(v as 'calendar' | 'list')}
+            tabs={[
+              { value: 'calendar', label: 'Calendrier', icon: CalendarIcon },
+              { value: 'list', label: 'Liste', icon: LayoutGrid },
+            ]}
+          />
+        }
+        action={
+          <Fab palette="blue" onClick={() => handleOpenCreate(undefined)}>
             <Plus className="h-5 w-5" />
           </Fab>
-        </div>
-      </div>
+        }
+      />
 
-      {/* CONTENT */}
-      <div className="flex-1 min-h-0">
+      <PageContent>
         {isLoading ? (
           viewMode === 'calendar' ? (
-             /* CALENDAR SKELETON */
-             <div className="max-w-2xl mx-auto w-full bg-surface-base rounded-xl border border-white-light h-[600px] p-4 space-y-4">
-               <div className="flex justify-between items-center mb-6">
-                 <Skeleton className="h-8 w-48 bg-white-light " />
-                 <Skeleton className="h-8 w-24 bg-white-light " />
-               </div>
-               <div className="space-y-2">
-                 {Array.from({ length: 7 }).map((_, i) => (
-                   <Skeleton key={i} className="h-[72px] w-full rounded-xl bg-white-subtle " />
-                 ))}
-               </div>
-             </div>
+            <CalendarSkeleton />
           ) : (
-            /* LIST SKELETON */
-            <div className="flex flex-col gap-4 pb-8 max-w-4xl mx-auto w-full">
-              <CardListSkeleton cardHeight="h-24" />
-            </div>
+            <CardListSkeleton cardHeight="h-24" />
           )
+        ) : viewMode === 'calendar' ? (
+          <CalendarView
+            events={events || []}
+            onSelectEvent={setSelectedEvent}
+            onAddEvent={(date) => handleOpenCreate(date)}
+          />
+        ) : sortedEvents.length === 0 ? (
+          <EmptyState
+            icon={CalendarIcon}
+            message="Aucun événement planifié"
+            action={
+              <Fab palette="blue" onClick={() => handleOpenCreate(undefined)}>
+                <Plus className="h-5 w-5 mr-2" />
+                Ajouter un événement
+              </Fab>
+            }
+          />
         ) : (
-          viewMode === 'calendar' ? (
-            <CalendarView
-              events={events || []}
-              onSelectEvent={setSelectedEvent}
-              onAddEvent={(date) => handleOpenCreate(date)}
-            />
-          ) : (
-            /* LIST VIEW */
-            sortedEvents.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-muted-foreground">
-                Aucun événement. Utilisez le bouton + pour planifier.
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4 pb-8 max-w-4xl mx-auto w-full">
-                {sortedEvents.map(event => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    onClick={setSelectedEvent}
-                    onEdit={setEditingEvent}
-                    onDelete={setEventToDelete}
-                  />
-                ))}
-              </div>
-            )
-          )
+          <div className="flex flex-col gap-4">
+            {sortedEvents.map(event => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onClick={setSelectedEvent}
+                onEdit={setEditingEvent}
+                onDelete={setEventToDelete}
+              />
+            ))}
+          </div>
         )}
-      </div>
+      </PageContent>
 
       {/* CREATE DIALOG */}
       <FormDialog
@@ -175,12 +155,12 @@ export function EventsPage() {
           <EventDetails
             event={selectedEvent}
             onEdit={(e) => {
-               setSelectedEvent(null);
-               setEditingEvent(e);
+              setSelectedEvent(null);
+              setEditingEvent(e);
             }}
             onDelete={(e) => {
-               setSelectedEvent(null);
-               setEventToDelete(e);
+              setSelectedEvent(null);
+              setEventToDelete(e);
             }}
           />
         )}
@@ -193,10 +173,10 @@ export function EventsPage() {
         title="Modifier l'événement"
       >
         {(close) => editingEvent && (
-            <EventForm
-              initialData={editingEvent}
-              onSuccess={close}
-            />
+          <EventForm
+            initialData={editingEvent}
+            onSuccess={close}
+          />
         )}
       </FormDialog>
 
@@ -204,10 +184,10 @@ export function EventsPage() {
       <EntityDeleteDialog
         open={!!eventToDelete}
         onOpenChange={(open) => {
-            if (!open) {
-                setEventToDelete(null);
-                setDeleteError('');
-            }
+          if (!open) {
+            setEventToDelete(null);
+            setDeleteError('');
+          }
         }}
         entityType="événement"
         entityLabel={eventToDelete?.title || ''}
@@ -215,6 +195,6 @@ export function EventsPage() {
         isDeleting={isDeleting}
         error={deleteError}
       />
-    </div>
+    </PageLayout>
   );
 }

@@ -1,26 +1,29 @@
 import { useState } from 'react';
-import {
-  Plus,
-  FileText
-} from 'lucide-react';
+import { Plus, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useDocuments } from '@/hooks/use-documents';
 import { useDeleteDocument } from '@/hooks/use-delete-document';
 import { Button } from '@/components/ui/button';
 import { Fab } from '@/components/ui/fab';
-import { FormDialog } from '@/components/shared/form-dialog';
-import { Document } from '@/api/model';
+import { EmptyState } from '@/components/shared/empty-state';
+
+// Layout Components
+import { PageLayout } from '@/components/layouts/page-layout';
+import { PageHeader } from '@/components/layouts/page-header';
+import { PageContent } from '@/components/layouts/page-content';
 
 // Shared Components
+import { FormDialog } from '@/components/shared/form-dialog';
 import { EntitySheet } from '@/components/shared/entity-sheet';
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
+import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 
 // Feature Components
 import { DocumentCard } from '@/components/documents/document-card';
 import { DocumentForm } from '@/components/documents/document-form';
 import { DocumentDetails } from '@/components/documents/document-details';
-import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
+import { Document } from '@/api/model';
 
 export function DocumentsPage() {
   const { documents, isLoading, isError } = useDocuments();
@@ -59,32 +62,25 @@ export function DocumentsPage() {
   };
 
   return (
-    <div className="space-y-6 pb-20">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Documents</h1>
-          <p className="text-muted-foreground">
-            Gérez vos fichiers (CV, Lettres) et liens externes.
-          </p>
-        </div>
+    <PageLayout>
+      <PageHeader
+        title="Documents"
+        action={
+          <FormDialog
+            title="Ajouter un document"
+            description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
+            trigger={
+              <Fab>
+                <Plus className="h-5 w-5" />
+              </Fab>
+            }
+          >
+            {(close) => <DocumentForm onSuccess={close} />}
+          </FormDialog>
+        }
+      />
 
-        {/* CREATE DIALOG */}
-        <FormDialog
-          title="Ajouter un document"
-          description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
-          trigger={
-            <Fab>
-              <Plus className="h-5 w-5" />
-            </Fab>
-          }
-        >
-          {(close) => <DocumentForm onSuccess={close} />}
-        </FormDialog>
-      </div>
-
-      {/* Content */}
-      <div className="min-h-[200px]">
+      <PageContent>
         {isLoading ? (
           <CardListSkeleton />
         ) : isError ? (
@@ -92,12 +88,10 @@ export function DocumentsPage() {
             Erreur lors du chargement des documents.
           </div>
         ) : !sortedDocuments || sortedDocuments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white-light bg-surface-base p-12 text-center">
-            <div className="mb-4 rounded-full bg-white-light p-4">
-              <FileText className="h-8 w-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-white">Aucun document</h3>
-            <div className="mt-4">
+          <EmptyState
+            icon={FileText}
+            message="Aucun document"
+            action={
               <FormDialog
                 title="Ajouter un document"
                 description="Vous pouvez uploader un fichier local ou sauvegarder un lien externe."
@@ -109,8 +103,8 @@ export function DocumentsPage() {
               >
                 {(close) => <DocumentForm onSuccess={close} />}
               </FormDialog>
-            </div>
-          </div>
+            }
+          />
         ) : (
           <div className="flex flex-col gap-3">
             {sortedDocuments.map((doc) => (
@@ -124,7 +118,7 @@ export function DocumentsPage() {
             ))}
           </div>
         )}
-      </div>
+      </PageContent>
 
       {/* EDIT DIALOG */}
       <FormDialog
@@ -175,6 +169,6 @@ export function DocumentsPage() {
         isDeleting={isDeleting}
         error={deleteError}
       />
-    </div>
+    </PageLayout>
   );
 }

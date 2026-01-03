@@ -8,6 +8,12 @@ import { Company } from '@/api/model';
 
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
+import { EmptyState } from '@/components/shared/empty-state';
+
+// Layout Components
+import { PageLayout } from '@/components/layouts/page-layout';
+import { PageHeader } from '@/components/layouts/page-header';
+import { PageContent } from '@/components/layouts/page-content';
 
 // Shared Components
 import { EntitySheet } from '@/components/shared/entity-sheet';
@@ -51,34 +57,34 @@ export function CompaniesPage() {
   };
 
   return (
-    <div className="space-y-6 pt-20 h-[calc(100vh-2rem)] flex flex-col">
-      {/* HEADER */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">Entreprises</h1>
-        <FormDialog
-          title="Nouvelle Entreprise"
-          description="Ajoutez une entreprise pour y associer des contacts et des opportunités."
-          trigger={
-            <Fab>
-              <Plus className="h-5 w-5" />
-            </Fab>
-          }
-        >
-          {(close) => <CompanyForm onSuccess={close} />}
-        </FormDialog>
-      </div>
+    <PageLayout>
+      <PageHeader
+        title="Entreprises"
+        action={
+          <FormDialog
+            title="Nouvelle Entreprise"
+            description="Ajoutez une entreprise pour y associer des contacts et des opportunités."
+            trigger={
+              <Fab>
+                <Plus className="h-5 w-5" />
+              </Fab>
+            }
+          >
+            {(close) => <CompanyForm onSuccess={close} />}
+          </FormDialog>
+        }
+      />
 
-      {/* CONTENT LIST */}
-      <div className="flex-1 min-h-0 pb-8">
+      <PageContent>
         {isLoading ? (
           <CardListSkeleton />
         ) : sortedCompanies.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
-            <Building2 className="h-12 w-12 opacity-20" />
-            <p>Aucune entreprise trouvée. Commencez par en ajouter une !</p>
-          </div>
+          <EmptyState
+            icon={Building2}
+            message="Aucune entreprise trouvée. Commencez par en ajouter une !"
+          />
         ) : (
-          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
+          <div className="flex flex-col gap-3">
             {sortedCompanies.map(company => (
               <CompanyCard
                 key={company.id}
@@ -90,7 +96,7 @@ export function CompaniesPage() {
             ))}
           </div>
         )}
-      </div>
+      </PageContent>
 
       {/* DETAILS SHEET */}
       <EntitySheet
@@ -102,12 +108,12 @@ export function CompaniesPage() {
           <CompanyDetails
             company={selectedCompany}
             onEdit={(c) => {
-               setSelectedCompany(null);
-               setEditingCompany(c);
+              setSelectedCompany(null);
+              setEditingCompany(c);
             }}
             onDelete={(c) => {
-               setSelectedCompany(null);
-               setCompanyToDelete(c);
+              setSelectedCompany(null);
+              setCompanyToDelete(c);
             }}
           />
         )}
@@ -132,10 +138,10 @@ export function CompaniesPage() {
       <EntityDeleteDialog
         open={!!companyToDelete}
         onOpenChange={(open) => {
-            if (!open) {
-                setCompanyToDelete(null);
-                setDeleteError('');
-            }
+          if (!open) {
+            setCompanyToDelete(null);
+            setDeleteError('');
+          }
         }}
         entityType="entreprise"
         entityLabel={companyToDelete?.name || ''}
@@ -143,6 +149,6 @@ export function CompaniesPage() {
         isDeleting={isDeleting}
         error={deleteError}
       />
-    </div>
+    </PageLayout>
   );
 }

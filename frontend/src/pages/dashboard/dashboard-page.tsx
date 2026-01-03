@@ -1,33 +1,41 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
+// Layout Components
+import { PageLayout } from '@/components/layouts/page-layout';
+import { PageHeader } from '@/components/layouts/page-header';
+import { PageContent } from '@/components/layouts/page-content';
 
 export function DashboardPage() {
   return (
-    <div className="space-y-8 pt-20">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-          Tableau de bord
-        </h1>
-      </div>
+    <PageLayout>
+      <PageHeader title="Tableau de bord" />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="border-white-light bg-surface-modal">
-          <CardHeader>
-            <CardTitle className="text-white">Candidatures en cours</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-primary">0</p>
-          </CardContent>
-        </Card>
+      <PageContent>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="border-white-light bg-surface-modal">
+            <CardHeader>
+              <CardTitle className="text-white">Candidatures en cours</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-primary">0</p>
+            </CardContent>
+          </Card>
 
-        <Card className="border-white-light bg-surface-modal">
-          <CardHeader>
-            <CardTitle className="text-white">Entretiens prévus</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-primary">0</p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          <Card className="border-white-light bg-surface-modal">
+            <CardHeader>
+              <CardTitle className="text-white">Entretiens prévus</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-primary">0</p>
+            </CardContent>
+          </Card>
+        </div>
+      </PageContent>
+    </PageLayout>
   );
 }

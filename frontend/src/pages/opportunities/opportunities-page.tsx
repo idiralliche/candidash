@@ -1,9 +1,6 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
-import {
-  Plus,
-  Briefcase,
-} from 'lucide-react';
+import { Plus, Briefcase } from 'lucide-react';
 
 import { useOpportunities } from '@/hooks/use-opportunities';
 import { useDeleteOpportunity } from '@/hooks/use-delete-opportunity';
@@ -12,9 +9,15 @@ import { Opportunity } from '@/api/model';
 import { findEntityById } from '@/lib/utils';
 
 import { Fab } from '@/components/ui/fab';
+import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
+import { EmptyState } from '@/components/shared/empty-state';
+
+// Layout Components
+import { PageLayout } from '@/components/layouts/page-layout';
+import { PageHeader } from '@/components/layouts/page-header';
+import { PageContent } from '@/components/layouts/page-content';
 
 // Shared Components
-import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EntitySheet } from '@/components/shared/entity-sheet';
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 import { FormDialog } from '@/components/shared/form-dialog';
@@ -57,49 +60,47 @@ export function OpportunitiesPage() {
   };
 
   return (
-    <div className="space-y-6 pt-20 h-[calc(100vh-2rem)] flex flex-col">
-      {/* HEADER */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">Opportunités</h1>
-        <FormDialog
-          title="Nouvelle Opportunité"
-          description="Ajoutez une nouvelle opportunité à votre pipeline."
-          trigger={
-            <Fab>
-              <Plus className="h-5 w-5" />
-            </Fab>
-          }
-        >
-          {(close) => <OpportunityForm onSuccess={close} />}
-        </FormDialog>
-      </div>
+    <PageLayout>
+      <PageHeader
+        title="Opportunités"
+        action={
+          <FormDialog
+            title="Nouvelle Opportunité"
+            description="Ajoutez une nouvelle opportunité à votre pipeline."
+            trigger={
+              <Fab>
+                <Plus className="h-5 w-5" />
+              </Fab>
+            }
+          >
+            {(close) => <OpportunityForm onSuccess={close} />}
+          </FormDialog>
+        }
+      />
 
-      {/* CONTENT LIST */}
-      <div className="flex-1 min-h-0 pb-8">
+      <PageContent>
         {isLoading ? (
           <CardListSkeleton />
         ) : sortedOpportunities.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-2">
-            <Briefcase className="h-12 w-12 opacity-20" />
-            <p>Aucune opportunité trouvée. Commencez par en ajouter une !</p>
-          </div>
+          <EmptyState
+            icon={Briefcase}
+            message="Aucune opportunité trouvée. Commencez par en ajouter une !"
+          />
         ) : (
-          <div className="flex flex-col gap-3 max-w-5xl mx-auto w-full">
-            {sortedOpportunities.map((opportunity) => {
-              return (
-                <OpportunityCard
-                  key={opportunity.id}
-                  opportunity={opportunity}
-                  company={findEntityById(companies, opportunity.company_id)}
-                  onClick={setSelectedOpportunity}
-                  onEdit={setEditingOpportunity}
-                  onDelete={setOpportunityToDelete}
-                />
-              );
-            })}
+          <div className="flex flex-col gap-3">
+            {sortedOpportunities.map((opportunity) => (
+              <OpportunityCard
+                key={opportunity.id}
+                opportunity={opportunity}
+                company={findEntityById(companies, opportunity.company_id)}
+                onClick={setSelectedOpportunity}
+                onEdit={setEditingOpportunity}
+                onDelete={setOpportunityToDelete}
+              />
+            ))}
           </div>
         )}
-      </div>
+      </PageContent>
 
       {/* DETAILS SHEET */}
       <EntitySheet
@@ -112,12 +113,12 @@ export function OpportunitiesPage() {
             opportunity={selectedOpportunity}
             company={findEntityById(companies, selectedOpportunity.company_id)}
             onEdit={(op) => {
-               setSelectedOpportunity(null);
-               setEditingOpportunity(op);
+              setSelectedOpportunity(null);
+              setEditingOpportunity(op);
             }}
             onDelete={(op) => {
-               setSelectedOpportunity(null);
-               setOpportunityToDelete(op);
+              setSelectedOpportunity(null);
+              setOpportunityToDelete(op);
             }}
           />
         )}
@@ -153,6 +154,6 @@ export function OpportunitiesPage() {
         isDeleting={isDeleting}
         error={deleteError}
       />
-    </div>
+    </PageLayout>
   );
 }

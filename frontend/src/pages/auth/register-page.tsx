@@ -1,7 +1,4 @@
-import {
-  Link,
-  useNavigate,
-} from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -80,7 +77,7 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md border-white-light bg-surface-base shadow-2xl">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center text-white">Créer un compte</CardTitle>
