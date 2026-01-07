@@ -37,7 +37,10 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
   };
 
   return (
-    <EntityCard onClick={() => onClick(event)}>
+    <EntityCard
+      onClick={() => onClick(event)}
+      hoverPalette="blue"
+    >
 
       {/* IDENTITY: Date Box as Icon + Title */}
       <EntityCard.Identity className="sm:w-[45%]">
@@ -53,6 +56,7 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
 
         <EntityCard.Info
           title={event.title}
+          hoverPalette="blue"
           subtitle={
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <span className="truncate">{event.event_type || "Événement"}</span>

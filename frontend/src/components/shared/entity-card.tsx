@@ -4,6 +4,10 @@ import {
   Pencil,
   Trash2,
 } from 'lucide-react';
+import {
+  cva,
+  type VariantProps,
+} from "class-variance-authority"
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -15,7 +19,41 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DestructiveMenuItem } from '@/components/ui/dropdown-menu-item-destructive';
 
-interface EntityCardProps {
+// --- STYLES ---
+
+// Card Hover Border Colors
+const cardVariants = cva(
+  "group relative flex flex-col sm:flex-row sm:items-center bg-surface-base border border-white-subtle rounded-xl p-4 gap-4 transition-all duration-200 hover:bg-surface-hover hover:shadow-md hover:-translate-y-[1px] cursor-pointer",
+  {
+    variants: {
+      hoverPalette: {
+        primary: "hover:border-primary/30",
+        blue: "hover:border-blue-500/30",
+      }
+    },
+    defaultVariants: {
+      hoverPalette: "primary"
+    }
+  }
+);
+
+// Title Hover Text Colors
+const infoVariants = cva(
+  "text-base font-bold text-white truncate transition-colors",
+  {
+    variants: {
+      hoverPalette: {
+        primary: "group-hover:text-primary",
+        blue: "group-hover:text-blue-400",
+      }
+    },
+    defaultVariants: {
+      hoverPalette: "primary"
+    }
+  }
+);
+
+interface EntityCardProps extends VariantProps<typeof cardVariants> {
   children: ReactNode;
   onClick?: () => void;
   className?: string;
@@ -25,14 +63,11 @@ interface EntityCardProps {
  * Root component for entity cards.
  * Handles global layout, hover states, and click interactions.
  */
-function EntityCard({ children, onClick, className }: EntityCardProps) {
+function EntityCard({ children, onClick, className, hoverPalette }: EntityCardProps) {
   return (
     <div
       onClick={onClick}
-      className={cn(
-        "group relative flex flex-col sm:flex-row sm:items-center bg-surface-base border border-white-subtle rounded-xl p-4 gap-4 transition-all duration-200 hover:bg-surface-hover hover:border-primary/30 hover:shadow-md hover:-translate-y-[1px] cursor-pointer",
-        className
-      )}
+      className={cn(cardVariants({ hoverPalette }), className)}
     >
       {children}
     </div>
@@ -55,10 +90,16 @@ function Identity({ children, className }: { children: ReactNode; className?: st
 /**
  * Info Helper (Title + Subtitle/Badge) inside Identity
  */
-function Info({ title, subtitle, className }: { title: ReactNode; subtitle?: ReactNode; className?: string }) {
+interface InfoProps extends VariantProps<typeof infoVariants> {
+    title: ReactNode;
+    subtitle?: ReactNode;
+    className?: string;
+}
+
+function Info({ title, subtitle, className, hoverPalette }: InfoProps) {
   return (
     <div className={cn("flex flex-col gap-1 min-w-0", className)}>
-      <h3 className="text-base font-bold text-white truncate group-hover:text-primary transition-colors">
+      <h3 className={cn(infoVariants({ hoverPalette }))}>
         {title}
       </h3>
       {subtitle}
@@ -85,7 +126,7 @@ function Meta({ children, className }: { children: ReactNode; className?: string
 interface ActionsProps {
   onEdit?: (e: React.MouseEvent) => void;
   onDelete?: (e: React.MouseEvent) => void;
-  children?: ReactNode; // Allows adding custom actions before the menu
+  children?: ReactNode;
 }
 
 function Actions({ onEdit, onDelete, children }: ActionsProps) {
