@@ -1,30 +1,10 @@
-import {
-  Briefcase,
-  Building2,
-  MapPin,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { Briefcase, Building2, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { IconBox } from "@/components/ui/icon-box";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { DestructiveMenuItem } from "@/components/ui/dropdown-menu-item-destructive";
+import { EntityCard } from "@/components/shared/entity-card";
 
-import {
-  Opportunity,
-  Company,
-} from "@/api/model";
-import {
-  LABELS_APPLICATION,
-  getLabel,
-} from "@/lib/dictionaries";
+import { Opportunity, Company } from "@/api/model";
+import { LABELS_APPLICATION, getLabel } from "@/lib/dictionaries";
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -42,18 +22,10 @@ export function OpportunityCard({
   onDelete,
 }: OpportunityCardProps) {
   return (
-    <div
-      onClick={() => onClick(opportunity)}
-      className="
-        group relative flex flex-col sm:flex-row sm:items-center
-        bg-surface-base border border-white-subtle rounded-xl p-4 gap-4
-        transition-all duration-200
-        hover:bg-surface-hover hover:border-primary/30 hover:shadow-md hover:-translate-y-[1px]
-        cursor-pointer
-      "
-    >
-      {/* ZONE 1 : IDENTITY (Left) */}
-      <div className="flex items-center gap-4 min-w-0 sm:w-[45%]">
+    <EntityCard onClick={() => onClick(opportunity)}>
+
+      {/* IDENTITY ZONE */}
+      <EntityCard.Identity className="sm:w-[45%]">
         <IconBox
           palette="green"
           groupHover
@@ -61,23 +33,22 @@ export function OpportunityCard({
           <Briefcase className="h-5 w-5" />
         </IconBox>
 
-        {/* Title & Company */}
-        <div className="flex flex-col gap-1 min-w-0">
-          <h3 className="text-base font-bold text-white truncate group-hover:text-primary transition-colors">
-            {opportunity.job_title}
-          </h3>
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <Building2 className="h-3 w-3" />
-            <span className="truncate">
-              {company?.name || "Entreprise inconnue"}
-            </span>
-          </div>
-        </div>
-      </div>
+        <EntityCard.Info
+          title={opportunity.job_title}
+          subtitle={
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              <Building2 className="h-3 w-3" />
+              <span className="truncate">
+                {company?.name || "Entreprise inconnue"}
+              </span>
+            </div>
+          }
+        />
+      </EntityCard.Identity>
 
-      {/* ZONE 2 : INFO (Center) */}
-      <div className="flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400">
-        {/* Badge Application Type */}
+      {/* META ZONE */}
+      <EntityCard.Meta>
+        {/* Application Type Badge */}
         <Badge
           variant="subtle"
           palette="gray"
@@ -97,48 +68,14 @@ export function OpportunityCard({
         ) : (
           <div className="hidden sm:block sm:mx-auto" />
         )}
-      </div>
+      </EntityCard.Meta>
 
-      {/* ZONE 3 : ACTIONS (Right) */}
-      <div className="absolute top-4 right-4 sm:static sm:pl-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              palette="gray"
-              size="icon"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="bg-surface-base border-white-light text-white"
-          >
-            <DropdownMenuItem
-              className="cursor-pointer focus:bg-white-light focus:text-white"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(opportunity);
-              }}
-            >
-              <Pencil className="mr-2 h-4 w-4" />
-              Modifier
-            </DropdownMenuItem>
+      {/* ACTIONS ZONE */}
+      <EntityCard.Actions
+        onEdit={() => onEdit(opportunity)}
+        onDelete={() => onDelete(opportunity)}
+      />
 
-            <DestructiveMenuItem
-              onClick={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                onDelete(opportunity);
-              }}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Supprimer
-            </DestructiveMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
+    </EntityCard>
   );
 }
