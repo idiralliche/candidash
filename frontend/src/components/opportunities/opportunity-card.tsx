@@ -1,10 +1,20 @@
-import { Briefcase, Building2, MapPin } from "lucide-react";
+import {
+  Briefcase,
+  Building2,
+  MapPin,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { IconBox } from "@/components/ui/icon-box";
 import { EntityCard } from "@/components/shared/entity-card";
 
-import { Opportunity, Company } from "@/api/model";
-import { LABELS_APPLICATION, getLabel } from "@/lib/dictionaries";
+import {
+  Opportunity,
+  Company,
+} from "@/api/model";
+import {
+  LABELS_APPLICATION,
+  getLabel,
+} from "@/lib/dictionaries";
 
 interface OpportunityCardProps {
   opportunity: Opportunity;

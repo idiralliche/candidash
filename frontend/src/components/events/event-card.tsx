@@ -1,12 +1,20 @@
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Clock, MapPin, Video, Phone } from 'lucide-react';
+import {
+  Clock,
+  MapPin,
+  Video,
+  Phone,
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { EntityCard } from '@/components/shared/entity-card';
 
 import { ScheduledEvent } from '@/api/model';
-import { LABELS_EVENT_STATUS, getLabel } from '@/lib/dictionaries';
+import {
+  LABELS_EVENT_STATUS,
+  getLabel,
+} from '@/lib/dictionaries';
 import { getStatusPalette } from '@/lib/semantic-ui';
 
 interface EventCardProps {
