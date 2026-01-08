@@ -2,7 +2,6 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-// Container style variants
 const inputContainerVariants = cva(
   "flex items-center w-full rounded-md border transition-colors cursor-text",
   {
@@ -11,6 +10,7 @@ const inputContainerVariants = cva(
         default: "bg-background border-border text-foreground focus-within:border-primary/50",
         subtle: "bg-muted/50 border-border text-foreground focus-within:border-primary/50",
         form: "bg-surface-base border-white-light text-white focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20",
+        "form-blue": "bg-surface-base border-white-light text-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500/20",
         ghost: "border-transparent bg-transparent",
         destructive: "border-destructive bg-surface-base text-white focus-within:ring-destructive/20",
       },
@@ -49,7 +49,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className
         )}
         onClick={(e) => {
-          // Focus input when clicking anywhere in the container
           const target = e.target as HTMLElement;
           if (target.tagName !== "INPUT") {
              target.querySelector("input")?.focus();
