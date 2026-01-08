@@ -53,7 +53,6 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
   const isPending = isCreating || isUpdating;
 
   const form = useForm<CompanyFormValues>({
-    // Logic to switch between Edit values and Empty values
     resolver: zodResolver(companySchema),
     defaultValues: {
       name: initialData?.name || '',
@@ -67,7 +66,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
     },
   });
 
-  // Reset form when initialData changes (important if reusing the same modal instance)
+  // Reset form when initialData changes
   useEffect(() => {
     if (initialData) {
       form.reset({
@@ -84,11 +83,8 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
   }, [initialData, form]);
 
   function onSubmit(values: CompanyFormValues) {
-    // Client-side Duplicate Check (only if SIRET changed or creating new)
     if (values.siret && companies) {
-      // Exclude current company from check if editing
       const duplicate = companies.find(c => c.siret === values.siret && c.id !== initialData?.id);
-
       if (duplicate) {
         form.setError("siret", {
           type: "manual",
@@ -117,16 +113,9 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
     };
 
     if (isEditing && initialData) {
-      // UPDATE MODE
-      updateCompany({
-        companyId: initialData.id,
-        data: payload
-      }, options);
+      updateCompany({ companyId: initialData.id, data: payload }, options);
     } else {
-      // CREATE MODE
-      createCompany({
-        data: payload
-      }, options);
+      createCompany({ data: payload }, options);
     }
   }
 
@@ -219,10 +208,11 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
           label="Notes"
           component={Textarea}
           placeholder="Informations complémentaires..."
+          maxLength={50000}
         />
 
         {error && (
-          <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center">
+          <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center animate-in fade-in slide-in-from-top-1">
             Une erreur est survenue lors de la création.
           </div>
         )}
