@@ -3,7 +3,7 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
 export const DestructiveMenuItem = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuItem>,
+  React.ComponentRef<typeof DropdownMenuItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuItem>
 >(({ className, ...props }, ref) => (
   <DropdownMenuItem

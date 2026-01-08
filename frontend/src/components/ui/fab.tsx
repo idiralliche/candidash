@@ -7,7 +7,7 @@ export function Fab({ className, ...props }: ButtonProps) {
       variant="solid"
       palette="primary"
       size="icon"
-      className={cn("rounded-full shadow-lg", className)} // Force le style rond et l'ombre
+      className={cn("rounded-full shadow-lg", className)}
       {...props}
     />
   );
