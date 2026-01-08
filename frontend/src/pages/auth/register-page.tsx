@@ -6,6 +6,7 @@ import {
   Loader2,
   Mail,
   Lock,
+  User,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -17,15 +18,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { SmartFormField } from '@/components/ui/form-field-wrapper';
 
 import { useRegisterApiV1AuthRegisterPost } from '@/api/authentication/authentication';
 
@@ -90,92 +85,55 @@ export function RegisterPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
               <div className="grid grid-cols-2 gap-4">
-                <FormField
+                <SmartFormField
                   control={form.control}
                   name="first_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white">Prénom</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Jean" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Prénom"
+                  component={Input}
+                  placeholder="Jean"
+                  leadingIcon={User}
                 />
-                <FormField
+                <SmartFormField
                   control={form.control}
                   name="last_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white">Nom</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Dupont" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Nom"
+                  component={Input}
+                  placeholder="Dupont"
+                  leadingIcon={User}
                 />
               </div>
 
-              <FormField
+              <SmartFormField
                 control={form.control}
                 name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="exemple@email.com"
-                        leadingIcon={Mail}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Email"
+                component={Input}
+                placeholder="exemple@email.com"
+                leadingIcon={Mail}
               />
 
-              <FormField
+              <SmartFormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        leadingIcon={Lock}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Mot de passe"
+                component={Input}
+                type="password"
+                placeholder="••••••••"
+                leadingIcon={Lock}
               />
 
-              <FormField
+              <SmartFormField
                 control={form.control}
                 name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Confirmer le mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        leadingIcon={Lock}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Confirmer le mot de passe"
+                component={Input}
+                type="password"
+                placeholder="••••••••"
+                leadingIcon={Lock}
               />
 
               {error && (
-                <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center">
+                <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center animate-in fade-in slide-in-from-top-1">
                   Une erreur est survenue (l'email existe peut-être déjà).
                 </div>
               )}
@@ -202,7 +160,7 @@ export function RegisterPage() {
         <CardFooter className="flex flex-col gap-2">
           <div className="text-center text-sm text-gray-500">
             Déjà un compte ?{" "}
-            <Link to="/login" className="text-primary hover:underline">
+            <Link to="/login" className="text-primary hover:text-primary-light hover:underline transition-colors">
               Se connecter
             </Link>
           </div>

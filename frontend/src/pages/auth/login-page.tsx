@@ -1,4 +1,5 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
+import { useNavigate, Link } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -7,7 +8,6 @@ import {
   Mail,
   Lock,
 } from 'lucide-react';
-import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,16 +18,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Link } from '@tanstack/react-router';
+import { SmartFormField } from '@/components/ui/form-field-wrapper';
 
 // API & Context
 import { useLoginApiV1AuthLoginPost } from '@/api/authentication/authentication';
@@ -87,45 +80,27 @@ export function LoginPage() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
-              <FormField
+              <SmartFormField
                 control={form.control}
                 name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="exemple@email.com"
-                        leadingIcon={Mail}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Email"
+                component={Input}
+                placeholder="exemple@email.com"
+                leadingIcon={Mail}
               />
 
-              <FormField
+              <SmartFormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        leadingIcon={Lock}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Mot de passe"
+                component={Input}
+                type="password"
+                placeholder="••••••••"
+                leadingIcon={Lock}
               />
 
               {error && (
-                <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center">
+                <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center animate-in fade-in slide-in-from-top-1">
                   Identifiants incorrects. Veuillez réessayer.
                 </div>
               )}
@@ -152,7 +127,7 @@ export function LoginPage() {
         <CardFooter className="flex flex-col gap-2">
           <div className="text-center text-sm text-gray-500">
             Pas encore de compte ?{" "}
-            <Link to="/" className="text-primary hover:underline">
+            <Link to="/" className="text-primary hover:text-primary-light hover:underline transition-colors">
               S'inscrire
             </Link>
           </div>
