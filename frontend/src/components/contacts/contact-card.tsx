@@ -2,9 +2,10 @@ import {
   Building2,
   Mail,
   Phone,
+  Balloon,
   Link as LinkIcon,
+  Contact as ContactIcon,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { IconBox } from '@/components/ui/icon-box';
 
 import { Contact } from '@/api/model';
@@ -22,7 +23,6 @@ interface ContactCardProps {
 export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardProps) {
   const { companies } = useCompanies();
   const company = findEntityById(companies, contact.company_id);
-  const initials = `${contact.first_name[0] || ''}${contact.last_name[0] || ''}`.toUpperCase();
 
   return (
     <EntityCard onClick={() => onClick(contact)}>
@@ -30,11 +30,11 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
       {/* IDENTITY ZONE */}
       <EntityCard.Identity className="sm:w-[45%]">
         <IconBox
-          palette="orange"
+          palette="purple"
           shape="circle"
           groupHover
         >
-          {initials}
+          <ContactIcon className="h-5 w-5" />
         </IconBox>
 
         <EntityCard.Info
@@ -53,29 +53,20 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
       <EntityCard.Meta>
         {/* Company or Status */}
         <div className="flex items-center gap-2">
-          {company ? (
+          {company && (
             <div className="flex items-center gap-1.5 text-xs text-gray-300 bg-white-subtle px-2 py-1 rounded">
-              <Building2 className="h-3 w-3" />
+              <Building2 className="h-4 w-4" />
               <span className="truncate max-w-[150px]">{company.name}</span>
             </div>
-          ) : contact.is_independent_recruiter ? (
-            <Badge
-              variant="subtle"
-              palette="purple"
-              className="text-[10px] font-normal"
-            >
-              Recruteur Indép.
-            </Badge>
-          ) : (
-            <span className="text-xs text-gray-600 italic">Aucune liaison</span>
           )}
         </div>
 
         {/* Contact Icons */}
         <div className="hidden sm:flex items-center gap-2">
-          {contact.linkedin && <LinkIcon className="h-3.5 w-3.5 text-blue-400" />}
-          {contact.email && <Mail className="h-3.5 w-3.5 text-gray-500" />}
-          {contact.phone && <Phone className="h-3.5 w-3.5 text-gray-500" />}
+          {contact.linkedin && <LinkIcon className="h-4 w-4 text-blue-400" />}
+          {contact.email && <Mail className="h-4 w-4 text-gray-500" />}
+          {contact.phone && <Phone className="h-4 w-4 text-gray-500" />}
+          {contact.is_independent_recruiter && <Balloon className="h-4 w-4 text-orange-400" />}
         </div>
       </EntityCard.Meta>
 

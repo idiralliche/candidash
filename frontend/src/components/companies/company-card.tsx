@@ -2,8 +2,9 @@ import {
   Building2,
   MapPin,
   Globe,
+  FingerprintPattern,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { IconBox } from "@/components/ui/icon-box";
 import { Company } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
 
@@ -20,17 +21,23 @@ export function CompanyCard({ company, onClick, onEdit, onDelete }: CompanyCardP
 
       {/* IDENTITY ZONE */}
       <EntityCard.Identity>
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+        <IconBox
+          palette="red"
+          groupHover
+        >
           <Building2 className="h-5 w-5" />
-        </div>
+        </IconBox>
 
         <EntityCard.Info
           title={company.name}
           subtitle={
             company.industry && (
-              <Badge variant="subtle" palette="gray" className="w-fit font-normal">
-                {company.industry}
-              </Badge>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <FingerprintPattern className="h-3 w-3" />
+                <span className="truncate">
+                  {company.industry}
+                </span>
+              </div>
             )
           }
         />
