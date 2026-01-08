@@ -1,4 +1,4 @@
-import { EventStatus, DocumentFormat } from '@/api/model';
+import { EventStatus, DocumentFormat, ApplicationType } from '@/api/model';
 
 // We extract the Palette type directly from the implementation logic
 // or define it manually to match badge.tsx possibilities.
@@ -12,7 +12,8 @@ export type UiPalette =
   | "purple"
   | "yellow"
   | "sky"
-  | "indigo";
+  | "indigo"
+  | "emerald";
 
 /**
  * =========================================================
@@ -26,6 +27,18 @@ export const STATUS_COLOR: Record<EventStatus, UiPalette> = {
   cancelled: 'red',       // Danger/Stop
   rescheduled: 'orange',  // Warning/Change
   pending: 'gray',        // Neutral/Waiting
+};
+
+/**
+ * =========================================================
+ * APPLICATION TYPE MAPPING
+ * Maps business logic application types to UI colors.
+ * =========================================================
+ */
+export const LABELS_APPLICATION: Record<ApplicationType, UiPalette> = {
+  job_posting: 'emerald',
+  spontaneous: 'indigo',
+  reached_out: 'orange',
 };
 
 /**
@@ -84,4 +97,11 @@ export function getStatusPalette(status?: EventStatus): UiPalette {
  */
 export function getFormatPalette(format?: DocumentFormat): UiPalette {
   return FORMAT_COLOR[format || 'txt'] || 'gray';
+}
+
+/**
+ * Helper to get application type color safely with fallback
+ */
+export function getApplicationTypePalette(application_type?: ApplicationType): UiPalette {
+  return LABELS_APPLICATION[application_type || 'job_posting'] || 'gray';
 }
