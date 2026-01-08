@@ -15,6 +15,7 @@ import {
   LABELS_APPLICATION,
   getLabel,
 } from "@/lib/dictionaries";
+import { getApplicationTypePalette } from '@/lib/semantic-ui';
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -37,7 +38,7 @@ export function OpportunityCard({
       {/* IDENTITY ZONE */}
       <EntityCard.Identity className="sm:w-[45%]">
         <IconBox
-          palette="green"
+          palette="emerald"
           groupHover
         >
           <Briefcase className="h-5 w-5" />
@@ -45,14 +46,14 @@ export function OpportunityCard({
 
         <EntityCard.Info
           title={opportunity.job_title}
-          subtitle={
+          subtitle={company && (
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <Building2 className="h-3 w-3" />
               <span className="truncate">
-                {company?.name || "Entreprise inconnue"}
+                {company.name}
               </span>
             </div>
-          }
+          )}
         />
       </EntityCard.Identity>
 
@@ -61,8 +62,7 @@ export function OpportunityCard({
         {/* Application Type Badge */}
         <Badge
           variant="subtle"
-          palette="gray"
-          className="font-normal shrink-0"
+          palette={getApplicationTypePalette(opportunity.application_type)}
         >
           {getLabel(LABELS_APPLICATION, opportunity.application_type)}
         </Badge>
