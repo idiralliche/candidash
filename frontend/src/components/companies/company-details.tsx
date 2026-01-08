@@ -1,5 +1,4 @@
 import {
-  Building2,
   MapPin,
   Globe,
   FileText,
@@ -7,12 +6,14 @@ import {
   Hash,
   Briefcase,
   Trash2,
+
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Company } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
+import { DetailsBlock } from "@/components/shared/details-block";
 
 interface CompanyDetailsProps {
   company: Company;
@@ -25,38 +26,38 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
   return (
     <EntityDetailsSheet
       title={company.name}
-      // Badges: Industry, Intermediary, Company Type
+
+      badge={company.is_intermediary && (
+        <Badge
+          variant="subtle"
+          palette="orange"
+          className="gap-1"
+        >
+          <CheckCircle2 className="h-3 w-3" />
+          Intermédiaire / ESN
+        </Badge>
+      )}
+
+      // Badges: Industry, Company Type
       metadata={
-        <>
+        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground pt-1 w-full">
           {company.industry && (
-            <div className="flex items-center gap-2 text-primary font-medium">
+            <div className="flex items-center gap-1">
               <Briefcase className="h-4 w-4" />
               <span>{company.industry}</span>
             </div>
           )}
 
-          <div className="flex flex-wrap gap-2 pt-1 w-full">
-            {company.company_type && (
-              <Badge
-                variant="subtle"
-                palette="blue"
-              >
-                {company.company_type}
-              </Badge>
-            )}
-
-            {company.is_intermediary && (
-              <Badge
-                variant="subtle"
-                palette="purple"
-                className="gap-1"
-              >
-                <CheckCircle2 className="h-3 w-3" />
-                Intermédiaire / ESN
-              </Badge>
-            )}
-          </div>
-        </>
+          {company.company_type && (
+            <Badge
+              variant="subtle"
+              palette="gray"
+              className="text-xs"
+            >
+              {company.company_type}
+            </Badge>
+          )}
+        </div>
       }
       onEdit={onEdit ? () => onEdit(company) : undefined}
       footer={
@@ -73,11 +74,6 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
         )
       }
     >
-      {/* Icon Box Placeholder */}
-      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white-subtle border border-white-light text-muted-foreground mb-4">
-        <Building2 className="h-6 w-6" />
-      </div>
-
       {/* WEBSITE ACTION */}
       {company.website && (
         <div className="mb-6">
@@ -102,52 +98,43 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
       <Separator className="bg-white-light mb-6" />
 
       {/* INFO GRID */}
-      <div className="grid grid-cols-1 gap-4 mb-6">
+      <div className="grid grid-cols-1 gap-3">
 
         {/* Headquarters */}
         {company.headquarters && (
-          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle p-3">
-            <MapPin className="h-5 w-5 text-red-400 mt-0.5" />
-            <div>
-              <p className="font-medium text-white text-sm">Siège social</p>
-              <p className="text-sm text-muted-foreground">{company.headquarters}</p>
-            </div>
-          </div>
+          <DetailsBlock icon={MapPin} label="Siège social">
+            {company.headquarters}
+          </DetailsBlock>
         )}
 
         {/* SIRET */}
         {company.siret && (
-          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle p-3">
-            <Hash className="h-5 w-5 text-yellow-400 mt-0.5" />
-            <div>
-              <p className="font-medium text-white text-sm">SIRET</p>
-              <p className="text-sm text-muted-foreground tracking-wider font-mono">
-                {company.siret}
-              </p>
+          <DetailsBlock
+            icon={Hash}
+            label="SIRET"
+            action={
               <a
                 href={`https://www.pappers.fr/recherche?q=${company.siret}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-blue-500 hover:underline mt-1 block"
+                className="text-xs text-blue-500 hover:underline block"
               >
                 Voir sur Pappers.fr
               </a>
-            </div>
-          </div>
+            }
+          >
+            <span className="font-mono tracking-wider">{company.siret}</span>
+          </DetailsBlock>
         )}
       </div>
 
       {/* NOTES */}
       {company.notes && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-gray-400" />
-            <h3 className="font-semibold text-white">Notes & Informations</h3>
-          </div>
-          <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-surface-deeper p-3 rounded-md border border-white-subtle">
+        <DetailsBlock icon={FileText} label="Notes & Informations">
+          <div className="whitespace-pre-wrap leading-relaxed">
             {company.notes}
           </div>
-        </div>
+        </DetailsBlock>
       )}
     </EntityDetailsSheet>
   );

@@ -6,6 +6,10 @@ import {
   Calendar,
   Link as LinkIcon,
   Trash2,
+  Star,
+  CodeXml,
+  FileText,
+  ListCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,12 +19,14 @@ import {
   Company,
 } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
+import { DetailsBlock } from "@/components/shared/details-block";
 import {
   LABELS_APPLICATION,
   LABELS_CONTRACT,
   LABELS_REMOTE,
   getLabel,
 } from "@/lib/dictionaries";
+import { getApplicationTypePalette } from '@/lib/semantic-ui';
 
 interface OpportunityDetailsProps {
   opportunity: Opportunity;
@@ -37,40 +43,33 @@ export function OpportunityDetails({
 }: OpportunityDetailsProps) {
 
   // Salary formatting helper
-  const formatSalary = (min?: number | null, max?: number | null, info?: string | null) => {
+  const formatSalary = (min?: number | null, max?: number | null) => {
     if (min == null && max == null) return null;
     let text = "";
     if (min != null && max != null) text = `${min / 1000}k - ${max / 1000}k`;
     else if (min != null) text = `> ${min / 1000}k`;
     else if (max != null) text = `< ${max / 1000}k`;
 
-    return (
-      <div className="flex flex-col">
-        <span className="font-medium text-white">{text}</span>
-        {info && <span className="text-xs text-muted-foreground">{info}</span>}
-      </div>
-    );
+    return text;
   };
 
   return (
     <EntityDetailsSheet
       title={opportunity.job_title}
-      // Status Badge (Application Type)
       badge={
         <Badge
           variant="subtle"
-          palette="gray"
+          palette={getApplicationTypePalette(opportunity.application_type)}
           className="mb-2"
         >
           {getLabel(LABELS_APPLICATION, opportunity.application_type)}
         </Badge>
       }
-      // Metadata: Company, Location, Contract
       metadata={
         <>
-          <div className="flex items-center gap-2 text-primary font-medium w-full sm:w-auto">
-            <Building2 className="h-5 w-5" />
-            <span className="text-lg">{company?.name || "Entreprise inconnue"}</span>
+          <div className="flex items-center gap-2 rounded border border-white-light bg-white-subtle px-3 py-1.5 text-primary font-bold mb-2">
+            <Building2 className="h-4 w-4" />
+            {company?.name}
           </div>
 
           <div className="flex flex-wrap gap-3 text-sm text-muted-foreground pt-1 w-full">
@@ -140,79 +139,64 @@ export function OpportunityDetails({
 
       {/* INFO GRID (Remote & Salary) */}
       <div className="grid grid-cols-1 gap-4 mb-6">
-
         {/* Remote Policy */}
         {opportunity.remote_policy && (
-          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle p-3">
-            <Laptop className="h-5 w-5 text-purple-400 mt-0.5" />
-            <div>
-              <p className="font-medium text-white text-sm">Politique Télétravail</p>
-              <p className="text-sm text-muted-foreground">
-                {getLabel(LABELS_REMOTE, opportunity.remote_policy)}
-              </p>
-              {opportunity.remote_details && (
-                <p className="text-xs text-gray-500 mt-1">{opportunity.remote_details}</p>
-              )}
-            </div>
-          </div>
+          <DetailsBlock icon={Laptop} label="Remote">
+            <p>{getLabel(LABELS_REMOTE, opportunity.remote_policy)}</p>
+            {opportunity.remote_details && (
+              <p className="text-xs text-muted-foreground mt-1">{opportunity.remote_details}</p>
+            )}
+          </DetailsBlock>
         )}
 
         {/* Salary */}
         {(opportunity.salary_min != null || opportunity.salary_max != null) && (
-          <div className="flex items-start gap-3 rounded-lg border border-white-subtle bg-white-subtle p-3">
-            <Banknote className="h-5 w-5 text-green-400 mt-0.5" />
-            <div>
-              <p className="font-medium text-white text-sm">Rémunération</p>
-              <div className="text-sm">
-                {formatSalary(opportunity.salary_min, opportunity.salary_max, opportunity.salary_info)}
-              </div>
-            </div>
-          </div>
+          <DetailsBlock icon={Banknote} label="Rémunération">
+            <p>{formatSalary(opportunity.salary_min, opportunity.salary_max)}</p>
+            {opportunity.salary_info && (
+              <p className="text-xs text-muted-foreground mt-1">{opportunity.salary_info}</p>
+            )}
+          </DetailsBlock>
         )}
       </div>
 
       {/* DESCRIPTION & SKILLS */}
       <div className="space-y-6">
+
         {/* Job Description */}
         {opportunity.job_description && (
-          <div className="space-y-2">
-            <h3 className="font-semibold text-white">Description du poste</h3>
-            <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-surface-deeper p-3 rounded-md border border-white-subtle">
-              {opportunity.job_description}
+          <DetailsBlock icon={FileText} label="Description du poste">
+            <div className="whitespace-pre-wrap leading-relaxed">
+               {opportunity.job_description}
             </div>
-          </div>
+          </DetailsBlock>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Required Skills */}
-          {opportunity.required_skills && (
-            <div className="space-y-2">
-              <h3 className="font-semibold text-white text-sm">Compétences requises</h3>
-              <div className="text-xs text-gray-400 whitespace-pre-wrap bg-surface-deeper p-3 rounded-md border border-white-subtle h-full">
-                {opportunity.required_skills}
-              </div>
+        {/* Technologies */}
+        {opportunity.technologies && (
+          <DetailsBlock icon={CodeXml} label="Technologies">
+            <div className="whitespace-pre-wrap leading-relaxed">
+              {opportunity.technologies}
             </div>
-          )}
+          </DetailsBlock>
+        )}
 
-          {/* Technologies */}
-          {opportunity.technologies && (
-            <div className="space-y-2">
-              <h3 className="font-semibold text-white text-sm">Technologies</h3>
-              <div className="text-xs text-gray-400 whitespace-pre-wrap bg-surface-deeper p-3 rounded-md border border-white-subtle h-full">
-                {opportunity.technologies}
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Required Skills */}
+        {opportunity.required_skills && (
+          <DetailsBlock icon={Star} label="Compétences requises">
+             <div className="whitespace-pre-wrap leading-relaxed">
+               {opportunity.required_skills}
+             </div>
+          </DetailsBlock>
+        )}
 
         {/* Recruitment Process */}
         {opportunity.recruitment_process && (
-          <div className="space-y-2">
-            <h3 className="font-semibold text-white">Processus de recrutement</h3>
-            <div className="text-sm text-gray-300 whitespace-pre-wrap bg-surface-deeper p-3 rounded-md border border-white-subtle">
-              {opportunity.recruitment_process}
-            </div>
-          </div>
+          <DetailsBlock icon={ListCheck} label="Processus de recrutement">
+             <div className="whitespace-pre-wrap leading-relaxed">
+               {opportunity.recruitment_process}
+             </div>
+          </DetailsBlock>
         )}
       </div>
     </EntityDetailsSheet>

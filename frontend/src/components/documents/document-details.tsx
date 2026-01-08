@@ -22,6 +22,7 @@ import {
 import { getFormatPalette } from '@/lib/semantic-ui';
 import { useDownloadDocument } from '@/hooks/use-download-document';
 import { EntityDetailsSheet } from '@/components/shared/entity-details-sheet';
+import { DetailsBlock } from '@/components/shared/details-block';
 
 interface DocumentDetailsProps {
   document: Document;
@@ -35,7 +36,6 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
   return (
     <EntityDetailsSheet
       title={document.name}
-      // Badge Format
       badge={
         <Badge
           variant="subtle"
@@ -45,12 +45,11 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
           {getLabel(LABELS_DOCUMENT_FORMAT, document.format)}
         </Badge>
       }
-      // Metadata: Type, Date, Storage
       metadata={
         <>
-          <div className="flex items-center gap-2 text-primary font-medium capitalize">
-            <FileText className="h-5 w-5" />
-            <span className="text-lg">{document.type}</span>
+          <div className="flex items-center gap-2 rounded border border-white-light bg-white-subtle px-3 py-1.5 text-primary font-bold mb-2">
+            <FileText className="h-4 w-4" />
+            {document.type}
           </div>
 
           <div className="flex flex-wrap gap-3 text-sm text-muted-foreground pt-1 w-full">
@@ -80,12 +79,12 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
         )
       }
     >
-      {/* ACTIONS (Download/Link) */}
+      {/* PRIMARY ACTION */}
       <div className="mb-6">
         <Button
             variant="outline"
             palette="blue"
-            className="w-full justify-start"
+            className="w-full justify-start h-auto"
             onClick={() => downloadDocument(document)}
             disabled={isDownloading}
         >
@@ -97,26 +96,33 @@ export function DocumentDetails({ document, onEdit, onDelete }: DocumentDetailsP
             ) : document.is_external ? (
                 <>
                     <LinkIcon className="mr-2 h-4 w-4" />
-                    Ouvrir le lien
+                    <div className="flex flex-col items-start text-left">
+                        <span>Ouvrir le lien</span>
+                    </div>
                 </>
             ) : (
                 <>
                     <Download className="mr-2 h-4 w-4" />
-                    Télécharger le fichier
+                    <div className="flex flex-col items-start text-left">
+                        <span>Télécharger le fichier</span>
+                    </div>
                 </>
             )}
         </Button>
       </div>
 
-      <Separator className="bg-white-light mb-6" />
-
       {/* DESCRIPTION */}
-      <div className="space-y-2">
-         <h3 className="font-semibold text-white">Description / Notes</h3>
-         <div className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed bg-surface-deeper p-3 rounded-md border border-white-subtle">
-            {document.description || "Aucune description fournie."}
-         </div>
-      </div>
+      {document.description && (
+        <>
+          <Separator className="bg-white-light mb-6" />
+
+          <DetailsBlock icon={FileText} label="Description / Notes">
+            <div className="whitespace-pre-wrap leading-relaxed">
+                {document.description}
+            </div>
+          </DetailsBlock>
+        </>
+      )}
     </EntityDetailsSheet>
   );
 }
