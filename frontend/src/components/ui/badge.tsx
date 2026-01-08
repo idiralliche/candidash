@@ -31,6 +31,7 @@ const badgeVariants = cva(
         gray: "border-gray-500/20",
         red: "border-red-500/20",
         blue: "border-blue-500/20",
+        emerald: "border-emerald-500/20",
         green: "border-green-500/20",
         orange: "border-orange-500/20",
         purple: "border-purple-500/20",
@@ -54,6 +55,10 @@ const badgeVariants = cva(
       // Blue
       { variant: "subtle", palette: "blue", class: "bg-blue-500/10 text-blue-400" },
       { variant: "solid", palette: "blue", class: "bg-blue-500 text-white" },
+
+      // Emerald
+      { variant: "subtle", palette: "emerald", class: "bg-emerald-500/10 text-emerald-400" },
+      { variant: "solid", palette: "emerald", class: "bg-emerald-500 text-white" },
 
       // Green
       { variant: "subtle", palette: "green", class: "bg-green-500/10 text-green-400" },
