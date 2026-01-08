@@ -12,18 +12,11 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
+import { FormSwitch } from "@/components/ui/form-switch";
+import { SmartFormField } from '@/components/ui/form-field-wrapper';
 import { useCompanies } from '@/hooks/use-companies';
 import { useCreateCompany } from '@/hooks/use-create-company';
 import { useUpdateCompany } from '@/hooks/use-update-company';
@@ -141,162 +134,91 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-4 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
 
-        {/* Name (required) */}
-        <FormField
+        {/* Name */}
+        <SmartFormField
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Nom de l'entreprise *</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Ex: TechCorp"
-                  leadingIcon={Building2}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nom de l'entreprise *"
+          component={Input}
+          placeholder="Ex: TechCorp"
+          leadingIcon={Building2}
         />
 
-        {/* Intermediary Checkbox */}
-        <FormField
+        {/* Intermediary Switch */}
+        <SmartFormField
           control={form.control}
           name="is_intermediary"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-white-light p-4 bg-surface-base">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel className="text-white">
-                  Est-ce un intermédiaire ?
-                </FormLabel>
-                <FormDescription>
-                  Cochez cette case s'il s'agit d'un cabinet de recrutement ou d'une ESN.
-                </FormDescription>
-              </div>
-            </FormItem>
+        >
+          {(field) => (
+            <FormSwitch
+              {...field}
+              label="Est-ce un intermédiaire ?"
+              description="Cochez cette case s'il s'agit d'un cabinet de recrutement ou d'une ESN."
+            />
           )}
-        />
+        </SmartFormField>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* SIRET */}
-          <FormField
+          <SmartFormField
             control={form.control}
             name="siret"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">SIRET</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="14 chiffres"
-                    leadingIcon={Hash}
-                    maxLength={14}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="SIRET"
+            component={Input}
+            placeholder="14 chiffres"
+            leadingIcon={Hash}
+            maxLength={14}
           />
 
           {/* Company Type */}
-          <FormField
+          <SmartFormField
             control={form.control}
             name="company_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Type d'entreprise</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ex: Startup, PME, Grand Groupe..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Type d'entreprise"
+            component={Input}
+            placeholder="Ex: Startup, PME, Grand Groupe..."
           />
         </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
            {/* Industry */}
-           <FormField
+           <SmartFormField
             control={form.control}
             name="industry"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Secteur d'activité</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Ex: Fintech, Santé..."
-                    leadingIcon={Briefcase}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            label="Secteur d'activité"
+            component={Input}
+            placeholder="Ex: Fintech, Santé..."
+            leadingIcon={Briefcase}
+           />
 
           {/* Headquarters */}
-          <FormField
+          <SmartFormField
             control={form.control}
             name="headquarters"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Siège Social</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Ville, Pays"
-                    leadingIcon={MapPin}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Siège Social"
+            component={Input}
+            placeholder="Ville, Pays"
+            leadingIcon={MapPin}
           />
         </div>
 
         {/* Website */}
-        <FormField
+        <SmartFormField
           control={form.control}
           name="website"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Site Web</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="https://..."
-                  leadingIcon={Globe}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Site Web"
+          component={Input}
+          placeholder="https://..."
+          leadingIcon={Globe}
         />
 
         {/* Notes */}
-        <FormField
+        <SmartFormField
           control={form.control}
           name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Notes</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Informations complémentaires..."
-                  {...field}
-                  className="bg-surface-base border-white-light text-white min-h-[80px]"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Notes"
+          component={Textarea}
+          placeholder="Informations complémentaires..."
         />
 
         {error && (

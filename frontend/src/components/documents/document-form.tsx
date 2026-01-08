@@ -26,16 +26,10 @@ import {
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { SmartFormField } from '@/components/ui/form-field-wrapper';
 import {
   Tabs,
   TabsContent,
@@ -240,25 +234,19 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
 
             {/* DROPZONE AREA */}
             {!isLocalEdit ? (
-               <FormField
-               control={uploadForm.control}
-               name="file"
-               render={({ field }) => (
-                 <FormItem>
-                   <FormLabel className="text-white">
-                      {isEditing ? "Nouveau fichier (Remplacement) *" : "Fichier *"}
-                   </FormLabel>
-                   <FormControl>
-                     <FileUploader
-                        value={field.value}
-                        onChange={field.onChange}
-                        isEditing={isEditing}
-                     />
-                   </FormControl>
-                   <FormMessage />
-                 </FormItem>
-               )}
-             />
+               <SmartFormField
+                 control={uploadForm.control}
+                 name="file"
+                 label={isEditing ? "Nouveau fichier (Remplacement) *" : "Fichier *"}
+               >
+                 {(field) => (
+                   <FileUploader
+                      value={field.value as FileList | null}
+                      onChange={field.onChange}
+                      isEditing={isEditing}
+                   />
+                 )}
+               </SmartFormField>
             ) : (
               <Alert className="bg-blue-500/10 border-blue-500/20 text-blue-200 py-2">
                 <Info className="h-4 w-4" />
@@ -272,7 +260,6 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
             <SharedFields form={uploadForm} />
 
             <DialogFooter className="pt-4">
-                {/* MIGRATION: Button Solid Primary */}
                 <Button
                   type="submit"
                   variant="solid"
@@ -303,27 +290,15 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
       <TabsContent value="external" className="mt-4">
         <Form {...externalForm}>
           <form onSubmit={externalForm.handleSubmit(onExternalSubmit)} className="space-y-4">
-            <FormField
+
+            <SmartFormField
               control={externalForm.control}
               name="path"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">URL du document *</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="https://docs.google.com/..."
-                      leadingIcon={LinkIcon}
-                      {...field}
-                    />
-                  </FormControl>
-                  {isEditing && !isExternalOrigin && (
-                      <p className="text-xs text-yellow-400">
-                        Attention : Le fichier local actuel sera supprimé et remplacé par ce lien.
-                      </p>
-                   )}
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="URL du document *"
+              component={Input}
+              placeholder="https://docs.google.com/..."
+              leadingIcon={LinkIcon}
+              description={isEditing && !isExternalOrigin ? "Attention : Le fichier local actuel sera supprimé et remplacé par ce lien." : undefined}
             />
 
             <SharedFields form={externalForm} />
@@ -419,7 +394,7 @@ function FileUploader({
       {...getRootProps()}
       className={`
         border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors
-        min-h-[120px] text-center
+        min-h-[120px] text-center outline-none
         ${isDragActive ? 'border-primary bg-primary/10' : 'border-white-light bg-surface-base hover:bg-white/5 hover:border-white/30'}
       `}
     >
@@ -443,57 +418,28 @@ function FileUploader({
 function SharedFields<T extends FieldValues>({ form }: { form: UseFormReturn<T> }) {
   return (
     <>
-      <FormField
+      <SmartFormField
         control={form.control}
         name={"name" as Path<T>}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-white">Nom *</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Ex: CV 2024"
-                leadingIcon={FileText}
-                {...field}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        label="Nom *"
+        component={Input}
+        placeholder="Ex: CV 2024"
+        leadingIcon={FileText}
       />
-      <FormField
+      <SmartFormField
         control={form.control}
         name={"type" as Path<T>}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-white">Type *</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Ex: CV, Lettre, Portfolio..."
-                leadingIcon={Tag}
-                {...field}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        label="Type *"
+        component={Input}
+        placeholder="Ex: CV, Lettre, Portfolio..."
+        leadingIcon={Tag}
       />
-      <FormField
+      <SmartFormField
         control={form.control}
         name={"description" as Path<T>}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-white">Description</FormLabel>
-            <FormControl>
-              <Textarea
-                placeholder="Notes..."
-                className="resize-none bg-surface-base border-white-light text-white min-h-[80px]"
-                {...field}
-                value={(field.value as string) || ''}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        label="Description"
+        component={Textarea}
+        placeholder="Notes..."
       />
     </>
   );

@@ -15,16 +15,10 @@ import {
 import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { SmartFormField } from '@/components/ui/form-field-wrapper';
 import {
   Select,
   SelectContent,
@@ -150,7 +144,6 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
   }, [initialData, form]);
 
   function onSubmit(values: OpportunityFormValues) {
-    // Parse numbers manually
     const companyId = values.company_id ? parseInt(values.company_id) : undefined;
     const salaryMin = values.salary_min ? parseFloat(values.salary_min) : undefined;
     const salaryMax = values.salary_max ? parseFloat(values.salary_max) : undefined;
@@ -200,115 +193,75 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
           <h3 className="text-lg font-semibold text-primary">Informations Principales</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Job Title (Required) */}
-            <FormField
+            <SmartFormField
               control={form.control}
               name="job_title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Titre du poste *</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ex: Senior Backend Developer"
-                      leadingIcon={Briefcase}
-                      maxLength={255}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Titre du poste *"
+              component={Input}
+              placeholder="Ex: Senior Backend Developer"
+              leadingIcon={Briefcase}
+              maxLength={255}
             />
 
-            {/* Company (Optional) */}
-            <FormField
+            <SmartFormField
               control={form.control}
               name="company_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Entreprise</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
-                    <FormControl>
-                      <SelectTrigger className="bg-surface-base border-white-light text-white">
-                        <SelectValue placeholder="Sélectionner (Optionnel)" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {companies?.map(c => (
-                        <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
+              label="Entreprise"
+            >
+              {(field) => (
+                <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner (Optionnel)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {companies?.map(c => (
+                      <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
-            />
+            </SmartFormField>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Position Type */}
-            <FormField
+            <SmartFormField
               control={form.control}
               name="position_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Type de poste</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ex: Backend, DevOps..."
-                      leadingIcon={Tag}
-                      maxLength={100}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Type de poste"
+              component={Input}
+              placeholder="Ex: Backend, DevOps..."
+              leadingIcon={Tag}
+              maxLength={100}
             />
 
-            {/* Application Type (Required) */}
-            <FormField
+            <SmartFormField
               control={form.control}
               name="application_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Type de candidature *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-surface-base border-white-light text-white">
-                        <SelectValue placeholder="Sélectionner..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="job_posting">Offre d'emploi</SelectItem>
-                      <SelectItem value="spontaneous">Spontanée</SelectItem>
-                      <SelectItem value="reached_out">Contact Recruteur</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
+              label="Type de candidature *"
+            >
+              {(field) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="job_posting">Offre d'emploi</SelectItem>
+                    <SelectItem value="spontaneous">Spontanée</SelectItem>
+                    <SelectItem value="reached_out">Contact Recruteur</SelectItem>
+                  </SelectContent>
+                </Select>
               )}
-            />
+            </SmartFormField>
           </div>
 
-          {/* Source */}
-          <FormField
+          <SmartFormField
             control={form.control}
             name="source"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Source</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Ex: LinkedIn, Malt, Chasseur de tête..."
-                    leadingIcon={Globe}
-                    maxLength={100}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Source"
+            component={Input}
+            placeholder="Ex: LinkedIn, Malt, Chasseur de tête..."
+            leadingIcon={Globe}
+            maxLength={100}
           />
         </div>
 
@@ -317,90 +270,68 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
           <h3 className="text-lg font-semibold text-primary">Contrat & Localisation</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <FormField
+            <SmartFormField
               control={form.control}
               name="contract_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Type de Contrat</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-surface-base border-white-light text-white">
-                        <SelectValue placeholder="Non spécifié" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="permanent">CDI</SelectItem>
-                      <SelectItem value="fixed_term">CDD</SelectItem>
-                      <SelectItem value="freelance">Freelance</SelectItem>
-                      <SelectItem value="contractor">Portage</SelectItem>
-                      <SelectItem value="internship">Stage</SelectItem>
-                      <SelectItem value="apprenticeship">Alternance</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
+              label="Type de Contrat"
+            >
+              {(field) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Non spécifié" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="permanent">CDI</SelectItem>
+                    <SelectItem value="fixed_term">CDD</SelectItem>
+                    <SelectItem value="freelance">Freelance</SelectItem>
+                    <SelectItem value="contractor">Portage</SelectItem>
+                    <SelectItem value="internship">Stage</SelectItem>
+                    <SelectItem value="apprenticeship">Alternance</SelectItem>
+                  </SelectContent>
+                </Select>
               )}
-            />
-             <FormField
+            </SmartFormField>
+
+            <SmartFormField
               control={form.control}
               name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Ville / Pays</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ex: Paris"
-                      leadingIcon={MapPin}
-                      maxLength={500}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Ville / Pays"
+              component={Input}
+              placeholder="Ex: Paris"
+              leadingIcon={MapPin}
+              maxLength={500}
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <FormField
+            <SmartFormField
               control={form.control}
               name="remote_policy"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Politique Télétravail</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-surface-base border-white-light text-white">
-                        <SelectValue placeholder="Non spécifié" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="on_site">Sur site (100%)</SelectItem>
-                      <SelectItem value="full_remote">Full Remote</SelectItem>
-                      <SelectItem value="hybrid">Hybride</SelectItem>
-                      <SelectItem value="flexible">Flexible</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
+              label="Politique Télétravail"
+            >
+              {(field) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Non spécifié" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="on_site">Sur site (100%)</SelectItem>
+                    <SelectItem value="full_remote">Full Remote</SelectItem>
+                    <SelectItem value="hybrid">Hybride</SelectItem>
+                    <SelectItem value="flexible">Flexible</SelectItem>
+                  </SelectContent>
+                </Select>
               )}
-            />
-             <FormField
+            </SmartFormField>
+
+            <SmartFormField
               control={form.control}
               name="remote_details"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Détails Télétravail</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ex: 2 jours/semaine, obligatoire le mardi..."
-                      leadingIcon={Wifi}
-                      maxLength={5000}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Détails Télétravail"
+              component={Input}
+              placeholder="Ex: 2 jours/semaine, obligatoire le mardi..."
+              leadingIcon={Wifi}
+              maxLength={5000}
             />
           </div>
         </div>
@@ -409,161 +340,88 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">Rémunération</h3>
           <div className="grid grid-cols-2 gap-4">
-             <FormField
+            <SmartFormField
               control={form.control}
               name="salary_min"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Min (€)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="40000"
-                      leadingIcon={Euro}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Min (€)"
+              component={Input}
+              type="number"
+              placeholder="40000"
+              leadingIcon={Euro}
             />
-             <FormField
+            <SmartFormField
               control={form.control}
               name="salary_max"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Max (€)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="55000"
-                      leadingIcon={Euro}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Max (€)"
+              component={Input}
+              type="number"
+              placeholder="55000"
+              leadingIcon={Euro}
             />
           </div>
-           <FormField
-              control={form.control}
-              name="salary_info"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Infos Rémunération</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ex: + BSPCE, primes, participation..."
-                      leadingIcon={Info}
-                      maxLength={2000}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <SmartFormField
+            control={form.control}
+            name="salary_info"
+            label="Infos Rémunération"
+            component={Input}
+            placeholder="Ex: + BSPCE, primes, participation..."
+            leadingIcon={Info}
+            maxLength={2000}
+          />
         </div>
 
         {/* --- SECTION 4: TECH & SKILLS --- */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">Compétences</h3>
-           <FormField
-              control={form.control}
-              name="required_skills"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Compétences requises</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Ex: Anglais courant, Gestion de projet..."
-                      {...field}
-                      maxLength={5000}
-                      className="bg-surface-base border-white-light text-white min-h-[60px]"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="technologies"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Technologies</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Ex: Python, React, AWS, Docker..."
-                      {...field}
-                      maxLength={5000}
-                      className="bg-surface-base border-white-light text-white min-h-[60px]"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <SmartFormField
+            control={form.control}
+            name="required_skills"
+            label="Compétences requises"
+            component={Textarea}
+            placeholder="Ex: Anglais courant, Gestion de projet..."
+            maxLength={5000}
+            className="min-h-[60px]"
+          />
+          <SmartFormField
+            control={form.control}
+            name="technologies"
+            label="Technologies"
+            component={Textarea}
+            placeholder="Ex: Python, React, AWS, Docker..."
+            maxLength={5000}
+            className="min-h-[60px]"
+          />
         </div>
 
         {/* --- SECTION 5: DETAILS --- */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">Détails</h3>
-           <FormField
-              control={form.control}
-              name="job_posting_url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Lien de l'offre</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="https://..."
-                      leadingIcon={LinkIcon}
-                      maxLength={255}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="job_description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Description complète</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Collez la description ici..."
-                      {...field}
-                      maxLength={5000}
-                      className="bg-surface-base border-white-light text-white min-h-[100px]"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="recruitment_process"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Processus de recrutement</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Ex: 1. RH, 2. Tech, 3. Fit..."
-                      {...field}
-                      maxLength={10000}
-                      className="bg-surface-base border-white-light text-white min-h-[80px]"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <SmartFormField
+            control={form.control}
+            name="job_posting_url"
+            label="Lien de l'offre"
+            component={Input}
+            placeholder="https://..."
+            leadingIcon={LinkIcon}
+            maxLength={255}
+          />
+          <SmartFormField
+            control={form.control}
+            name="job_description"
+            label="Description complète"
+            component={Textarea}
+            placeholder="Collez la description ici..."
+            maxLength={5000}
+            className="min-h-[100px]"
+          />
+          <SmartFormField
+            control={form.control}
+            name="recruitment_process"
+            label="Processus de recrutement"
+            component={Textarea}
+            placeholder="Ex: 1. RH, 2. Tech, 3. Fit..."
+            maxLength={10000}
+          />
         </div>
 
         {error && (

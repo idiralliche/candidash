@@ -11,18 +11,11 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from "@/components/ui/switch";
+import { FormSwitch } from '@/components/ui/form-switch';
+import { SmartFormField } from '@/components/ui/form-field-wrapper';
 import {
   Select,
   SelectContent,
@@ -46,7 +39,7 @@ const contactSchema = z.object({
   email: z.string().email("Email invalide").max(255).optional().or(z.literal('')),
   phone: z.string().max(20).optional(),
   linkedin: z.string().regex(LINKEDIN_PATTERN, "Format invalide (URL ou in/user)").optional().or(z.literal('')),
-  company_id: z.string().optional(), // Select returns string
+  company_id: z.string().optional(),
   is_independent_recruiter: z.boolean().default(false),
   relationship_notes: z.string().max(50000).optional(),
   notes: z.string().max(50000).optional(),
@@ -108,11 +101,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
       first_name: values.first_name,
       last_name: values.last_name,
       company_id: companyId,
-      // Manual convertion of Select (String -> Int)
-
       is_independent_recruiter: values.is_independent_recruiter,
-
-      // Explicit null handeling for backend (PUT)
       position: values.position || null,
       email: values.email || null,
       phone: values.phone || null,
@@ -143,194 +132,119 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">Identité</h3>
           <div className="grid grid-cols-2 gap-4">
-            <FormField
+            <SmartFormField
               control={form.control}
               name="first_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Prénom *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Prénom *"
+              component={Input}
+              placeholder="John"
             />
-            <FormField
+            <SmartFormField
               control={form.control}
               name="last_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Nom *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Nom *"
+              component={Input}
+              placeholder="Doe"
             />
           </div>
-          <FormField
+          <SmartFormField
             control={form.control}
             name="position"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Poste / Titre</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Talent Acquisition Manager..."
-                    leadingIcon={User}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Poste / Titre"
+            component={Input}
+            placeholder="Talent Acquisition Manager..."
+            leadingIcon={User}
           />
         </div>
 
         {/* PROFESSIONAL CONTEXT */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">Contexte Professionnel</h3>
-          <FormField
+
+          <SmartFormField
             control={form.control}
             name="company_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Entreprise liée</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
-                  <FormControl>
-                    <SelectTrigger className="bg-surface-base border-white-light text-white">
-                      <SelectValue placeholder="Aucune entreprise (Indépendant ou autre)" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                      {companies?.map(c => (
-                        <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                </Select>
-                <FormDescription className="text-xs text-gray-500">
-                  Optionnel.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
+            label="Entreprise liée"
+            description="Optionnel."
+          >
+            {(field) => (
+               <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Aucune entreprise (Indépendant ou autre)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {companies?.map(c => (
+                    <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
-          />
-          <FormField
+          </SmartFormField>
+
+          {/* Independent Recruiter Switch */}
+          <SmartFormField
             control={form.control}
             name="is_independent_recruiter"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white-light bg-surface-base p-3">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base text-white">Recruteur Indépendant</FormLabel>
-                  <FormDescription className="text-xs text-gray-400">
-                    Cochez si ce contact est un chasseur de tête ou cabinet externe.
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-              </FormItem>
+          >
+            {(field) => (
+              <FormSwitch
+                {...field}
+                label="Recruteur Indépendant"
+                description="Cochez si ce contact est un chasseur de tête ou cabinet externe."
+              />
             )}
-          />
+          </SmartFormField>
         </div>
 
         {/* COORDINATES */}
         <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-primary">Coordonnées</h3>
-            <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                <FormItem>
-                    <FormLabel className="text-white">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="email@exemple.com"
-                        leadingIcon={Mail}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-                )}
+          <h3 className="text-lg font-semibold text-primary">Coordonnées</h3>
+          <SmartFormField
+            control={form.control}
+            name="email"
+            label="Email"
+            component={Input}
+            placeholder="email@exemple.com"
+            leadingIcon={Mail}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <SmartFormField
+              control={form.control}
+              name="phone"
+              label="Téléphone"
+              component={Input}
+              placeholder="+33 6..."
+              leadingIcon={Phone}
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="text-white">Téléphone</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="+33 6..."
-                            leadingIcon={Phone}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="linkedin"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="text-white">LinkedIn</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="in/username"
-                            leadingIcon={LinkIcon}
-                            {...field}
-                            />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-            </div>
+            <SmartFormField
+              control={form.control}
+              name="linkedin"
+              label="LinkedIn"
+              component={Input}
+              placeholder="in/username"
+              leadingIcon={LinkIcon}
+            />
+          </div>
         </div>
 
         {/* NOTES */}
         <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-primary">Notes</h3>
-            <FormField
-                control={form.control}
-                name="relationship_notes"
-                render={({ field }) => (
-                <FormItem>
-                    <FormLabel className="text-white text-xs">Contexte de rencontre</FormLabel>
-                    <FormControl>
-                    <Textarea
-                      placeholder="Ancien collègue, contacté sur LinkedIn..."
-                      {...field}
-                      className="bg-surface-base border-white-light text-white min-h-[60px]"
-                    />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-                )}
-            />
-             <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                <FormItem>
-                    <FormLabel className="text-white text-xs">Notes générales</FormLabel>
-                    <FormControl>
-                    <Textarea
-                      placeholder="..."
-                      {...field}
-                      className="bg-surface-base border-white-light text-white min-h-[80px]"
-                    />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-                )}
-            />
+          <h3 className="text-lg font-semibold text-primary">Notes</h3>
+          <SmartFormField
+            control={form.control}
+            name="relationship_notes"
+            label="Contexte de rencontre"
+            component={Textarea}
+            placeholder="Ancien collègue, contacté sur LinkedIn..."
+            className="min-h-[60px]"
+          />
+          <SmartFormField
+            control={form.control}
+            name="notes"
+            label="Notes générales"
+            component={Textarea}
+            placeholder="..."
+          />
         </div>
 
         {error && (

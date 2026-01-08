@@ -12,23 +12,20 @@ import {
   Video,
   Phone,
   MapPin,
+  Clock
 } from 'lucide-react';
 import {
   addHours,
   startOfHour,
+  format
 } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
+import { SmartFormField } from '@/components/ui/form-field-wrapper';
 import {
   Select,
   SelectContent,
@@ -49,11 +46,12 @@ import {
   LABELS_EVENT_STATUS,
   getLabel,
 } from '@/lib/dictionaries';
-import { toLocalISOString } from '@/lib/utils.ts';
 
 const eventSchema = z.object({
   title: z.string().min(1, "Le titre est requis").max(255),
-  scheduled_date: z.string().min(1, "La date est requise"),
+  date: z.date({ required_error: "La date est requise" }),
+  time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Format invalide"),
+
   event_type: z.string().max(100).optional(),
   status: z.nativeEnum(EventStatus).default(EventStatus.pending),
   duration_minutes: z.coerce.number().min(1).optional(),
@@ -82,27 +80,37 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
   const isPending = isCreating || isUpdating;
   const error = createError || updateError;
 
-  const getDefaultDate = useCallback(() => {
-    if (initialData?.scheduled_date) return toLocalISOString(initialData.scheduled_date);
-    if (defaultDate) {
+  const getDefaultDateTime = useCallback(() => {
+    let dateObj = new Date();
+
+    if (initialData?.scheduled_date) {
+      dateObj = new Date(initialData.scheduled_date);
+    } else if (defaultDate) {
+      dateObj = new Date(defaultDate);
       const now = new Date();
-      const isToday = defaultDate.toDateString() === now.toDateString();
-      const baseDate = new Date(defaultDate);
-      if (!isToday) {
-          baseDate.setHours(9, 0, 0, 0);
+      if (dateObj.toDateString() === now.toDateString()) {
+         dateObj = startOfHour(addHours(now, 1));
       } else {
-          baseDate.setHours(now.getHours() + 1, 0, 0, 0);
+         dateObj.setHours(9, 0, 0, 0);
       }
-      return toLocalISOString(baseDate.toISOString());
+    } else {
+      dateObj = startOfHour(addHours(new Date(), 1));
     }
-    return toLocalISOString(startOfHour(addHours(new Date(), 1)).toISOString());
+
+    return {
+      date: dateObj,
+      time: format(dateObj, 'HH:mm')
+    };
   }, [initialData, defaultDate]);
+
+  const defaults = getDefaultDateTime();
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       title: initialData?.title || '',
-      scheduled_date: getDefaultDate(),
+      date: defaults.date,
+      time: defaults.time,
       event_type: initialData?.event_type || '',
       status: initialData?.status || EventStatus.pending,
       duration_minutes: initialData?.duration_minutes || 30,
@@ -115,11 +123,14 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
     },
   });
 
+  // Reset effect
   useEffect(() => {
     if (initialData) {
+      const d = new Date(initialData.scheduled_date);
       form.reset({
         title: initialData.title,
-        scheduled_date: toLocalISOString(initialData.scheduled_date),
+        date: d,
+        time: format(d, 'HH:mm'),
         event_type: initialData.event_type || '',
         status: initialData.status,
         duration_minutes: initialData.duration_minutes || undefined,
@@ -130,16 +141,19 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
         instructions: initialData.instructions || '',
         notes: initialData.notes || '',
       });
-    } else if (defaultDate) {
-        form.setValue('scheduled_date', getDefaultDate());
     }
-  }, [initialData, defaultDate, form, getDefaultDate]);
+  }, [initialData, form]);
 
   function onSubmit(values: EventFormValues) {
-    const isoDate = new Date(values.scheduled_date).toISOString();
+    const [hours, minutes] = values.time.split(':').map(Number);
+    const scheduledDate = new Date(values.date);
+    scheduledDate.setHours(hours, minutes, 0, 0);
+
     const payload = {
-      ...values,
-      scheduled_date: isoDate,
+      title: values.title,
+      scheduled_date: scheduledDate.toISOString(),
+      status: values.status,
+      duration_minutes: values.duration_minutes,
       event_type: values.event_type || null,
       communication_method: values.communication_method || null,
       event_link: values.event_link || null,
@@ -166,212 +180,160 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-4 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
-        <FormField
+
+        <SmartFormField
           control={form.control}
           name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Titre de l'événement *</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Ex: Entretien RH, Appel découverte..."
-                  leadingIcon={Bell}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Titre de l'événement *"
+          component={Input}
+          variant="form-blue"
+          placeholder="Ex: Entretien RH, Appel découverte..."
+          leadingIcon={Bell}
         />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField
+          {/* Date Picker via SmartFormField custom render */}
+          <SmartFormField
             control={form.control}
-            name="scheduled_date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Date et Heure *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="datetime-local"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            name="date"
+            label="Date *"
+          >
+            {(field) => (
+              <DatePicker
+                date={field.value}
+                onSelect={field.onChange}
+                variant="form-blue"
+              />
             )}
-          />
-          <FormField
-            control={form.control}
-            name="duration_minutes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Durée (minutes)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          </SmartFormField>
+
+          <div className="flex gap-2">
+             <div className="flex-1">
+                <SmartFormField
+                  control={form.control}
+                  name="time"
+                  label="Heure *"
+                  component={Input}
+                  type="time"
+                  variant="form-blue"
+                  leadingIcon={Clock}
+                />
+             </div>
+             <div className="w-24">
+                <SmartFormField
+                  control={form.control}
+                  name="duration_minutes"
+                  label="Durée (min)"
+                  component={Input}
+                  type="number"
+                  variant="form-blue"
+                />
+             </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-           <FormField
+          <SmartFormField
             control={form.control}
             name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Statut *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="bg-surface-base border-white-light text-white">
-                      <SelectValue placeholder="Sélectionner un statut" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="bg-surface-base border-white-light text-white">
-                    {Object.keys(LABELS_EVENT_STATUS).map((key) => (
-                      <SelectItem key={key} value={key}>
-                        {getLabel(LABELS_EVENT_STATUS, key)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="event_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Type</FormLabel>
-                <FormControl>
-                   <Input
-                    placeholder="Ex: Technique, Fit..."
-                    leadingIcon={Tag}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Communication Method */}
-        <FormField
-          control={form.control}
-          name="communication_method"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Moyen de communication</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || ""}>
-                <FormControl>
-                  <SelectTrigger className="bg-surface-base border-white-light text-white">
-                    <SelectValue placeholder="Choisir..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="bg-surface-base border-white-light text-white">
-                  {Object.keys(LABELS_COMMUNICATION_METHOD).map((key) => (
+            label="Statut *"
+          >
+            {(field) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                <SelectTrigger variant="form-blue">
+                  <SelectValue placeholder="Sélectionner un statut" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(LABELS_EVENT_STATUS).map((key) => (
                     <SelectItem key={key} value={key}>
-                      {getLabel(LABELS_COMMUNICATION_METHOD, key)}
+                      {getLabel(LABELS_EVENT_STATUS, key)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            )}
+          </SmartFormField>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
+          <SmartFormField
             control={form.control}
-            name="event_link"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel className="text-white">Lien (Visio)</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="https://..."
-                    leadingIcon={Video}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-                </FormItem>
-            )}
-            />
-            <FormField
-            control={form.control}
-            name="phone_number"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel className="text-white">Téléphone</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="+33..."
-                    leadingIcon={Phone}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-                </FormItem>
-            )}
-            />
+            name="event_type"
+            label="Type"
+            component={Input}
+            variant="form-blue"
+            placeholder="Ex: Technique, Fit..."
+            leadingIcon={Tag}
+          />
         </div>
 
-        <FormField
+        <SmartFormField
+          control={form.control}
+          name="communication_method"
+          label="Moyen de communication"
+        >
+          {(field) => (
+            <Select onValueChange={field.onChange} value={field.value || ""}>
+              <SelectTrigger variant="form-blue">
+                <SelectValue placeholder="Choisir..." />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(LABELS_COMMUNICATION_METHOD).map((key) => (
+                  <SelectItem key={key} value={key}>
+                    {getLabel(LABELS_COMMUNICATION_METHOD, key)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </SmartFormField>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <SmartFormField
             control={form.control}
-            name="location"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel className="text-white">Lieu</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Adresse..."
-                    leadingIcon={MapPin}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-            )}
+            name="event_link"
+            label="Lien (Visio)"
+            component={Input}
+            variant="form-blue"
+            placeholder="https://..."
+            leadingIcon={Video}
+          />
+          <SmartFormField
+            control={form.control}
+            name="phone_number"
+            label="Téléphone"
+            component={Input}
+            variant="form-blue"
+            placeholder="+33..."
+            leadingIcon={Phone}
+          />
+        </div>
+
+        <SmartFormField
+          control={form.control}
+          name="location"
+          label="Lieu"
+          component={Input}
+          variant="form-blue"
+          placeholder="Adresse..."
+          leadingIcon={MapPin}
         />
 
-        <FormField
-            control={form.control}
-            name="instructions"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel className="text-white">Instructions</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Code porte, étage..." {...field} className="bg-surface-base border-white-light text-white" />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-            )}
+        <SmartFormField
+          control={form.control}
+          name="instructions"
+          label="Instructions"
+          component={Textarea}
+          variant="form-blue"
+          placeholder="Code porte, étage..."
         />
 
-        <FormField
-            control={form.control}
-            name="notes"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel className="text-white">Notes privées</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="..." {...field} className="bg-surface-base border-white-light text-white" />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-            )}
+        <SmartFormField
+          control={form.control}
+          name="notes"
+          label="Notes privées"
+          component={Textarea}
+          variant="form-blue"
+          placeholder="..."
         />
-
 
         {error && (
           <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center">
