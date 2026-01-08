@@ -324,6 +324,8 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
           component={Textarea}
           variant="form-blue"
           placeholder="Code porte, étage..."
+          maxLength={5000}
+          showCharCount
         />
 
         <SmartFormField
@@ -333,6 +335,8 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
           component={Textarea}
           variant="form-blue"
           placeholder="..."
+          maxLength={5000}
+          showCharCount
         />
 
         {error && (

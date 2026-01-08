@@ -236,7 +236,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
             label="Contexte de rencontre"
             component={Textarea}
             placeholder="Ancien collègue, contacté sur LinkedIn..."
-            className="min-h-[60px]"
+            maxLength={50000}
           />
           <SmartFormField
             control={form.control}
@@ -244,6 +244,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
             label="Notes générales"
             component={Textarea}
             placeholder="..."
+            maxLength={50000}
           />
         </div>
 

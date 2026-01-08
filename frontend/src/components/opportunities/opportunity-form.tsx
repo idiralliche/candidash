@@ -380,7 +380,7 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
             component={Textarea}
             placeholder="Ex: Anglais courant, Gestion de projet..."
             maxLength={5000}
-            className="min-h-[60px]"
+            showCharCount
           />
           <SmartFormField
             control={form.control}
@@ -389,7 +389,7 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
             component={Textarea}
             placeholder="Ex: Python, React, AWS, Docker..."
             maxLength={5000}
-            className="min-h-[60px]"
+            showCharCount
           />
         </div>
 
@@ -412,7 +412,7 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
             component={Textarea}
             placeholder="Collez la description ici..."
             maxLength={5000}
-            className="min-h-[100px]"
+            showCharCount
           />
           <SmartFormField
             control={form.control}
@@ -421,6 +421,7 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
             component={Textarea}
             placeholder="Ex: 1. RH, 2. Tech, 3. Fit..."
             maxLength={10000}
+            showCharCount
           />
         </div>
 

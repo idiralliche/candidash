@@ -440,6 +440,8 @@ function SharedFields<T extends FieldValues>({ form }: { form: UseFormReturn<T> 
         label="Description"
         component={Textarea}
         placeholder="Notes..."
+        maxLength={5000}
+        showCharCount
       />
     </>
   );
