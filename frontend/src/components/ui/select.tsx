@@ -1,6 +1,11 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
-import { Check, ChevronDown, ChevronUp } from "lucide-react"
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  X
+} from "lucide-react"
 import { inputContainerVariants } from "@/components/ui/input"
 import { VariantProps } from "class-variance-authority"
 
@@ -14,25 +19,46 @@ const SelectValue = SelectPrimitive.Value
 
 interface SelectTriggerProps
   extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
-    Omit<VariantProps<typeof inputContainerVariants>, "disabled"> {}
+    Omit<VariantProps<typeof inputContainerVariants>, "disabled"> {
+  onClear?: () => void;
+}
 
 const SelectTrigger = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Trigger>,
+  React.ComponentRef<typeof SelectPrimitive.Trigger>,
   SelectTriggerProps
->(({ className, children, variant, size, ...props }, ref) => (
+>(({ className, children, variant, size, onClear, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
       inputContainerVariants({ variant, size }),
-      "justify-between [&>span]:line-clamp-1",
+      "justify-between [&>span]:line-clamp-1 group",
       className
     )}
     {...props}
   >
     {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
-    </SelectPrimitive.Icon>
+
+    <div className="flex items-center gap-2">
+      {onClear && (
+        <div
+          role="button"
+          onPointerDown={(e) => {
+            e.stopPropagation();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClear();
+          }}
+          className="..."
+        >
+          <X className="h-3.5 w-3.5" />
+        </div>
+      )}
+
+      <SelectPrimitive.Icon asChild>
+        <ChevronDown className="h-4 w-4 opacity-50" />
+      </SelectPrimitive.Icon>
+    </div>
   </SelectPrimitive.Trigger>
 ))
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
