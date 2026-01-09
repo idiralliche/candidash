@@ -8,7 +8,7 @@ export function useCreateProduct() {
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: getGetProductsApiV1ProductsGetQueryKey({ skip: 0, limit: 100 }).slice(0, 1),
+          queryKey: getGetProductsApiV1ProductsGetQueryKey(),
         });
       },
     },
