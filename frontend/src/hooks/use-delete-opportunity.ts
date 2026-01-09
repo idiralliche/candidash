@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useDeleteOpportunityApiV1OpportunitiesOpportunityIdDelete } from '@/api/opportunities/opportunities';
-import { getGetOpportunitiesApiV1OpportunitiesGetQueryKey } from '@/api/opportunities/opportunities';
+import {
+  useDeleteOpportunityApiV1OpportunitiesOpportunityIdDelete,
+  getGetOpportunitiesApiV1OpportunitiesGetQueryKey
+} from '@/api/opportunities/opportunities';
 
 export function useDeleteOpportunity() {
   const queryClient = useQueryClient();

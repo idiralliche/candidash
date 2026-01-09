@@ -1,8 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
-import { useUpdateDocumentApiV1DocumentsDocumentIdPut } from '@/api/documents/documents';
-import { getGetDocumentsApiV1DocumentsGetQueryKey } from '@/api/documents/documents';
+import {
+  useUpdateDocumentApiV1DocumentsDocumentIdPut,
+  getGetDocumentsApiV1DocumentsGetQueryKey
+} from '@/api/documents/documents';
 import { HTTPValidationError } from '@/api/model';
 
 export function useUpdateDocument() {

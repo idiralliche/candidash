@@ -1,7 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useDeleteDocumentApiV1DocumentsDocumentIdDelete } from '@/api/documents/documents';
-import { getGetDocumentsApiV1DocumentsGetQueryKey } from '@/api/documents/documents';
+import {
+  useDeleteDocumentApiV1DocumentsDocumentIdDelete,
+  getGetDocumentsApiV1DocumentsGetQueryKey
+} from '@/api/documents/documents';
 import { HTTPValidationError } from '@/api/model';
 
 export function useDeleteDocument() {

@@ -1,5 +1,8 @@
 import { useGetOpportunitiesApiV1OpportunitiesGet } from '@/api/opportunities/opportunities';
-import { ApplicationType, ContractType } from '@/api/model';
+import {
+  ApplicationType,
+  ContractType
+} from '@/api/model';
 import { useAuth } from '@/hooks/use-auth';
 
 interface UseOpportunitiesParams {

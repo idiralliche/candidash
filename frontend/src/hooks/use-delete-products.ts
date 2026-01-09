@@ -1,5 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useDeleteProductApiV1ProductsProductIdDelete, getGetProductsApiV1ProductsGetQueryKey } from '@/api/products/products';
+import {
+  useDeleteProductApiV1ProductsProductIdDelete,
+  getGetProductsApiV1ProductsGetQueryKey
+} from '@/api/products/products';
 
 export function useDeleteProduct() {
   const queryClient = useQueryClient();

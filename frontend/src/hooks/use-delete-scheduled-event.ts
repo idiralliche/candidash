@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useDeleteScheduledEventApiV1ScheduledEventsEventIdDelete } from '@/api/scheduled-events/scheduled-events';
-import { getGetScheduledEventsApiV1ScheduledEventsGetQueryKey } from '@/api/scheduled-events/scheduled-events';
+import {
+  useDeleteScheduledEventApiV1ScheduledEventsEventIdDelete,
+  getGetScheduledEventsApiV1ScheduledEventsGetQueryKey
+} from '@/api/scheduled-events/scheduled-events';
 
 export function useDeleteScheduledEvent() {
   const queryClient = useQueryClient();

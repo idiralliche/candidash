@@ -1,5 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useDeleteCompanyApiV1CompaniesCompanyIdDelete, getGetCompaniesApiV1CompaniesGetQueryKey } from '@/api/companies/companies';
+import {
+  useDeleteCompanyApiV1CompaniesCompanyIdDelete,
+  getGetCompaniesApiV1CompaniesGetQueryKey
+} from '@/api/companies/companies';
 
 export function useDeleteCompany() {
   const queryClient = useQueryClient();

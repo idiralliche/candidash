@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useCreateContactApiV1ContactsPost } from '@/api/contacts/contacts';
-import { getGetContactsApiV1ContactsGetQueryKey } from '@/api/contacts/contacts';
+import {
+  useCreateContactApiV1ContactsPost,
+  getGetContactsApiV1ContactsGetQueryKey
+} from '@/api/contacts/contacts';
 
 export function useCreateContact() {
   const queryClient = useQueryClient();

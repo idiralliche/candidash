@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useDeleteContactApiV1ContactsContactIdDelete } from '@/api/contacts/contacts';
-import { getGetContactsApiV1ContactsGetQueryKey } from '@/api/contacts/contacts';
+import {
+  useDeleteContactApiV1ContactsContactIdDelete,
+  getGetContactsApiV1ContactsGetQueryKey
+} from '@/api/contacts/contacts';
 
 export function useDeleteContact() {
   const queryClient = useQueryClient();
