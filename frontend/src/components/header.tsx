@@ -1,5 +1,17 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Menu, X, User, LayoutDashboard, LogOut, Building2, Briefcase, CalendarClock, Contact, Files } from 'lucide-react';
+import {
+  Menu,
+  X,
+  User,
+  LayoutDashboard,
+  LogOut,
+  Building2,
+  Briefcase,
+  CalendarClock,
+  Contact,
+  Files,
+  Package,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useUserProfile } from '@/hooks/use-user-profile';
@@ -40,13 +52,13 @@ export function Header() {
         {/* --- DESKTOP NAVIGATION LINKS --- */}
         {isAuthenticated && (
           <nav className="hidden md:flex items-center gap-6">
-             <Link to="/companies" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
-               <Building2 className="h-4 w-4" />
-               Entreprises
-             </Link>
              <Link to="/opportunities" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
                <Briefcase className="h-4 w-4" />
                Opportunités
+             </Link>
+             <Link to="/companies" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
+               <Building2 className="h-4 w-4" />
+               Entreprises
              </Link>
              <Link to="/scheduled-events" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
                <CalendarClock className="h-4 w-4" />
@@ -59,6 +71,10 @@ export function Header() {
              <Link to="/documents" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
                <Files className="h-4 w-4" />
                Documents
+             </Link>
+             <Link to="/products" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
+               <Package className="h-4 w-4" />
+               Produits
              </Link>
           </nav>
         )}
@@ -131,21 +147,21 @@ export function Header() {
 
                   {/* Added Mobile Links */}
                   <Link
-                    to="/companies"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Building2 size={18} />
-                    Entreprises
-                  </Link>
-
-                  <Link
                     to="/opportunities"
                     className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Briefcase size={18} />
                     Opportunités
+                  </Link>
+
+                  <Link
+                    to="/companies"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Building2 size={18} />
+                    Entreprises
                   </Link>
 
                   <Link
@@ -173,6 +189,15 @@ export function Header() {
                   >
                     <Files size={18} />
                     Documents
+                  </Link>
+
+                  <Link
+                    to="/products"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Package size={18} />
+                    Produits
                   </Link>
 
                   <Link
