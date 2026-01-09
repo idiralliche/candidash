@@ -1,0 +1,204 @@
+import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import {
+  Loader2,
+  Package,
+  Globe,
+} from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { SmartFormField } from '@/components/ui/form-field-wrapper';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { useCreateProduct } from '@/hooks/use-create-products';
+import { useUpdateProduct } from '@/hooks/use-update-products';
+import { useCompanies } from '@/hooks/use-companies';
+import { Product } from '@/api/model';
+
+const productSchema = z.object({
+  name: z.string().min(1, "Le nom du produit est requis").max(255),
+  company_id: z.string({ required_error: "L'entreprise est requise" }).min(1, "L'entreprise est requise"),
+  description: z.string().max(5000).optional().or(z.literal('')),
+  website: z.string().url("URL invalide").max(255).optional().or(z.literal('')),
+  technologies_used: z.string().max(5000).optional().or(z.literal('')),
+});
+
+type ProductFormValues = z.infer<typeof productSchema>;
+
+interface ProductFormProps {
+  onSuccess?: () => void;
+  className?: string;
+  initialData?: Product;
+}
+
+export function ProductForm({ onSuccess, className, initialData }: ProductFormProps) {
+  const { mutate: createProduct, isPending: isCreating, error: createError } = useCreateProduct();
+  const { mutate: updateProduct, isPending: isUpdating, error: updateError } = useUpdateProduct();
+  const { companies, isLoading: isLoadingCompanies } = useCompanies();
+
+  const isEditing = !!initialData;
+  const isPending = isCreating || isUpdating;
+  const error = createError || updateError;
+
+  const form = useForm<ProductFormValues>({
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: initialData?.name || '',
+      company_id: initialData?.company_id ? String(initialData.company_id) : '',
+      description: initialData?.description || '',
+      website: initialData?.website || '',
+      technologies_used: initialData?.technologies_used || '',
+    },
+  });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        name: initialData.name,
+        company_id: initialData.company_id ? String(initialData.company_id) : '',
+        description: initialData.description || '',
+        website: initialData.website || '',
+        technologies_used: initialData.technologies_used || '',
+      });
+    }
+  }, [initialData, form]);
+
+  function onSubmit(values: ProductFormValues) {
+    const companyId = parseInt(values.company_id);
+    const payload = {
+      name: values.name,
+      company_id: companyId,
+      description: values.description || null,
+      website: values.website || null,
+      technologies_used: values.technologies_used || null,
+    };
+
+    const options = {
+      onSuccess: () => {
+        form.reset();
+        if (onSuccess) onSuccess();
+      },
+    };
+
+    if (isEditing && initialData) {
+      updateProduct({ productId: initialData.id, data: payload }, options);
+    } else {
+      createProduct({ data: payload }, options);
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
+
+        {/* IDENTITY */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-primary">Identité</h3>
+
+          <SmartFormField
+            control={form.control}
+            name="name"
+            label="Nom du produit *"
+            component={Input}
+            placeholder="Ex: SaaS Platform, Mobile App..."
+            leadingIcon={Package}
+          />
+
+          <SmartFormField
+            control={form.control}
+            name="company_id"
+            label="Entreprise liée *"
+            description="L'entreprise qui développe ou vend ce produit."
+          >
+            {(field) => (
+               <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une entreprise" />
+                </SelectTrigger>
+                <SelectContent>
+                  {companies?.map(c => (
+                    <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </SmartFormField>
+        </div>
+
+        {/* TECHNICAL DETAILS */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-primary">Détails Techniques</h3>
+
+          <SmartFormField
+            control={form.control}
+            name="technologies_used"
+            label="Technologies / Stack"
+            component={Textarea}
+            placeholder="React, Python, AWS, Docker..."
+            maxLength={5000}
+          />
+
+          <SmartFormField
+            control={form.control}
+            name="website"
+            label="Site Web (Produit)"
+            component={Input}
+            placeholder="https://product.example.com"
+            leadingIcon={Globe}
+          />
+        </div>
+
+        {/* DESCRIPTION */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-primary">Description</h3>
+          <SmartFormField
+            control={form.control}
+            name="description"
+            label="Description détaillée"
+            component={Textarea}
+            placeholder="Fonctionnalités principales, cible, contexte..."
+            maxLength={5000}
+            className="min-h-[100px]"
+            showCharCount
+          />
+        </div>
+
+        {error && (
+          <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center">
+            Erreur lors de l'enregistrement.
+          </div>
+        )}
+
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            variant="solid"
+            palette="primary"
+            className="w-full"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isEditing ? "Enregistrement..." : "Ajout en cours..."}
+              </>
+            ) : (
+              isEditing ? "Enregistrer les modifications" : "Ajouter le produit"
+            )}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
