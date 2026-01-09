@@ -3,7 +3,7 @@ OpportunityContact routes - CRUD operations for opportunity-contact associations
 """
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -43,7 +43,10 @@ def get_opportunity_contacts(
 
     Returns only associations where the opportunity belongs to the authenticated user.
     """
-    query = db.query(OpportunityContactModel).join(
+    query = db.query(OpportunityContactModel).options(
+        joinedload(OpportunityContactModel.contact),
+        joinedload(OpportunityContactModel.opportunity)
+    ).join(
         OpportunityContactModel.opportunity
     ).filter(
         Opportunity.owner_id == current_user.id
@@ -77,7 +80,10 @@ def get_opportunity_contact(
 
     Returns 404 if association doesn't exist or doesn't belong to the authenticated user.
     """
-    association = db.query(OpportunityContactModel).join(
+    association = db.query(OpportunityContactModel).options(
+        joinedload(OpportunityContactModel.contact),
+        joinedload(OpportunityContactModel.opportunity)
+    ).join(
         OpportunityContactModel.opportunity
     ).filter(
         OpportunityContactModel.id == association_id,

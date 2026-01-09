@@ -2,6 +2,8 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
+from app.schemas.contact import Contact
+from app.schemas.opportunity import Opportunity
 
 
 class OpportunityContactBase(BaseModel):
@@ -36,6 +38,8 @@ class OpportunityContact(OpportunityContactBase):
     """
     id: int = Field(..., description="Unique identifier")
     created_at: datetime = Field(..., description="Creation timestamp")
+    opportunity: Optional[Opportunity] = None
+    contact: Optional[Contact] = None
 
     model_config = ConfigDict(from_attributes=True)
 

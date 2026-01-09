@@ -1,6 +1,9 @@
 """Pydantic schemas for OpportunityProduct entity."""
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
+from app.schemas.opportunity import Opportunity
+from app.schemas.product import Product
 
 class OpportunityProductBase(BaseModel):
     """Base schema with common fields for OpportunityProduct."""
@@ -17,6 +20,8 @@ class OpportunityProduct(OpportunityProductBase):
     """
     id: int = Field(..., description="Unique identifier")
     created_at: datetime = Field(..., description="Creation timestamp")
+    opportunity: Optional[Opportunity] = None
+    product: Optional[Product] = None
 
     model_config = ConfigDict(from_attributes=True)
 

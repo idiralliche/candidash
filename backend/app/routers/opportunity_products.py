@@ -3,7 +3,7 @@ OpportunityProduct routes - CRUD operations for opportunity-product associations
 """
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -40,7 +40,10 @@ def get_opportunity_products(
 
     Returns only associations where the opportunity belongs to the authenticated user.
     """
-    query = db.query(OpportunityProductModel).join(
+    query = db.query(OpportunityProductModel).options(
+        joinedload(OpportunityProductModel.product),
+        joinedload(OpportunityProductModel.opportunity)
+    ).join(
         OpportunityProductModel.opportunity
     ).filter(
         Opportunity.owner_id == current_user.id
@@ -71,7 +74,10 @@ def get_opportunity_product(
 
     Returns 404 if association doesn't exist or doesn't belong to the authenticated user.
     """
-    association = db.query(OpportunityProductModel).join(
+    association = db.query(OpportunityProductModel).options(
+        joinedload(OpportunityProductModel.product),
+        joinedload(OpportunityProductModel.opportunity)
+    ).join(
         OpportunityProductModel.opportunity
     ).filter(
         OpportunityProductModel.id == association_id,
