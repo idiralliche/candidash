@@ -44,6 +44,7 @@ def get_owned_entity_or_404(
     *,
     entity_name: Optional[str] = None,
     requires_joins: Optional[List[JoinSpec]] = None,
+    options: Optional[List[Any]] = None,
 ) -> T:
     """
     Retrieve an entity by its ID with ownership validation.
@@ -60,6 +61,7 @@ def get_owned_entity_or_404(
                     (defaults to model.__name__)
         requires_joins: List of JoinSpec for entities whose ownership
                        is inherited through relationships
+        options: List of SQLAlchemy query options (e.g., [joinedload(Model.field)])
 
     Returns:
         The entity instance if found and owned by the user
@@ -70,33 +72,13 @@ def get_owned_entity_or_404(
         HTTPException: 404 if the entity does not exist or is not owned by the user
 
     Examples:
-        # Direct ownership
-        company = get_owned_entity_or_404(
+        # Direct ownership with eager loading
+        contact = get_owned_entity_or_404(
             db=db,
-            entity_model=Company,
-            entity_id=company_id,
-            owner_id=current_user.id
-        )
-
-        # Inherited ownership via single JOIN
-        application = get_owned_entity_or_404(
-            db=db,
-            entity_model=Application,
-            entity_id=application_id,
+            entity_model=Contact,
+            entity_id=contact_id,
             owner_id=current_user.id,
-            requires_joins=[JoinSpec(model=Opportunity, owner_field='owner_id')]
-        )
-
-        # Inherited ownership via multiple JOINs
-        action = get_owned_entity_or_404(
-            db=db,
-            entity_model=Action,
-            entity_id=action_id,
-            owner_id=current_user.id,
-            requires_joins=[
-                JoinSpec(model=Application, owner_field=None),
-                JoinSpec(model=Opportunity, owner_field='owner_id')
-            ]
+            options=[joinedload(Contact.company)]
         )
     """
     # Input validation
@@ -108,6 +90,11 @@ def get_owned_entity_or_404(
 
     entity_name = entity_name or entity_model.__name__
     query: Query = db.query(entity_model)
+
+    # Apply query options (optimizations like joinedload)
+    if options:
+        for option in options:
+            query = query.options(option)
 
     # Apply joins if required
     if requires_joins:
