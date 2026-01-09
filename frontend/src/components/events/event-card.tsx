@@ -15,7 +15,7 @@ import {
   LABELS_EVENT_STATUS,
   getLabel,
 } from '@/lib/dictionaries';
-import { getStatusPalette } from '@/lib/semantic-ui';
+import { getEventStatusPalette } from '@/lib/semantic-ui';
 
 interface EventCardProps {
   event: ScheduledEvent;
@@ -79,7 +79,7 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
         <div className="flex items-center gap-2">
             <Badge
                 variant="subtle"
-                palette={getStatusPalette(event.status)}
+                palette={getEventStatusPalette(event.status)}
                 className="text-[10px] px-2 py-0.5 h-5"
             >
                 {getLabel(LABELS_EVENT_STATUS, event.status)}

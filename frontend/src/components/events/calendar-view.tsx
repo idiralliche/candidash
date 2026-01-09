@@ -24,7 +24,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScheduledEvent } from '@/api/model';
-import { getStatusPalette } from '@/lib/semantic-ui';
+import { getEventStatusPalette } from '@/lib/semantic-ui';
 import {
   getLabel,
   LABELS_EVENT_STATUS
@@ -194,7 +194,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
 
                                 <Badge
                                   variant="subtle"
-                                  palette={getStatusPalette(event.status)}
+                                  palette={getEventStatusPalette(event.status)}
                                   className="text-[10px] h-5 px-1.5"
                                 >
                                     {getLabel(LABELS_EVENT_STATUS, event.status)}

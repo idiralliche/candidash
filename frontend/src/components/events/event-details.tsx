@@ -28,7 +28,7 @@ import {
   getLabel,
 } from "@/lib/dictionaries";
 
-import { getStatusPalette } from '@/lib/semantic-ui';
+import { getEventStatusPalette } from '@/lib/semantic-ui';
 
 interface EventDetailsProps {
   event: ScheduledEvent;
@@ -55,7 +55,7 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
       badge={
         <Badge
           variant="subtle"
-          palette={getStatusPalette(event.status)}
+          palette={getEventStatusPalette(event.status)}
         >
           {getLabel(LABELS_EVENT_STATUS, event.status)}
         </Badge>
