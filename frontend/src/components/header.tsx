@@ -11,6 +11,7 @@ import {
   Contact,
   Files,
   Package,
+  Layers,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
@@ -55,6 +56,10 @@ export function Header() {
              <Link to="/opportunities" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
                <Briefcase className="h-4 w-4" />
                Opportunités
+             </Link>
+             <Link to="/applications" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
+               <Layers className="h-4 w-4" />
+               Candidatures
              </Link>
              <Link to="/companies" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
                <Building2 className="h-4 w-4" />
@@ -153,6 +158,15 @@ export function Header() {
                   >
                     <Briefcase size={18} />
                     Opportunités
+                  </Link>
+
+                  <Link
+                    to="/applications"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Layers size={18} />
+                    Candidatures
                   </Link>
 
                   <Link
