@@ -67,10 +67,12 @@ export function OpportunityDetails({
       }
       metadata={
         <>
-          <div className="flex items-center gap-2 rounded border border-white-light bg-white-subtle px-3 py-1.5 text-primary font-bold mb-2">
-            <Building2 className="h-4 w-4" />
-            {company?.name}
-          </div>
+          {company?.name && (
+            <div className="flex items-center gap-2 rounded border border-white-light bg-white-subtle px-3 py-1.5 text-primary font-bold mb-2">
+              <Building2 className="h-4 w-4" />
+              {company.name}
+            </div>
+          )}
 
           <div className="flex flex-wrap gap-3 text-sm text-muted-foreground pt-1 w-full">
             {opportunity.location && (
