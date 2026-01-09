@@ -1,7 +1,10 @@
-import { EventStatus, DocumentFormat, ApplicationType } from '@/api/model';
+import {
+  EventStatus,
+  DocumentFormat,
+  ApplicationType,
+  ApplicationStatus,
+} from '@/api/model';
 
-// We extract the Palette type directly from the implementation logic
-// or define it manually to match badge.tsx possibilities.
 export type UiPalette =
   | "default"
   | "gray"
@@ -15,93 +18,73 @@ export type UiPalette =
   | "indigo"
   | "emerald";
 
-/**
- * =========================================================
- * EVENT STATUS MAPPING
- * Maps business logic statuses to UI colors.
- * =========================================================
- */
-export const STATUS_COLOR: Record<EventStatus, UiPalette> = {
-  confirmed: 'green',     // Success/Go
-  completed: 'blue',      // Done/Info
-  cancelled: 'red',       // Danger/Stop
-  rescheduled: 'orange',  // Warning/Change
-  pending: 'gray',        // Neutral/Waiting
+// --- MAPPINGS ---
+
+export const EVENT_STATUS_COLOR: Record<EventStatus, UiPalette> = {
+  confirmed: 'green',
+  completed: 'blue',
+  cancelled: 'red',
+  rescheduled: 'orange',
+  pending: 'gray',
 };
 
-/**
- * =========================================================
- * APPLICATION TYPE MAPPING
- * Maps business logic application types to UI colors.
- * =========================================================
- */
-export const LABELS_APPLICATION: Record<ApplicationType, UiPalette> = {
+export const APPLICATION_TYPE_COLOR: Record<ApplicationType, UiPalette> = {
   job_posting: 'emerald',
   spontaneous: 'indigo',
   reached_out: 'orange',
 };
 
-/**
- * =========================================================
- * DOCUMENT FORMAT MAPPING
- * Maps file extensions to brand colors (e.g., Word=Blue, PDF=Red).
- * =========================================================
- */
-export const FORMAT_COLOR: Record<DocumentFormat, UiPalette> = {
-  // Adobe Acrobat / PDF
+export const DOCUMENT_FORMAT_COLOR: Record<DocumentFormat, UiPalette> = {
   pdf: 'red',
-
-  // Microsoft Office
   doc: 'blue',
   docx: 'blue',
   xls: 'green',
   xlsx: 'green',
   ppt: 'orange',
   pptx: 'orange',
-
-  // OpenOffice / LibreOffice
   odt: 'indigo',
   ods: 'green',
   odp: 'orange',
-
-  // Data & Code
   csv: 'green',
   tsv: 'green',
   json: 'gray',
-
-  // Images
   jpg: 'yellow',
   jpeg: 'yellow',
   png: 'yellow',
   gif: 'yellow',
   webp: 'yellow',
-
-  // Text
   txt: 'gray',
   rtf: 'gray',
   md: 'gray',
-
-  // External
   external: 'sky',
 };
 
-/**
- * Helper to get status color safely with fallback
- */
-export function getStatusPalette(status?: EventStatus): UiPalette {
-  return STATUS_COLOR[status || 'pending'];
-}
+export const APPLICATION_STATUS_COLOR: Record<ApplicationStatus, UiPalette> = {
+  pending: 'blue',
+  follow_up_scheduled: 'orange',
+  interview_scheduled: 'purple',
+  rejected: 'red',
+  accepted: 'green',
+  obsolete: 'gray',
+};
+
+// --- GENERIC HELPER ---
 
 /**
- * Helper to get format color safely with fallback
+ * Generic helper to retrieve palette color from a map with fallback.
  */
-export function getFormatPalette(format?: DocumentFormat): UiPalette {
-  return FORMAT_COLOR[format || 'txt'] || 'gray';
+function getPalette<T extends string>(
+  value: T | undefined | null,
+  map: Record<T, UiPalette>,
+  fallback: UiPalette = 'gray'
+): UiPalette {
+  if (!value) return fallback;
+  return map[value] || fallback;
 }
 
-/**
- * Helper to get application type color safely with fallback
- */
-export function getApplicationTypePalette(application_type?: ApplicationType): UiPalette {
-  return LABELS_APPLICATION[application_type || 'job_posting'] || 'gray';
-}
+// --- PUBLIC API ---
+
+export const getEventStatusPalette = (s?: EventStatus) => getPalette(s, EVENT_STATUS_COLOR, 'gray');
+export const getFormatPalette = (f?: DocumentFormat) => getPalette(f, DOCUMENT_FORMAT_COLOR, 'gray');
+export const getApplicationTypePalette = (t?: ApplicationType) => getPalette(t, APPLICATION_TYPE_COLOR, 'gray');
+export const getApplicationStatusPalette = (s?: ApplicationStatus) => getPalette(s, APPLICATION_STATUS_COLOR, 'blue');

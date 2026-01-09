@@ -77,6 +77,15 @@ export const LABELS_DOCUMENT_FORMAT: Record<string, string> = {
   external: 'Lien Externe',
 };
 
+export const LABELS_APPLICATION_STATUS: Record<string, string> = {
+  pending: "En attente",
+  follow_up_scheduled: "Relance à faire",
+  interview_scheduled: "Entretien programmé",
+  rejected: "Refusé",
+  accepted: "Accepté",
+  obsolete: "Obsolète / Sans suite",
+};
+
 /**
  * Helper to safely get a label from a dictionary.
  * Returns the key itself if not found.
