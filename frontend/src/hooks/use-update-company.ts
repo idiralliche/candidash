@@ -1,6 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useUpdateCompanyApiV1CompaniesCompanyIdPut } from '@/api/companies/companies';
-import { getGetCompaniesApiV1CompaniesGetQueryKey } from '@/api/companies/companies';
+import { useUpdateCompanyApiV1CompaniesCompanyIdPut, getGetCompaniesApiV1CompaniesGetQueryKey } from '@/api/companies/companies';
 
 export function useUpdateCompany() {
   const queryClient = useQueryClient();
