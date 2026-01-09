@@ -1,7 +1,13 @@
 """Pydantic schemas for DocumentAssociation entity."""
 from datetime import datetime
+from typing import Union, Optional
 from pydantic import BaseModel, ConfigDict, Field
 from app.models.document_association import EntityType
+from app.schemas.document import Document
+from app.schemas.application import Application
+from app.schemas.opportunity import Opportunity
+from app.schemas.company import Company
+from app.schemas.contact import Contact
 
 
 class DocumentAssociationBase(BaseModel):
@@ -22,6 +28,8 @@ class DocumentAssociation(DocumentAssociationBase):
     """
     id: int = Field(..., description="Unique identifier")
     created_at: datetime = Field(..., description="Creation timestamp")
+    document: Optional[Document] = None
+    entity: Optional[Union[Application, Opportunity, Company, Contact]] = None
 
     model_config = ConfigDict(from_attributes=True)
 
