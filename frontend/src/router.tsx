@@ -1,18 +1,19 @@
 import { createRouter } from '@tanstack/react-router';
 
 // Import Routes
-import { rootRoute } from './routes/__root';
-import { indexRoute } from './routes/index';
-import { loginRoute } from './routes/login';
-import { registerRoute } from './routes/register';
-import { authRoute } from './routes/_auth';
-import { dashboardRoute } from './routes/dashboard';
-import { accountRoute } from './routes/account';
-import { companiesRoute } from './routes/companies';
-import { opportunitiesRoute } from './routes/opportunities';
-import { scheduledEventsRoute } from './routes/scheduled-events';
-import { contactsRoute } from './routes/contacts';
-import { documentsRoute } from './routes/documents';
+import { rootRoute } from '@/routes/__root';
+import { indexRoute } from '@/routes/index';
+import { loginRoute } from '@/routes/login';
+import { registerRoute } from '@/routes/register';
+import { authRoute } from '@/routes/_auth';
+import { dashboardRoute } from '@/routes/dashboard';
+import { accountRoute } from '@/routes/account';
+import { companiesRoute } from '@/routes/companies';
+import { opportunitiesRoute } from '@/routes/opportunities';
+import { scheduledEventsRoute } from '@/routes/scheduled-events';
+import { contactsRoute } from '@/routes/contacts';
+import { documentsRoute } from '@/routes/documents';
+import { productsRoute } from '@/routes/products';
 
 // Create Route Tree
 const routeTree = rootRoute.addChildren([
@@ -27,6 +28,7 @@ const routeTree = rootRoute.addChildren([
     scheduledEventsRoute,
     contactsRoute,
     documentsRoute,
+    productsRoute,
   ]),
 ]);
 
