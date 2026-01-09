@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, EmailStr, field_validator
 from app.utils.validators.format_validators import validate_name, validate_and_normalize_phone, validate_linkedin_url
+from app.schemas.company import Company
 
 class ContactBase(BaseModel):
     """Base schema with common fields for Contact."""
@@ -112,6 +113,8 @@ class Contact(ContactBase):
     id: int = Field(..., description="Unique identifier")
     created_at: datetime = Field(..., description="Creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
+    company: Optional[Company] = None
+
     model_config = ConfigDict(from_attributes=True)
 
 

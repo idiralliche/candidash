@@ -3,7 +3,7 @@ Product routes - CRUD operations for products.
 """
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -33,7 +33,7 @@ def get_products(
 
     Returns only products belonging to the authenticated user.
     """
-    query = db.query(ProductModel).filter(
+    query = db.query(ProductModel).options(joinedload(ProductModel.company)).filter(
         ProductModel.owner_id == current_user.id
     )
 
@@ -63,7 +63,8 @@ def get_product(
         entity_model=ProductModel,
         entity_id=product_id,
         owner_id=current_user.id,
-        entity_name="Product"
+        entity_name="Product",
+        options=[joinedload(ProductModel.company)]
     )
     return product
 

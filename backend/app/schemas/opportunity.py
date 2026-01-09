@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app.models.opportunity import ApplicationType, ContractType, RemotePolicy
+from app.schemas.company import Company
 
 class OpportunityBase(BaseModel):
     """Base schema with common fields for Opportunity."""
@@ -91,6 +92,7 @@ class Opportunity(OpportunityBase):
     id: int = Field(..., description="Unique identifier")
     created_at: datetime = Field(..., description="Creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
+    company: Optional[Company] = None
 
     model_config = ConfigDict(from_attributes=True)
 

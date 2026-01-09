@@ -2,6 +2,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
+from app.schemas.company import Company
 
 class ProductBase(BaseModel):
     """Base schema with common fields for Product."""
@@ -34,6 +35,7 @@ class Product(ProductBase):
     """
     id: int = Field(..., description="Unique identifier")
     created_at: datetime = Field(..., description="Creation timestamp")
+    company: Optional[Company] = None
 
     model_config = ConfigDict(from_attributes=True)
 

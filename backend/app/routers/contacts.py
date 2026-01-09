@@ -3,7 +3,7 @@ Contact routes - CRUD operations for contacts.
 """
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -34,7 +34,7 @@ def get_contacts(
 
     Returns only contacts belonging to the authenticated user.
     """
-    query = db.query(ContactModel).filter(
+    query = db.query(ContactModel).options(joinedload(ContactModel.company)).filter(
         ContactModel.owner_id == current_user.id
     )
 
@@ -67,7 +67,8 @@ def get_contact(
         entity_model=ContactModel,
         entity_id=contact_id,
         owner_id=current_user.id,
-        entity_name="Contact"
+        entity_name="Contact",
+        options=[joinedload(ContactModel.company)]
     )
     return contact
 

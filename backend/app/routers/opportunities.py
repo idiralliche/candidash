@@ -3,7 +3,7 @@ Opportunity routes - CRUD operations for opportunities.
 """
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -36,7 +36,7 @@ def get_opportunities(
 
     Returns only opportunities belonging to the authenticated user.
     """
-    query = db.query(OpportunityModel).filter(
+    query = db.query(OpportunityModel).options(joinedload(OpportunityModel.company)).filter(
         OpportunityModel.owner_id == current_user.id
     )
 
@@ -71,7 +71,8 @@ def get_opportunity(
         entity_model=OpportunityModel,
         entity_id=opportunity_id,
         owner_id=current_user.id,
-        entity_name="Opportunity"
+        entity_name="Opportunity",
+        options=[joinedload(OpportunityModel.company)]
     )
     return opportunity
 
