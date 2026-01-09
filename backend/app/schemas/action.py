@@ -2,6 +2,8 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
+from app.schemas.application import Application
+from app.schemas.scheduled_event import ScheduledEvent
 
 
 class ActionBase(BaseModel):
@@ -37,6 +39,8 @@ class Action(ActionBase):
     application_id: int = Field(..., description="ID of the related application")
     created_at: datetime = Field(..., description="Creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
+    application: Application
+    scheduled_event: Optional[ScheduledEvent] = None
 
     model_config = ConfigDict(from_attributes=True)
 

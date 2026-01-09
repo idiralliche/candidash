@@ -3,7 +3,7 @@ Application routes - CRUD operations for applications.
 """
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -50,7 +50,11 @@ def get_applications(
 
     Returns only applications belonging to the authenticated user (owner_id direct).
     """
-    query = db.query(ApplicationModel).filter(ApplicationModel.owner_id == current_user.id)
+    query = db.query(ApplicationModel).options(
+        joinedload(ApplicationModel.opportunity).joinedload(OpportunityModel.company),
+        joinedload(ApplicationModel.resume_used),
+        joinedload(ApplicationModel.cover_letter)
+    ).filter(ApplicationModel.owner_id == current_user.id)
 
     if opportunity_id is not None:
         validate_opportunity_exists_and_owned(db, opportunity_id, current_user)
@@ -84,6 +88,11 @@ def get_application(
         entity_id=application_id,
         owner_id=current_user.id,
         entity_name="Application",
+        options=[
+            joinedload(ApplicationModel.opportunity).joinedload(OpportunityModel.company),
+            joinedload(ApplicationModel.resume_used),
+            joinedload(ApplicationModel.cover_letter)
+        ]
     )
     return application
 

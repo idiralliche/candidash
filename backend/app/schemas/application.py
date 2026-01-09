@@ -3,7 +3,8 @@ from datetime import date, datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from app.models.application import ApplicationStatus
-from app.schemas.opportunity import OpportunityCreate
+from app.schemas.opportunity import OpportunityCreate, Opportunity
+from app.schemas.document import Document
 
 
 class ApplicationBase(BaseModel):
@@ -78,6 +79,9 @@ class Application(ApplicationBase):
     opportunity_id: int = Field(..., description="ID of the related opportunity")
     created_at: datetime = Field(..., description="Creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
+    opportunity: Opportunity
+    resume_used: Optional[Document] = None
+    cover_letter: Optional[Document] = None
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -3,7 +3,7 @@ Action routes - CRUD operations for actions.
 """
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -35,7 +35,10 @@ def get_actions(
     - **application_id**: Optional filter by application ID
     - **completed**: Filter by completion (true=completed_date NOT NULL, false=NULL)
     """
-    query = db.query(ActionModel).filter(
+    query = db.query(ActionModel).options(
+        joinedload(ActionModel.application),
+        joinedload(ActionModel.scheduled_event)
+    ).filter(
         ActionModel.owner_id == current_user.id
     )
 
@@ -71,6 +74,10 @@ def get_action(
         entity_id=action_id,
         owner_id=current_user.id,
         entity_name="Action",
+        options=[
+            joinedload(ActionModel.application),
+            joinedload(ActionModel.scheduled_event)
+        ]
     )
     return action
 
