@@ -5,6 +5,7 @@ import { Plus, Building2 } from 'lucide-react';
 import { useCompanies } from '@/hooks/use-companies';
 import { useDeleteCompany } from '@/hooks/use-delete-company';
 import { Company } from '@/api/model';
+import { useProducts } from '@/hooks/use-products';
 
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
@@ -34,6 +35,11 @@ export function CompaniesPage() {
   const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const [deleteError, setDeleteError] = useState('');
+  const { products: allProducts } = useProducts();
+  const selectedCompanyProducts = useMemo(() => {
+    if (!selectedCompany || !allProducts) return [];
+    return allProducts.filter(p => p.company_id === selectedCompany.id);
+  }, [selectedCompany, allProducts]);
 
   // Sorting Logic
   const sortedCompanies = useMemo(() => {
@@ -107,6 +113,7 @@ export function CompaniesPage() {
         {selectedCompany && (
           <CompanyDetails
             company={selectedCompany}
+            products={selectedCompanyProducts}
             onEdit={(c) => {
               setSelectedCompany(null);
               setEditingCompany(c);

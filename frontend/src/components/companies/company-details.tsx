@@ -6,7 +6,7 @@ import {
   Hash,
   Briefcase,
   Trash2,
-
+  Package,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,14 +14,22 @@ import { Separator } from "@/components/ui/separator";
 import { Company } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { DetailsBlock } from "@/components/shared/details-block";
+import { ActionCard } from "@/components/shared/action-card";
+import { Product } from "@/api/model";
 
 interface CompanyDetailsProps {
   company: Company;
+  products?: Product[];
   onEdit?: (company: Company) => void;
   onDelete?: (company: Company) => void;
 }
 
-export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProps) {
+export function CompanyDetails({
+  company,
+  products,
+  onEdit,
+  onDelete,
+}: CompanyDetailsProps) {
 
   return (
     <EntityDetailsSheet
@@ -127,6 +135,28 @@ export function CompanyDetails({ company, onEdit, onDelete }: CompanyDetailsProp
           </DetailsBlock>
         )}
       </div>
+
+      {/* PRODUCTS LIST (Style "Coordonnées") */}
+      {products && products.length > 0 && (
+        <div className="space-y-4 mb-6">
+          <h3 className="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-2 select-none">
+            <Package className="h-3 w-3" />
+            Produits & Services
+          </h3>
+          <div className="grid grid-cols-1 gap-3">
+            {products.map(product => (
+              <ActionCard
+                key={product.id}
+                href="#"
+                icon={Package}
+                label={product.name}
+                value={product.description || "Pas de description"}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
 
       {/* NOTES */}
       {company.notes && (
