@@ -18,7 +18,6 @@ from app.schemas.application import (
 )
 from app.utils.validators.ownership_validators import (
     validate_opportunity_exists_and_owned,
-    validate_document_exists_and_owned,
     validate_company_exists_and_owned
 )
 from app.utils.db import get_owned_entity_or_404
