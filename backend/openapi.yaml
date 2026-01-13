@@ -57,18 +57,10 @@ paths:
       tags:
       - authentication
       summary: Login
-      description: 'Login with email and password to get JWT access token.
+      description: 'Login with email and password.
 
 
-        OAuth2 compatible - use ''username'' field for email.
-
-
-        - **username**: User email address
-
-        - **password**: User password
-
-
-        Returns JWT access token for authenticated requests.'
+        Returns Access Token in body and sets Refresh Token in HttpOnly cookie.'
       operationId: login_api_v1_auth_login_post
       requestBody:
         content:
@@ -89,6 +81,79 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/refresh:
+    post:
+      tags:
+      - authentication
+      summary: Refresh Token
+      description: 'Refresh access token using the refresh token from cookie.
+
+
+        Performs token rotation: invalidates old refresh token and issues a new one.'
+      operationId: refresh_token_api_v1_auth_refresh_post
+      parameters:
+      - name: refreshToken
+        in: cookie
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Refreshtoken
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/logout:
+    post:
+      tags:
+      - authentication
+      summary: Logout
+      description: Logout user by blacklisting the refresh token and clearing the
+        cookie.
+      operationId: logout_api_v1_auth_logout_post
+      parameters:
+      - name: refreshToken
+        in: cookie
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Refreshtoken
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/logout-all:
+    post:
+      tags:
+      - authentication
+      summary: Logout All
+      description: 'Logout from all devices.
+
+
+        Requires valid Access Token. Revokes all refresh tokens for the current user.'
+      operationId: logout_all_api_v1_auth_logout_all_post
+      responses:
+        '204':
+          description: Successful Response
+      security:
+      - OAuth2PasswordBearer: []
   /api/v1/users/me:
     get:
       tags:
@@ -2891,7 +2956,8 @@ paths:
       tags:
       - document_associations
       summary: Get Document Association
-      description: 'Retrieve a specific document association by ID.
+      description: 'Retrieve a specific document association by ID with full entity
+        details.
 
 
         - **association_id**: The ID of the association to retrieve
@@ -3008,6 +3074,12 @@ components:
           - type: 'null'
           title: Updated At
           description: Last update timestamp
+        application:
+          $ref: '#/components/schemas/Application'
+        scheduled_event:
+          anyOf:
+          - $ref: '#/components/schemas/ScheduledEvent'
+          - type: 'null'
       type: object
       required:
       - type
@@ -3015,6 +3087,7 @@ components:
       - owner_id
       - application_id
       - created_at
+      - application
       title: Action
       description: 'Schema for reading an action (GET).
 
@@ -3160,6 +3233,16 @@ components:
           - type: 'null'
           title: Updated At
           description: Last update timestamp
+        opportunity:
+          $ref: '#/components/schemas/Opportunity'
+        resume_used:
+          anyOf:
+          - $ref: '#/components/schemas/Document'
+          - type: 'null'
+        cover_letter:
+          anyOf:
+          - $ref: '#/components/schemas/Document'
+          - type: 'null'
       type: object
       required:
       - application_date
@@ -3167,6 +3250,7 @@ components:
       - owner_id
       - opportunity_id
       - created_at
+      - opportunity
       title: Application
       description: 'Schema for reading an application (GET).
 
@@ -3731,6 +3815,10 @@ components:
           - type: 'null'
           title: Updated At
           description: Last update timestamp
+        company:
+          anyOf:
+          - $ref: '#/components/schemas/Company'
+          - type: 'null'
       type: object
       required:
       - last_name
@@ -3984,6 +4072,18 @@ components:
           format: date-time
           title: Created At
           description: Creation timestamp
+        document:
+          anyOf:
+          - $ref: '#/components/schemas/Document'
+          - type: 'null'
+        entity:
+          anyOf:
+          - $ref: '#/components/schemas/Application'
+          - $ref: '#/components/schemas/Opportunity'
+          - $ref: '#/components/schemas/Company'
+          - $ref: '#/components/schemas/Contact'
+          - type: 'null'
+          title: Entity
       type: object
       required:
       - document_id
@@ -4300,6 +4400,10 @@ components:
           - type: 'null'
           title: Updated At
           description: Last update timestamp
+        company:
+          anyOf:
+          - $ref: '#/components/schemas/Company'
+          - type: 'null'
       type: object
       required:
       - job_title
@@ -4358,6 +4462,14 @@ components:
           format: date-time
           title: Created At
           description: Creation timestamp
+        opportunity:
+          anyOf:
+          - $ref: '#/components/schemas/Opportunity'
+          - type: 'null'
+        contact:
+          anyOf:
+          - $ref: '#/components/schemas/Contact'
+          - type: 'null'
       type: object
       required:
       - opportunity_id
@@ -4589,6 +4701,14 @@ components:
           format: date-time
           title: Created At
           description: Creation timestamp
+        opportunity:
+          anyOf:
+          - $ref: '#/components/schemas/Opportunity'
+          - type: 'null'
+        product:
+          anyOf:
+          - $ref: '#/components/schemas/Product'
+          - type: 'null'
       type: object
       required:
       - opportunity_id
@@ -4768,6 +4888,10 @@ components:
           format: date-time
           title: Created At
           description: Creation timestamp
+        company:
+          anyOf:
+          - $ref: '#/components/schemas/Company'
+          - type: 'null'
       type: object
       required:
       - name
@@ -5127,7 +5251,9 @@ components:
       description: 'Token response schema.
 
 
-        Returned after successful login.'
+        Returned after successful login or token refresh.
+
+        Contains the access token (short lived).'
     User:
       properties:
         email:
