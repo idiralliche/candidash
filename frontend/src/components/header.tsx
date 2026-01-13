@@ -12,6 +12,7 @@ import {
   Files,
   Package,
   Layers,
+  Target,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
@@ -69,6 +70,10 @@ export function Header() {
                <CalendarClock className="h-4 w-4" />
                Agenda
              </Link>
+             <Link to="/actions" className={navLinkClass} activeProps={{ className: '!text-white font-bold' }}>
+              <Target className="h-4 w-4" />
+              Actions
+            </Link>
              <Link to="/contacts" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
                <Contact className="h-4 w-4" />
                Contacts
@@ -185,6 +190,15 @@ export function Header() {
                   >
                     <CalendarClock size={18} />
                     Agenda
+                  </Link>
+
+                  <Link
+                    to="/actions"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Target size={18} />
+                    Actions
                   </Link>
 
                   <Link
