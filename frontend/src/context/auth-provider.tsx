@@ -7,6 +7,7 @@
  * - TokenManager integration for axios interceptors
  * - Proper logout with backend cleanup
  * - JWT decoding for email extraction
+ * - Uses useRef for immediate token access to prevent race conditions during initial load
  */
 
 import { useState, ReactNode, useEffect, useCallback, useRef } from 'react';
@@ -24,6 +25,11 @@ interface JWTPayload {
   sub: string;  // User email
   exp: number;  // Expiration timestamp
   type: string; // Token type ("access")
+}
+
+interface TokenResponse {
+  access_token: string;
+  token_type: string;
 }
 
 // ============================================================================
@@ -52,14 +58,20 @@ function extractEmailFromToken(token: string): string | null {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   // =========================================================================
-  // STATE
+  // STATE & REFS
   // =========================================================================
 
   /**
-   * Access token stored in memory only.
-   * NEVER persisted to localStorage.
+   * Access token stored in React State for UI reactivity.
    */
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [accessToken, setAccessTokenState] = useState<string | null>(null);
+
+  /**
+   * Access token stored in Ref for IMMEDIATE synchronous access.
+   * This solves the race condition where Axios interceptors need the token
+   * before the React state update has propagated.
+   */
+  const accessTokenRef = useRef<string | null>(null);
 
   /**
    * User email extracted from JWT token.
@@ -68,19 +80,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /**
    * Loading state during initial session check.
-   * Prevents flash of login page while checking if user has valid refresh token.
    */
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  /**
-   * Computed authentication state.
-   */
-  const isAuthenticated = accessToken !== null;
 
   /**
    * Ref to prevent multiple simultaneous session initialization attempts.
    */
   const isInitializing = useRef(false);
+
+  // =========================================================================
+  // INTERNAL HELPERS
+  // =========================================================================
+
+  /**
+   * Synchronized setter that updates both Ref (for logic) and State (for UI).
+   */
+  const setAccessToken = useCallback((token: string | null) => {
+    // 1. Update Ref immediately - crucial for Axios interceptors
+    accessTokenRef.current = token;
+    // 2. Update State - triggers re-render
+    setAccessTokenState(token);
+  }, []);
 
   // =========================================================================
   // METHODS
@@ -98,11 +118,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setAccessToken(token);
     setUserEmail(email);
-  }, []);
+  }, [setAccessToken]);
 
   /**
    * Logout - Clear state and call backend to invalidate refresh token.
-   * Uses window.location.href to avoid RouterProvider dependency.
    */
   const logout = useCallback(async () => {
     if (IS_DEV) {
@@ -113,7 +132,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await AXIOS_INSTANCE.post('/api/v1/auth/logout', {}, { withCredentials: true });
     } catch {
-      // Logout on backend failed, but we still clean local state
       if (IS_DEV) {
         console.warn('[AuthProvider] Backend logout failed (continuing anyway)');
       }
@@ -125,14 +143,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Redirect to login using window.location (hard reload, clean state)
     window.location.href = '/login';
-  }, []);
+  }, [setAccessToken]);
 
   /**
    * Get current token (for TokenManager).
+   * Reads directly from Ref to ensure we always get the latest value,
+   * avoiding stale closures in interceptors.
    */
   const getToken = useCallback((): string | null => {
-    return accessToken;
-  }, [accessToken]);
+    return accessTokenRef.current;
+  }, []);
 
   /**
    * Set token (for TokenManager after refresh).
@@ -143,30 +163,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setAccessToken(token);
 
-    // Extract email from new token
     if (token) {
       const email = extractEmailFromToken(token);
       setUserEmail(email);
     }
-  }, []);
+  }, [setAccessToken]);
 
   // =========================================================================
   // SESSION INITIALIZATION
   // =========================================================================
 
-  /**
-   * Attempt to restore session on mount.
-   * Tries to refresh access token using the httpOnly cookie.
-   * If successful, user is automatically logged in.
-   * If failed, user stays logged out (no redirect, just ready state).
-   */
   useEffect(() => {
     const initializeSession = async () => {
-      // Prevent duplicate initialization
-      if (isInitializing.current) {
-        return;
-      }
-
+      if (isInitializing.current) return;
       isInitializing.current = true;
 
       if (IS_DEV) {
@@ -174,8 +183,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        // Attempt to refresh token (cookie sent automatically)
-        const { data } = await AXIOS_INSTANCE.post<{ access_token: string; token_type: string }>(
+        const { data } = await AXIOS_INSTANCE.post<TokenResponse>(
           '/api/v1/auth/refresh',
           {},
           { withCredentials: true }
@@ -187,20 +195,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log('[AuthProvider] Session restored successfully');
         }
 
-        // Extract email from token
         const email = extractEmailFromToken(newAccessToken);
 
-        // Set token and email in state (triggers re-render, user is authenticated)
         setAccessToken(newAccessToken);
         setUserEmail(email);
 
       } catch {
-        // No valid refresh token (user is not logged in or session expired)
         if (IS_DEV) {
           console.log('[AuthProvider] No valid session found (user not logged in)');
         }
-
-        // Stay logged out (do nothing, isAuthenticated = false)
       } finally {
         setIsLoading(false);
         isInitializing.current = false;
@@ -208,16 +211,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     initializeSession();
-  }, []);
+  }, [setAccessToken]);
 
   // =========================================================================
   // TOKEN MANAGER INTEGRATION
   // =========================================================================
 
-  /**
-   * Initialize TokenManager with callbacks.
-   * This allows axios interceptors to access token and trigger logout.
-   */
   useEffect(() => {
     tokenManager.initialize(getToken, setToken, logout);
 
@@ -225,7 +224,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('[AuthProvider] TokenManager initialized');
     }
 
-    // Cleanup on unmount (useful for tests)
     return () => {
       if (IS_DEV) {
         console.log('[AuthProvider] Cleaning up TokenManager');
@@ -238,10 +236,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // RENDER
   // =========================================================================
 
-  /**
-   * Show loading state during initial session check.
-   * Prevents flash of login page or protected content.
-   */
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface-base">
@@ -256,7 +250,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
+        isAuthenticated: !!accessToken,
         isLoading,
         userEmail,
         login,
