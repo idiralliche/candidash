@@ -15,6 +15,7 @@ import { contactsRoute } from '@/routes/contacts';
 import { documentsRoute } from '@/routes/documents';
 import { productsRoute } from '@/routes/products';
 import { applicationsRoute } from '@/routes/applications';
+import { actionsRoute } from '@/routes/actions';
 
 // Create Route Tree
 const routeTree = rootRoute.addChildren([
@@ -31,6 +32,7 @@ const routeTree = rootRoute.addChildren([
     documentsRoute,
     productsRoute,
     applicationsRoute,
+    actionsRoute,
   ]),
 ]);
 
