@@ -62,6 +62,10 @@ export function ApplicationForm({ onSuccess, className, initialData }: Applicati
   const isPending = isCreating || isUpdating;
   const error = createError || updateError;
 
+  // Prepare initial IDs from nested objects if necessary
+  const initialResumeId = initialData?.resume_used_id ?? initialData?.resume_used?.id;
+  const initialCoverLetterId = initialData?.cover_letter_id ?? initialData?.cover_letter?.id;
+
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
@@ -69,8 +73,8 @@ export function ApplicationForm({ onSuccess, className, initialData }: Applicati
       application_date: initialData?.application_date ? new Date(initialData.application_date) : new Date(),
       status: initialData?.status || ApplicationStatus.pending,
       salary_expectation: initialData?.salary_expectation || '',
-      resume_used_id: initialData?.resume_used_id ? String(initialData.resume_used_id) : '',
-      cover_letter_id: initialData?.cover_letter_id ? String(initialData.cover_letter_id) : '',
+      resume_used_id: initialResumeId ? String(initialResumeId) : '',
+      cover_letter_id: initialCoverLetterId ? String(initialCoverLetterId) : '',
       is_archived: initialData?.is_archived || false,
     },
   });
@@ -78,13 +82,16 @@ export function ApplicationForm({ onSuccess, className, initialData }: Applicati
   // Reset form when initialData changes (for editing mode)
   useEffect(() => {
     if (initialData) {
+      const resumeId = initialData.resume_used_id ?? initialData.resume_used?.id;
+      const coverId = initialData.cover_letter_id ?? initialData.cover_letter?.id;
+
       form.reset({
         opportunity_id: String(initialData.opportunity_id),
         application_date: new Date(initialData.application_date),
         status: initialData.status,
         salary_expectation: initialData.salary_expectation || '',
-        resume_used_id: initialData.resume_used_id ? String(initialData.resume_used_id) : '',
-        cover_letter_id: initialData.cover_letter_id ? String(initialData.cover_letter_id) : '',
+        resume_used_id: resumeId ? String(resumeId) : '',
+        cover_letter_id: coverId ? String(coverId) : '',
         is_archived: initialData.is_archived,
       });
     }

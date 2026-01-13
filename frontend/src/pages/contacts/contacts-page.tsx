@@ -44,6 +44,8 @@ export function ContactsPage() {
       contact.first_name,
       contact.last_name,
       contact.email || '',
+      contact.company?.name || '',
+      contact.position || '',
     ],
     sortFn: (a, b) => {
       const nameA = `${a.last_name} ${a.first_name}`.toLowerCase();
@@ -72,7 +74,7 @@ export function ContactsPage() {
         search={{
           value: search,
           onChange: setSearch,
-          placeholder: "Rechercher un nom, un email...",
+          placeholder: "Rechercher un nom, une entreprise...",
         }}
         action={
           <FormDialog

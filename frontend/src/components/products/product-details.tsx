@@ -9,24 +9,22 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   Product,
-  Company,
 } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { DetailsBlock } from "@/components/shared/details-block";
 
 interface ProductDetailsProps {
   product: Product;
-  company?: Company;
   onEdit?: (product: Product) => void;
   onDelete?: (product: Product) => void;
 }
 
 export function ProductDetails({
   product,
-  company,
   onEdit,
   onDelete
 }: ProductDetailsProps) {
+  const company = product.company;
 
   return (
     <EntityDetailsSheet

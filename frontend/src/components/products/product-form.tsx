@@ -51,11 +51,13 @@ export function ProductForm({ onSuccess, className, initialData }: ProductFormPr
   const isPending = isCreating || isUpdating;
   const error = createError || updateError;
 
+  const initialCompanyId = initialData?.company_id ?? initialData?.company?.id;
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: initialData?.name || '',
-      company_id: initialData?.company_id ? String(initialData.company_id) : '',
+      company_id: initialCompanyId ? String(initialCompanyId) : '',
       description: initialData?.description || '',
       website: initialData?.website || '',
       technologies_used: initialData?.technologies_used || '',
@@ -64,9 +66,11 @@ export function ProductForm({ onSuccess, className, initialData }: ProductFormPr
 
   useEffect(() => {
     if (initialData) {
+      const companyId = initialData.company_id ?? initialData.company?.id;
+
       form.reset({
         name: initialData.name,
-        company_id: initialData.company_id ? String(initialData.company_id) : '',
+        company_id: companyId ? String(companyId) : '',
         description: initialData.description || '',
         website: initialData.website || '',
         technologies_used: initialData.technologies_used || '',

@@ -6,11 +6,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { IconBox } from "@/components/ui/icon-box";
 import { EntityCard } from "@/components/shared/entity-card";
-
-import {
-  Opportunity,
-  Company,
-} from "@/api/model";
+import { Opportunity } from "@/api/model";
 import {
   LABELS_APPLICATION,
   getLabel,
@@ -19,7 +15,6 @@ import { getApplicationTypePalette } from '@/lib/semantic-ui';
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
-  company?: Company;
   onClick: (opportunity: Opportunity) => void;
   onEdit: (opportunity: Opportunity) => void;
   onDelete: (opportunity: Opportunity) => void;
@@ -27,11 +22,12 @@ interface OpportunityCardProps {
 
 export function OpportunityCard({
   opportunity,
-  company,
   onClick,
   onEdit,
   onDelete,
 }: OpportunityCardProps) {
+  const company = opportunity.company;
+
   return (
     <EntityCard onClick={() => onClick(opportunity)}>
 

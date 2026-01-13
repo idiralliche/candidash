@@ -15,11 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ActionCard } from "@/components/shared/action-card";
 
-import {
-  Application,
-  Opportunity,
-  Document,
-} from "@/api/model";
+import { Application } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { DetailsBlock } from "@/components/shared/details-block";
 
@@ -32,23 +28,21 @@ import { useDownloadDocument } from '@/hooks/use-download-document';
 
 interface ApplicationDetailsProps {
   application: Application;
-  opportunity?: Opportunity;
-  resume?: Document;
-  coverLetter?: Document;
   onEdit?: (app: Application) => void;
   onDelete?: (app: Application) => void;
 }
 
 export function ApplicationDetails({
   application,
-  opportunity,
-  resume,
-  coverLetter,
   onEdit,
   onDelete
 }: ApplicationDetailsProps) {
   const applicationDate = new Date(application.application_date);
   const { downloadDocument, isDownloading } = useDownloadDocument();
+
+  const opportunity = application.opportunity;
+  const resume = application.resume_used;
+  const coverLetter = application.cover_letter;
 
   const formatSalary = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);

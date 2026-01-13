@@ -5,8 +5,6 @@ import { Plus, Package } from 'lucide-react';
 import { useProducts } from '@/hooks/use-products';
 import { useDeleteProduct } from '@/hooks/use-delete-products';
 import { Product } from '@/api/model';
-import { useCompanies } from '@/hooks/use-companies';
-import { findEntityById } from '@/lib/utils';
 
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
@@ -29,7 +27,6 @@ import { ProductCard } from '@/components/products/product-card';
 
 export function ProductsPage() {
   const { products, isLoading } = useProducts();
-  const { companies } = useCompanies();
   const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
 
   // State
@@ -92,7 +89,6 @@ export function ProductsPage() {
               <ProductCard
                 key={product.id}
                 product={product}
-                company={findEntityById(companies, product.company_id)}
                 onClick={setSelectedProduct}
                 onEdit={setEditingProduct}
                 onDelete={setProductToDelete}
@@ -111,7 +107,6 @@ export function ProductsPage() {
         {selectedProduct && (
           <ProductDetails
             product={selectedProduct}
-            company={findEntityById(companies, selectedProduct.company_id)}
             onEdit={(p) => {
               setSelectedProduct(null);
               setEditingProduct(p);

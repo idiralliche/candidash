@@ -14,10 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  Opportunity,
-  Company,
-} from "@/api/model";
+import { Opportunity } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { DetailsBlock } from "@/components/shared/details-block";
 import {
@@ -30,17 +27,16 @@ import { getApplicationTypePalette } from '@/lib/semantic-ui';
 
 interface OpportunityDetailsProps {
   opportunity: Opportunity;
-  company?: Company;
   onEdit?: (opportunity: Opportunity) => void;
   onDelete?: (opportunity: Opportunity) => void;
 }
 
 export function OpportunityDetails({
   opportunity,
-  company,
   onEdit,
   onDelete
 }: OpportunityDetailsProps) {
+  const company = opportunity.company;
 
   // Salary formatting helper
   const formatSalary = (min?: number | null, max?: number | null) => {

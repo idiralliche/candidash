@@ -4,9 +4,7 @@ import { Plus, Briefcase } from 'lucide-react';
 
 import { useOpportunities } from '@/hooks/use-opportunities';
 import { useDeleteOpportunity } from '@/hooks/use-delete-opportunity';
-import { useCompanies } from '@/hooks/use-companies';
 import { Opportunity } from '@/api/model';
-import { findEntityById } from '@/lib/utils';
 
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
@@ -29,7 +27,6 @@ import { OpportunityCard } from '@/components/opportunities/opportunity-card';
 
 export function OpportunitiesPage() {
   const { opportunities, isLoading } = useOpportunities();
-  const { companies } = useCompanies();
   const { mutate: deleteOpportunity, isPending: isDeleting } = useDeleteOpportunity();
 
   // State
@@ -92,7 +89,6 @@ export function OpportunitiesPage() {
               <OpportunityCard
                 key={opportunity.id}
                 opportunity={opportunity}
-                company={findEntityById(companies, opportunity.company_id)}
                 onClick={setSelectedOpportunity}
                 onEdit={setEditingOpportunity}
                 onDelete={setOpportunityToDelete}
@@ -111,7 +107,6 @@ export function OpportunitiesPage() {
         {selectedOpportunity && (
           <OpportunityDetails
             opportunity={selectedOpportunity}
-            company={findEntityById(companies, selectedOpportunity.company_id)}
             onEdit={(op) => {
               setSelectedOpportunity(null);
               setEditingOpportunity(op);

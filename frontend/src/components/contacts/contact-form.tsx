@@ -62,6 +62,8 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
   const isPending = isCreating || isUpdating;
   const error = createError || updateError;
 
+  const initialCompanyId = initialData?.company_id ?? initialData?.company?.id;
+
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
@@ -71,7 +73,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
       email: initialData?.email || '',
       phone: initialData?.phone || '',
       linkedin: initialData?.linkedin || '',
-      company_id: initialData?.company_id ? String(initialData.company_id) : undefined,
+      company_id: initialCompanyId ? String(initialCompanyId) : undefined,
       is_independent_recruiter: initialData?.is_independent_recruiter || false,
       relationship_notes: initialData?.relationship_notes || '',
       notes: initialData?.notes || '',
@@ -80,6 +82,8 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
 
   useEffect(() => {
     if (initialData) {
+      const companyId = initialData.company_id ?? initialData.company?.id;
+
       form.reset({
         first_name: initialData.first_name,
         last_name: initialData.last_name,
@@ -87,7 +91,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
         email: initialData.email || '',
         phone: initialData.phone || '',
         linkedin: initialData.linkedin || '',
-        company_id: initialData.company_id ? String(initialData.company_id) : undefined,
+        company_id: companyId ? String(companyId) : undefined,
         is_independent_recruiter: initialData.is_independent_recruiter,
         relationship_notes: initialData.relationship_notes || '',
         notes: initialData.notes || '',

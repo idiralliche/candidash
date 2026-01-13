@@ -18,12 +18,9 @@ import { FormDialog } from '@/components/shared/form-dialog';
 
 // Hooks
 import { useApplications } from '@/hooks/use-applications';
-import { useOpportunities } from '@/hooks/use-opportunities';
-import { useDocuments } from '@/hooks/use-documents';
 import { useDeleteApplication } from '@/hooks/use-delete-application';
 import { useFilteredEntities } from '@/hooks/use-filtered-entities';
 import { Application } from '@/api/model';
-import { findEntityById } from '@/lib/utils';
 import { getLabel, LABELS_APPLICATION_STATUS } from '@/lib/dictionaries';
 
 // Feature Components
@@ -33,33 +30,24 @@ import { ApplicationDetails } from '@/components/applications/application-detail
 
 export function ApplicationsPage() {
   const [search, setSearch] = useState('');
-
-  // 1. Load all necessary data (Eager Loading pattern)
-  const { applications, isLoading: isLoadingApps } = useApplications();
-  const { opportunities, isLoading: isLoadingOps } = useOpportunities();
-  const { documents } = useDocuments();
-
+  const { applications, isLoading } = useApplications();
   const { mutate: deleteApplication, isPending: isDeleting } = useDeleteApplication();
 
-  // 2. Local State
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [applicationToDelete, setApplicationToDelete] = useState<Application | null>(null);
   const [editingApplication, setEditingApplication] = useState<Application | null>(null);
   const [deleteError, setDeleteError] = useState<string>('');
 
-  const isLoading = isLoadingApps || isLoadingOps;
-
-  // 3. Filtering Logic
-  // We need to filter based on Opportunity Title (joined data) or Status
+  // Filtering Logic
   const filteredApplications = useFilteredEntities({
     entities: applications,
     searchTerm: search,
     searchFields: (app) => {
-      const opportunity = findEntityById(opportunities, app.opportunity_id);
+      const opportunityTitle = app.opportunity?.job_title;
       const statusLabel = getLabel(LABELS_APPLICATION_STATUS, app.status);
 
       return [
-        opportunity?.job_title || '',
+        opportunityTitle || '',
         statusLabel || '',
         app.status || '',
       ];
@@ -87,8 +75,7 @@ export function ApplicationsPage() {
   // Helper to get title for delete dialog
   const getDeleteLabel = () => {
     if (!applicationToDelete) return '';
-    const op = findEntityById(opportunities, applicationToDelete.opportunity_id);
-    return op?.job_title || "cette candidature";
+    return applicationToDelete.opportunity?.job_title || "cette candidature";
   };
 
   return (
@@ -133,7 +120,6 @@ export function ApplicationsPage() {
               <ApplicationCard
                 key={app.id}
                 application={app}
-                opportunity={findEntityById(opportunities, app.opportunity_id)}
                 onClick={setSelectedApplication}
                 onEdit={setEditingApplication}
                 onDelete={setApplicationToDelete}
@@ -152,11 +138,6 @@ export function ApplicationsPage() {
         {selectedApplication && (
           <ApplicationDetails
             application={selectedApplication}
-            // Resolve all relationships for the details view
-            opportunity={findEntityById(opportunities, selectedApplication.opportunity_id)}
-            resume={findEntityById(documents, selectedApplication.resume_used_id)}
-            coverLetter={findEntityById(documents, selectedApplication.cover_letter_id)}
-
             onEdit={(app) => {
               setSelectedApplication(null);
               setEditingApplication(app);

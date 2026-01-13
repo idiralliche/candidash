@@ -96,12 +96,14 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
   const isEditing = !!initialData;
   const isPending = isCreating || isUpdating;
 
+  const initialCompanyId = initialData?.company_id ?? initialData?.company?.id;
+
   const form = useForm<OpportunityFormValues>({
     resolver: zodResolver(opportunitySchema),
     defaultValues: {
       job_title: initialData?.job_title || '',
       application_type: initialData?.application_type || 'job_posting',
-      company_id: initialData?.company_id ? initialData.company_id.toString() : undefined,
+      company_id: initialCompanyId ? initialCompanyId.toString() : undefined,
       position_type: initialData?.position_type || '',
       source: initialData?.source || '',
       contract_type: initialData?.contract_type || undefined,
@@ -121,10 +123,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
 
   useEffect(() => {
     if (initialData) {
+      const initialCompanyId = initialData.company_id ?? initialData.company?.id;
+
       form.reset({
         job_title: initialData.job_title,
         application_type: initialData.application_type,
-        company_id: initialData.company_id?.toString(),
+        company_id: initialCompanyId?.toString(),
         position_type: initialData.position_type || '',
         source: initialData.source || '',
         contract_type: initialData.contract_type || undefined,

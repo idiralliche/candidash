@@ -12,8 +12,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Contact } from "@/api/model";
-import { useCompanies } from "@/hooks/use-companies";
-import { findEntityById } from "@/lib/utils";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { DetailsBlock } from "@/components/shared/details-block";
 import { ActionCard } from "@/components/shared/action-card";
@@ -25,8 +23,7 @@ interface ContactDetailsProps {
 }
 
 export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProps) {
-  const { companies } = useCompanies();
-  const company = findEntityById(companies, contact.company_id);
+  const company = contact.company;
 
   return (
     <EntityDetailsSheet

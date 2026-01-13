@@ -9,8 +9,6 @@ import {
 import { IconBox } from '@/components/ui/icon-box';
 
 import { Contact } from '@/api/model';
-import { useCompanies } from '@/hooks/use-companies';
-import { findEntityById } from '@/lib/utils';
 import { EntityCard } from '@/components/shared/entity-card';
 
 interface ContactCardProps {
@@ -21,8 +19,7 @@ interface ContactCardProps {
 }
 
 export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardProps) {
-  const { companies } = useCompanies();
-  const company = findEntityById(companies, contact.company_id);
+  const company = contact.company;
 
   return (
     <EntityCard onClick={() => onClick(contact)}>

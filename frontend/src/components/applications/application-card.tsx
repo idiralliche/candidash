@@ -3,7 +3,7 @@ import {
   Layers,
   Archive,
 } from "lucide-react";
-import { Application, Opportunity } from "@/api/model";
+import { Application } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
 import { IconBox } from "@/components/ui/icon-box";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,6 @@ import { getApplicationStatusPalette } from '@/lib/semantic-ui';
 
 interface ApplicationCardProps {
   application: Application;
-  opportunity?: Opportunity;
   onClick: (app: Application) => void;
   onEdit: (app: Application) => void;
   onDelete: (app: Application) => void;
@@ -23,12 +22,12 @@ interface ApplicationCardProps {
 
 export function ApplicationCard({
   application,
-  opportunity,
   onClick,
   onEdit,
   onDelete
 }: ApplicationCardProps) {
   const applicationDate = new Date(application.application_date);
+  const opportunity = application.opportunity;
 
   return (
     <EntityCard onClick={() => onClick(application)}>

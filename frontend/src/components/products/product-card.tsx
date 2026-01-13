@@ -7,13 +7,11 @@ import {
 import { IconBox } from "@/components/ui/icon-box";
 import {
   Product,
-  Company,
 } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
 
 interface ProductCardProps {
   product: Product;
-  company?: Company;
   onClick: (product: Product) => void;
   onEdit: (product: Product) => void;
   onDelete: (product: Product) => void;
@@ -21,11 +19,12 @@ interface ProductCardProps {
 
 export function ProductCard({
   product,
-  company,
   onClick,
   onEdit,
   onDelete,
 }: ProductCardProps) {
+  const company = product.company;
+
   return (
     <EntityCard onClick={() => onClick(product)}>
 
