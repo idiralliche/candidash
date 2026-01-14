@@ -12,7 +12,7 @@
 
 import { useState, ReactNode, useEffect, useCallback, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { AuthContext } from './auth-context';
+import { AuthContext } from '@/context/auth-context';
 import { tokenManager, AXIOS_INSTANCE } from '@/lib/api-client';
 
 const IS_DEV = import.meta.env.DEV;

@@ -19,7 +19,7 @@ import { FormDialog } from '@/components/shared/form-dialog';
 // Hooks
 import { useApplications } from '@/hooks/applications/use-applications';
 import { useDeleteApplication } from '@/hooks/applications/use-delete-application';
-import { useFilteredEntities } from '@/hooks/use-filtered-entities';
+import { useFilteredEntities } from '@/hooks/shared/use-filtered-entities';
 import { Application } from '@/api/model';
 import { getLabel, LABELS_APPLICATION_STATUS } from '@/lib/dictionaries';
 

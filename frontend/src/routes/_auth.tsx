@@ -1,5 +1,5 @@
 import { createRoute, Outlet, redirect } from '@tanstack/react-router';
-import { rootRoute } from './__root';
+import { rootRoute } from '@/routes/__root';
 import type { AuthContextType } from '@/context/auth-context';
 
 export const authRoute = createRoute({

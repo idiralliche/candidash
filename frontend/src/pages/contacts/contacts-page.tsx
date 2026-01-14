@@ -18,7 +18,7 @@ import { FormDialog } from '@/components/shared/form-dialog';
 
 import { useContacts } from '@/hooks/contacts/use-contacts';
 import { useDeleteContact } from '@/hooks/contacts/use-delete-contact';
-import { useFilteredEntities } from '@/hooks/use-filtered-entities';
+import { useFilteredEntities } from '@/hooks/shared/use-filtered-entities';
 import { Contact } from '@/api/model';
 
 import { ContactForm } from '@/components/contacts/contact-form';

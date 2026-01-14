@@ -1,5 +1,5 @@
 import { createRoute } from '@tanstack/react-router';
-import { authRoute } from './_auth';
+import { authRoute } from '@/routes/_auth';
 import { AccountPage } from '@/pages/account/account-page';
 
 export const accountRoute = createRoute({

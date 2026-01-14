@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useDebounce } from './use-debounce';
+import { useDebounce } from '@/hooks/shared/use-debounce';
 
 interface UseFilteredEntitiesOptions<T> {
   entities: T[] | undefined;
