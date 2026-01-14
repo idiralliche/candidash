@@ -21,7 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { ScheduledEvent } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { DetailsBlock } from "@/components/shared/details-block";
-import { ActionCard } from "@/components/shared/action-card";
+import { LinkCard } from "@/components/shared/link-card";
 import {
   LABELS_EVENT_STATUS,
   LABELS_COMMUNICATION_METHOD,
@@ -115,7 +115,7 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
           <div className="grid grid-cols-1 gap-3">
             {/* Link */}
             {event.event_link && (
-              <ActionCard
+              <LinkCard
                 href={event.event_link}
                 icon={LinkIcon}
                 label="Lien Visio"
@@ -127,7 +127,7 @@ export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
 
             {/* Phone */}
             {event.phone_number && (
-              <ActionCard
+              <LinkCard
                 href={`tel:${event.phone_number}`}
                 icon={Phone}
                 label="Téléphone"

@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ActionCard } from "@/components/shared/action-card";
+import { LinkCard } from "@/components/shared/link-card";
 
 import { Application } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
@@ -133,7 +133,7 @@ export function ApplicationDetails({
 
           <div className="grid grid-cols-1 gap-3">
             {resume && (
-              <ActionCard
+              <LinkCard
                 icon={FileText}
                 label="Curriculum Vitae"
                 value={resume.name}
@@ -145,7 +145,7 @@ export function ApplicationDetails({
             )}
 
             {coverLetter && (
-              <ActionCard
+              <LinkCard
                 icon={Mail}
                 label="Lettre de Motivation"
                 value={coverLetter.name}

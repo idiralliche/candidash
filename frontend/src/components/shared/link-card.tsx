@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface ActionCardProps {
+interface LinkCardProps {
   // Link mode
   href?: string;
   isExternal?: boolean;
@@ -23,7 +23,7 @@ interface ActionCardProps {
   variant?: "default" | "blue";
 }
 
-export function ActionCard({
+export function LinkCard({
   href,
   onClick,
   icon: Icon,
@@ -34,7 +34,7 @@ export function ActionCard({
   isLoading,
   valueClassName,
   variant = "default"
-}: ActionCardProps) {
+}: LinkCardProps) {
   const isBlue = variant === "blue";
 
   // Common container classes

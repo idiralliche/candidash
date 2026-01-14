@@ -17,9 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { Action } from '@/api/model';
 import { EntityDetailsSheet } from '@/components/shared/entity-details-sheet';
 import { DetailsBlock } from '@/components/shared/details-block';
-import { ActionCard as LinkCard } from '@/components/shared/action-card';
-// Note : J'utilise 'LinkCard' comme alias pour éviter le conflit de nom avec notre entité 'Action'
-// Assurez-vous que '@/components/shared/action-card' est bien le composant générique pour les liens/fichiers utilisé dans ApplicationDetails
+import { LinkCard } from '@/components/shared/link-card';
 
 interface ActionDetailsProps {
   action: Action;

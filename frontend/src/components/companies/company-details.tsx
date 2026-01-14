@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Company } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { DetailsBlock } from "@/components/shared/details-block";
-import { ActionCard } from "@/components/shared/action-card";
+import { LinkCard } from "@/components/shared/link-card";
 import { Product } from "@/api/model";
 
 interface CompanyDetailsProps {
@@ -145,7 +145,7 @@ export function CompanyDetails({
           </h3>
           <div className="grid grid-cols-1 gap-3">
             {products.map(product => (
-              <ActionCard
+              <LinkCard
                 key={product.id}
                 href="#"
                 icon={Package}

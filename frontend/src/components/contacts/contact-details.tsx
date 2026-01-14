@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Contact } from "@/api/model";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
 import { DetailsBlock } from "@/components/shared/details-block";
-import { ActionCard } from "@/components/shared/action-card";
+import { LinkCard } from "@/components/shared/link-card";
 
 interface ContactDetailsProps {
   contact: Contact;
@@ -70,7 +70,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
         </h3>
         <div className="grid grid-cols-1 gap-3">
           {contact.email && (
-            <ActionCard
+            <LinkCard
               href={`mailto:${contact.email}`}
               icon={Mail}
               label="Email"
@@ -79,7 +79,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
           )}
 
           {contact.phone && (
-            <ActionCard
+            <LinkCard
               href={`tel:${contact.phone}`}
               icon={Phone}
               label="Téléphone"
@@ -89,7 +89,7 @@ export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProp
           )}
 
           {contact.linkedin && (
-            <ActionCard
+            <LinkCard
               href={contact.linkedin.startsWith("http") ? contact.linkedin : `https://linkedin.com${contact.linkedin}`}
               icon={LinkIcon}
               label="LinkedIn"
