@@ -1,15 +1,21 @@
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Calendar as CalendarIcon } from "lucide-react";
+import {
+  ChevronDown,
+  Calendar as CalendarIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Button,
+  buttonVariants
+} from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { inputContainerVariants } from "./input";
+import { inputContainerVariants } from "@/components/ui/input";
 import { VariantProps } from "class-variance-authority";
 
 interface DatePickerProps extends Omit<VariantProps<typeof inputContainerVariants>, "disabled"> {
@@ -37,17 +43,20 @@ export function DatePicker({
           disabled={disabled}
           className={cn(
             inputContainerVariants({ variant, size, disabled }),
-            "justify-start text-left font-normal",
+            "justify-between text-left font-normal cursor-pointer hover:bg-opacity-0",
             !date && "text-muted-foreground",
             className
           )}
         >
+          <div className="flex items-center gap-2">
           <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
           {date ? (
             format(date, "EEEE d MMMM yyyy", { locale: fr })
           ) : (
             <span>{placeholder}</span>
           )}
+          </div>
+          <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
 

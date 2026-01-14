@@ -31,7 +31,7 @@ const SelectTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       inputContainerVariants({ variant, size }),
-      "justify-between [&>span]:line-clamp-1 group",
+      "justify-between [&>span]:line-clamp-1 group cursor-pointer",
       className
     )}
     {...props}
@@ -49,7 +49,7 @@ const SelectTrigger = React.forwardRef<
             e.stopPropagation();
             onClear();
           }}
-          className="..."
+          className="hover:bg-white/10 rounded-full p-0.5 transition-colors"
         >
           <X className="h-3.5 w-3.5" />
         </div>
