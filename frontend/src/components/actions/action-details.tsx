@@ -73,7 +73,7 @@ export function ActionDetails({ action, onEdit, onDelete }: ActionDetailsProps) 
         )
       }
     >
-      {/* SECTION CONTEXTE (Liens vers Application et Event) */}
+      {/* SECTION CONTEXTE */}
       {(application || scheduledEvent) && (
         <div className="space-y-4 mb-6">
           <h3 className="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-2 select-none">
@@ -87,8 +87,6 @@ export function ActionDetails({ action, onEdit, onDelete }: ActionDetailsProps) 
                 icon={Layers}
                 label="Candidature liée"
                 value={application.opportunity?.job_title || "Voir la candidature"}
-                // Ici on pourrait ajouter une navigation vers la candidature si nécessaire
-                // onClick={() => navigate(...)}
                 variant="default"
               />
             )}
