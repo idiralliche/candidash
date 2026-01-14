@@ -1,6 +1,6 @@
 import { useGetScheduledEventsApiV1ScheduledEventsGet } from '@/api/scheduled-events/scheduled-events';
 import { EventStatus } from '@/api/model';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 interface ScheduledEventsParams {
   skip?: number;

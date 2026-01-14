@@ -1,5 +1,5 @@
 import { useGetCompaniesApiV1CompaniesGet } from '@/api/companies/companies';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 export function useCompanies(skip = 0, limit = 100) {
   const { isAuthenticated } = useAuth();

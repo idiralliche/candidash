@@ -1,5 +1,5 @@
 import { useGetUserApiV1UsersMeGet } from '@/api/users/users';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 export function useUserProfile() {
   const { isAuthenticated } = useAuth();

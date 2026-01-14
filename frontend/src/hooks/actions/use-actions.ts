@@ -1,5 +1,5 @@
 import { useGetActionsApiV1ActionsGet } from '@/api/actions/actions';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 import { keepPreviousData } from '@tanstack/react-query';
 
 interface UseActionsParams {

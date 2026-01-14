@@ -1,5 +1,5 @@
 import { useGetContactsApiV1ContactsGet } from '@/api/contacts/contacts';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 interface UseContactsParams {
   skip?: number;

@@ -1,5 +1,5 @@
 import { useGetApplicationsApiV1ApplicationsGet } from '@/api/applications/applications';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 import { ApplicationStatus } from '@/api/model';
 import { keepPreviousData } from '@tanstack/react-query';
 

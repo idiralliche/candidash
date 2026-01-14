@@ -1,5 +1,5 @@
 import { useGetProductsApiV1ProductsGet } from '@/api/products/products';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 interface UseProductsParams {
   skip?: number;

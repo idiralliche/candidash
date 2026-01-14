@@ -3,7 +3,7 @@ import {
   ApplicationType,
   ContractType
 } from '@/api/model';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 interface UseOpportunitiesParams {
   skip?: number;

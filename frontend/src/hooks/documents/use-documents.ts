@@ -1,5 +1,5 @@
 import { useGetDocumentsApiV1DocumentsGet } from '@/api/documents/documents';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 export function useDocuments(skip = 0, limit = 100) {
   const { isAuthenticated } = useAuth();
