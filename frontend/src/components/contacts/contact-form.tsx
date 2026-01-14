@@ -172,8 +172,14 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
             description="Optionnel."
           >
             {(field) => (
-               <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
-                <SelectTrigger>
+               <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isLoadingCompanies}
+                >
+                <SelectTrigger
+                    onClear={field.value ? () => field.onChange("") : undefined}
+                >
                   <SelectValue placeholder="Aucune entreprise (Indépendant ou autre)" />
                 </SelectTrigger>
                 <SelectContent>

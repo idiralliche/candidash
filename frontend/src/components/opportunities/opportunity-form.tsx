@@ -213,8 +213,15 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
               label="Entreprise"
             >
               {(field) => (
-                <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
-                  <SelectTrigger>
+                <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isLoadingCompanies}
+                >
+                  <SelectTrigger
+                      className="w-full"
+                      onClear={field.value ? () => field.onChange("") : undefined}
+                  >
                     <SelectValue placeholder="Sélectionner (Optionnel)" />
                   </SelectTrigger>
                   <SelectContent>
@@ -280,8 +287,15 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
               label="Type de Contrat"
             >
               {(field) => (
-                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                  <SelectTrigger>
+                <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    value={field.value}
+                >
+                  <SelectTrigger
+                      className="w-full"
+                      onClear={field.value ? () => field.onChange(null) : undefined}
+                  >
                     <SelectValue placeholder="Non spécifié" />
                   </SelectTrigger>
                   <SelectContent>
@@ -314,8 +328,15 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
               label="Politique Télétravail"
             >
               {(field) => (
-                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                  <SelectTrigger>
+                <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    value={field.value}
+                >
+                  <SelectTrigger
+                      className="w-full"
+                      onClear={field.value ? () => field.onChange(null) : undefined}
+                  >
                     <SelectValue placeholder="Non spécifié" />
                   </SelectTrigger>
                   <SelectContent>

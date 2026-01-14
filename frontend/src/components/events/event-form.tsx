@@ -272,7 +272,10 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
         >
           {(field) => (
             <Select onValueChange={field.onChange} value={field.value || ""}>
-              <SelectTrigger variant="form-blue">
+              <SelectTrigger
+                  variant="form-blue"
+                  onClear={field.value ? () => field.onChange(null) : undefined}
+              >
                 <SelectValue placeholder="Choisir..." />
               </SelectTrigger>
               <SelectContent>
