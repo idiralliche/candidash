@@ -16,8 +16,8 @@ import { EntitySheet } from '@/components/shared/entity-sheet';
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 import { FormDialog } from '@/components/shared/form-dialog';
 
-import { useContacts } from '@/hooks/use-contacts';
-import { useDeleteContact } from '@/hooks/use-delete-contact';
+import { useContacts } from '@/hooks/contacts/use-contacts';
+import { useDeleteContact } from '@/hooks/contacts/use-delete-contact';
 import { useFilteredEntities } from '@/hooks/use-filtered-entities';
 import { Contact } from '@/api/model';
 

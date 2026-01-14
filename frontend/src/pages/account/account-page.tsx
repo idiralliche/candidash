@@ -15,8 +15,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
-import { useUserProfile } from '@/hooks/use-user-profile';
-import { useAuth } from '@/hooks/use-auth';
+import { useUserProfile } from '@/hooks/account/use-user-profile';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 // Layout Components
 import { PageLayout } from '@/components/layouts/page-layout';

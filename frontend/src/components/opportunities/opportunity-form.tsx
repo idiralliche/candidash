@@ -27,9 +27,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useCreateOpportunity } from '@/hooks/use-create-opportunity';
-import { useUpdateOpportunity } from '@/hooks/use-update-opportunity';
-import { useCompanies } from '@/hooks/use-companies';
+import { useCreateOpportunity } from '@/hooks/opportunities/use-create-opportunity';
+import { useUpdateOpportunity } from '@/hooks/opportunities/use-update-opportunity';
+import { useCompanies } from '@/hooks/companies/use-companies';
 import { Opportunity } from '@/api/model';
 
 const opportunitySchema = z.object({

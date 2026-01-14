@@ -6,8 +6,8 @@ import {
   Calendar as CalendarIcon,
 } from 'lucide-react';
 
-import { useScheduledEvents } from '@/hooks/use-scheduled-events';
-import { useDeleteScheduledEvent } from '@/hooks/use-delete-scheduled-event';
+import { useScheduledEvents } from '@/hooks/scheduled-events/use-scheduled-events';
+import { useDeleteScheduledEvent } from '@/hooks/scheduled-events/use-delete-scheduled-event';
 import { ScheduledEvent } from '@/api/model';
 
 import { Fab } from '@/components/ui/fab';

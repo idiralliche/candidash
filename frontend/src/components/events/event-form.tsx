@@ -34,8 +34,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useCreateScheduledEvent } from '@/hooks/use-create-scheduled-event';
-import { useUpdateScheduledEvent } from '@/hooks/use-update-scheduled-event';
+import { useCreateScheduledEvent } from '@/hooks/scheduled-events/use-create-scheduled-event';
+import { useUpdateScheduledEvent } from '@/hooks/scheduled-events/use-update-scheduled-event';
 import {
   ScheduledEvent,
   EventStatus,

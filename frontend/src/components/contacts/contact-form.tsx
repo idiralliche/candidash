@@ -24,9 +24,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useCreateContact } from '@/hooks/use-create-contact';
-import { useUpdateContact } from '@/hooks/use-update-contact';
-import { useCompanies } from '@/hooks/use-companies';
+import { useCreateContact } from '@/hooks/contacts/use-create-contact';
+import { useUpdateContact } from '@/hooks/contacts/use-update-contact';
+import { useCompanies } from '@/hooks/companies/use-companies';
 import { Contact } from '@/api/model';
 
 // LinkedIn basic validation (URL or username)

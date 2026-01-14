@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Plus, Briefcase } from 'lucide-react';
 
-import { useOpportunities } from '@/hooks/use-opportunities';
-import { useDeleteOpportunity } from '@/hooks/use-delete-opportunity';
+import { useOpportunities } from '@/hooks/opportunities/use-opportunities';
+import { useDeleteOpportunity } from '@/hooks/opportunities/use-delete-opportunity';
 import { Opportunity } from '@/api/model';
 
 import { Fab } from '@/components/ui/fab';
