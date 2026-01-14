@@ -43,9 +43,9 @@ import {
 } from '@/components/ui/alert';
 import { formatBytes } from '@/lib/utils';
 
-import { useCreateDocument } from '@/hooks/use-create-document';
-import { useUpdateDocument } from '@/hooks/use-update-document';
-import { useReplaceDocumentFile } from '@/hooks/use-replace-document-file';
+import { useCreateDocument } from '@/hooks/documents/use-create-document';
+import { useUpdateDocument } from '@/hooks/documents/use-update-document';
+import { useReplaceDocumentFile } from '@/hooks/documents/use-replace-document-file';
 import { Document } from '@/api/model';
 
 // --- Zod Schemas ---

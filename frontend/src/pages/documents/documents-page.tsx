@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Plus, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useDocuments } from '@/hooks/use-documents';
-import { useDeleteDocument } from '@/hooks/use-delete-document';
+import { useDocuments } from '@/hooks/documents/use-documents';
+import { useDeleteDocument } from '@/hooks/documents/use-delete-document';
 import { Button } from '@/components/ui/button';
 import { Fab } from '@/components/ui/fab';
 import { EmptyState } from '@/components/shared/empty-state';

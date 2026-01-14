@@ -20,7 +20,7 @@ import {
   getLabel,
 } from '@/lib/dictionaries';
 import { getFormatPalette } from '@/lib/semantic-ui';
-import { useDownloadDocument } from '@/hooks/use-download-document';
+import { useDownloadDocument } from '@/hooks/documents/use-download-document';
 import { EntityDetailsSheet } from '@/components/shared/entity-details-sheet';
 import { DetailsBlock } from '@/components/shared/details-block';
 
