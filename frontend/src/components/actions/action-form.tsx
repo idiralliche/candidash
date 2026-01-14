@@ -23,10 +23,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useCreateAction } from '@/hooks/use-create-action';
-import { useUpdateAction } from '@/hooks/use-update-action';
-import { useApplications } from '@/hooks/use-applications';
-import { useScheduledEvents } from '@/hooks/use-scheduled-events';
+import { useCreateAction } from '@/hooks/actions/use-create-action';
+import { useUpdateAction } from '@/hooks/actions/use-update-action';
+import { useApplications } from '@/hooks/applications/use-applications';
+import { useScheduledEvents } from '@/hooks/scheduled-events/use-scheduled-events';
 import { Action } from '@/api/model';
 
 // Zod Schema
