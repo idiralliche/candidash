@@ -17,9 +17,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FormSwitch } from "@/components/ui/form-switch";
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
-import { useCompanies } from '@/hooks/use-companies';
-import { useCreateCompany } from '@/hooks/use-create-company';
-import { useUpdateCompany } from '@/hooks/use-update-company';
+import { useCompanies } from '@/hooks/companies/use-companies';
+import { useCreateCompany } from '@/hooks/companies/use-create-company';
+import { useUpdateCompany } from '@/hooks/companies/use-update-company';
 import { Company } from '@/api/model';
 
 // Validation schema

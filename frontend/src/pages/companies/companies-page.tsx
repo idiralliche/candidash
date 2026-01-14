@@ -2,10 +2,10 @@ import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Plus, Building2 } from 'lucide-react';
 
-import { useCompanies } from '@/hooks/use-companies';
-import { useDeleteCompany } from '@/hooks/use-delete-company';
+import { useCompanies } from '@/hooks/companies/use-companies';
+import { useDeleteCompany } from '@/hooks/companies/use-delete-company';
 import { Company } from '@/api/model';
-import { useProducts } from '@/hooks/use-products';
+import { useProducts } from '@/hooks/products/use-products';
 
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";

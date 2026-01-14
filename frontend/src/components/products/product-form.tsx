@@ -21,9 +21,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useCreateProduct } from '@/hooks/use-create-products';
-import { useUpdateProduct } from '@/hooks/use-update-products';
-import { useCompanies } from '@/hooks/use-companies';
+import { useCreateProduct } from '@/hooks/products/use-create-products';
+import { useUpdateProduct } from '@/hooks/products/use-update-products';
+import { useCompanies } from '@/hooks/companies/use-companies';
 import { Product } from '@/api/model';
 
 const productSchema = z.object({

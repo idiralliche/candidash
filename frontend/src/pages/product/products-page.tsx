@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Plus, Package } from 'lucide-react';
 
-import { useProducts } from '@/hooks/use-products';
-import { useDeleteProduct } from '@/hooks/use-delete-products';
+import { useProducts } from '@/hooks/products/use-products';
+import { useDeleteProduct } from '@/hooks/products/use-delete-products';
 import { Product } from '@/api/model';
 
 import { Fab } from '@/components/ui/fab';
