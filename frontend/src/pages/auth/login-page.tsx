@@ -24,7 +24,7 @@ import { SmartFormField } from '@/components/ui/form-field-wrapper';
 
 // API & Context
 import { useLoginApiV1AuthLoginPost } from '@/api/authentication/authentication';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/shared/use-auth';
 
 const loginSchema = z.object({
   username: z.string().email({ message: "Email invalide" }),

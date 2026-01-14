@@ -15,8 +15,8 @@ import {
   Target,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useAuth } from '@/hooks/use-auth';
-import { useUserProfile } from '@/hooks/use-user-profile';
+import { useAuth } from '@/hooks/shared/use-auth';
+import { useUserProfile } from '@/hooks/account/use-user-profile';
 
 // Shadcn Components
 import {
