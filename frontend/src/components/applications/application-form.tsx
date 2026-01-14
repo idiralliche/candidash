@@ -23,10 +23,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useCreateApplication } from '@/hooks/use-create-application';
-import { useUpdateApplication } from '@/hooks/use-update-application';
-import { useOpportunities } from '@/hooks/use-opportunities';
-import { useDocuments } from '@/hooks/use-documents';
+import { useCreateApplication } from '@/hooks/applications/use-create-application';
+import { useUpdateApplication } from '@/hooks/applications/use-update-application';
+import { useOpportunities } from '@/hooks/opportunities/use-opportunities';
+import { useDocuments } from '@/hooks/documents/use-documents';
 import { Application, ApplicationStatus } from '@/api/model';
 import { LABELS_APPLICATION_STATUS, getLabel } from '@/lib/dictionaries';
 

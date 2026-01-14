@@ -24,7 +24,7 @@ import {
   getLabel,
 } from '@/lib/dictionaries';
 import { getApplicationStatusPalette } from '@/lib/semantic-ui';
-import { useDownloadDocument } from '@/hooks/use-download-document';
+import { useDownloadDocument } from '@/hooks/documents/use-download-document';
 
 interface ApplicationDetailsProps {
   application: Application;

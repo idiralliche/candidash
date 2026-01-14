@@ -17,8 +17,8 @@ import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
 import { FormDialog } from '@/components/shared/form-dialog';
 
 // Hooks
-import { useApplications } from '@/hooks/use-applications';
-import { useDeleteApplication } from '@/hooks/use-delete-application';
+import { useApplications } from '@/hooks/applications/use-applications';
+import { useDeleteApplication } from '@/hooks/applications/use-delete-application';
 import { useFilteredEntities } from '@/hooks/use-filtered-entities';
 import { Application } from '@/api/model';
 import { getLabel, LABELS_APPLICATION_STATUS } from '@/lib/dictionaries';
