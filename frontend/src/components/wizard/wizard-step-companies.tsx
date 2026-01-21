@@ -78,38 +78,52 @@ export function WizardStepCompanies({
     extraProps: CompanyExtraProps
   ) => {
     const isLinked = extraProps.linkedCompanyId === company.id;
+    const mainCompanyBadge = isLinked && (
+      <div className="sm:mx-auto">
+        <Badge
+          variant="subtle"
+          palette="blue"
+        >
+          <Star className="mr-2 h-4 w-4" />
+          Principale
+        </Badge>
+      </div>
+    )
+
+    const switchLinkToOpportunity = extraProps && (
+      <Badge
+        variant="outline"
+        palette="red"
+        className="flex items-center gap-2"
+      >
+        <label className={`text-sm p-2 flex justify-between items-center ${isLinked ? "text-primary" : ""}`}>
+          {isLinked ? (
+            <>
+              <StarOff className="mr-2 h-4 w-4"/>
+              Dissocier
+            </>
+          ) : (
+            <>
+              <Star className="mr-2 h-4 w-4"/>
+              Associer
+            </>
+          )}
+        </label>
+        <Switch
+          checked={isLinked}
+          onCheckedChange={() => !isLinked ? extraProps.onLinkCompany(company) : extraProps.onUnlinkCompany()}
+        />
+      </Badge>
+    )
 
     return (
       <CompanyCard
         key={company.id}
         company={company}
         onDelete={() => onDelete(company)}
-        isLinked={isLinked}
-        customActions={extraProps && (
-          <Badge
-            variant="outline"
-            palette="red"
-            className="flex items-center gap-2"
-          >
-            <label className={`text-sm p-2 flex justify-between items-center ${isLinked ? "text-primary" : ""}`}>
-              {isLinked ? (
-                <>
-                  <StarOff className="mr-2 h-4 w-4"/>
-                  Dissocier
-                </>
-              ) : (
-                <>
-                  <Star className="mr-2 h-4 w-4"/>
-                  Associer
-                </>
-              )}
-            </label>
-            <Switch
-              checked={isLinked}
-              onCheckedChange={() => !isLinked ? extraProps.onLinkCompany(company) : extraProps.onUnlinkCompany()}
-            />
-          </Badge>
-        )}
+        isHighlighted={isLinked}
+        badges={mainCompanyBadge}
+        extraActions={switchLinkToOpportunity}
       />
     );
   };
