@@ -12,12 +12,12 @@ import {
   Video,
   Phone,
   MapPin,
-  Clock
+  Clock,
 } from 'lucide-react';
 import {
   addHours,
   startOfHour,
-  format
+  format,
 } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
@@ -66,15 +66,24 @@ const eventSchema = z.object({
 type EventFormValues = z.infer<typeof eventSchema>;
 
 interface EventFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (event?: ScheduledEvent) => void;
   className?: string;
   initialData?: ScheduledEvent;
   defaultDate?: Date;
 }
 
 export function EventForm({ onSuccess, className, initialData, defaultDate }: EventFormProps) {
-  const { mutate: createEvent, isPending: isCreating, error: createError } = useCreateScheduledEvent();
-  const { mutate: updateEvent, isPending: isUpdating, error: updateError } = useUpdateScheduledEvent();
+  const {
+    mutateAsync: createEvent,
+    isPending: isCreating,
+    error: createError
+  } = useCreateScheduledEvent();
+
+  const {
+    mutateAsync: updateEvent,
+    isPending: isUpdating,
+    error: updateError
+  } = useUpdateScheduledEvent();
 
   const isEditing = !!initialData;
   const isPending = isCreating || isUpdating;
@@ -123,7 +132,6 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
     },
   });
 
-  // Reset effect
   useEffect(() => {
     if (initialData) {
       const d = new Date(initialData.scheduled_date);
@@ -144,7 +152,7 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
     }
   }, [initialData, form]);
 
-  function onSubmit(values: EventFormValues) {
+  async function onSubmit(values: EventFormValues) {
     const [hours, minutes] = values.time.split(':').map(Number);
     const scheduledDate = new Date(values.date);
     scheduledDate.setHours(hours, minutes, 0, 0);
@@ -163,23 +171,29 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
       notes: values.notes || null,
     };
 
-    const options = {
-      onSuccess: () => {
-        form.reset();
-        if (onSuccess) onSuccess();
-      },
-    };
+    try {
+      let resultEvent: ScheduledEvent | undefined;
 
-    if (isEditing && initialData) {
-      updateEvent({ eventId: initialData.id, data: payload }, options);
-    } else {
-      createEvent({ data: payload }, options);
+      if (isEditing && initialData) {
+        const result = await updateEvent({ eventId: initialData.id, data: payload });
+        resultEvent = result as unknown as ScheduledEvent;
+      } else {
+        resultEvent = await createEvent({ data: payload });
+      }
+
+      form.reset();
+      if (onSuccess) onSuccess(resultEvent);
+    } catch (err) {
+      console.error("Error saving event", err);
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-4 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={`space-y-4 ${className} pr-2 max-h-[80vh] overflow-y-auto`}
+      >
 
         <SmartFormField
           control={form.control}
@@ -239,7 +253,11 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
             label="Statut *"
           >
             {(field) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                value={field.value}
+              >
                 <SelectTrigger variant="form-blue">
                   <SelectValue placeholder="Sélectionner un statut" />
                 </SelectTrigger>
@@ -271,7 +289,10 @@ export function EventForm({ onSuccess, className, initialData, defaultDate }: Ev
           label="Moyen de communication"
         >
           {(field) => (
-            <Select onValueChange={field.onChange} value={field.value || ""}>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value || ""}
+            >
               <SelectTrigger
                   variant="form-blue"
                   onClear={field.value ? () => field.onChange(null) : undefined}

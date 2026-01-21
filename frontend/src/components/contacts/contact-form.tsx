@@ -48,14 +48,23 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 interface ContactFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (contact?: Contact) => void;
   className?: string;
   initialData?: Contact;
 }
 
 export function ContactForm({ onSuccess, className, initialData }: ContactFormProps) {
-  const { mutate: createContact, isPending: isCreating, error: createError } = useCreateContact();
-  const { mutate: updateContact, isPending: isUpdating, error: updateError } = useUpdateContact();
+  const {
+    mutateAsync: createContact,
+    isPending: isCreating,
+    error: createError
+  } = useCreateContact();
+
+  const {
+    mutateAsync: updateContact,
+    isPending: isUpdating,
+    error: updateError
+  } = useUpdateContact();
   const { companies, isLoading: isLoadingCompanies } = useCompanies();
 
   const isEditing = !!initialData;
@@ -99,7 +108,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
     }
   }, [initialData, form]);
 
-  function onSubmit(values: ContactFormValues) {
+  async function onSubmit(values: ContactFormValues) {
     const companyId = values.company_id ? parseInt(values.company_id) : undefined;
     const payload = {
       first_name: values.first_name,
@@ -114,23 +123,30 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
       notes: values.notes || null,
     };
 
-    const options = {
-      onSuccess: () => {
-        form.reset();
-        if (onSuccess) onSuccess();
-      },
-    };
+    try {
+      let resultContact: Contact | undefined;
 
-    if (isEditing && initialData) {
-      updateContact({ contactId: initialData.id, data: payload }, options);
-    } else {
-      createContact({ data: payload }, options);
+      if (isEditing && initialData) {
+         const result = await updateContact({ contactId: initialData.id, data: payload });
+         resultContact = result as unknown as Contact;
+      } else {
+         resultContact = await createContact({ data: payload });
+      }
+
+      form.reset();
+      if (onSuccess) onSuccess(resultContact);
+
+    } catch (err) {
+      console.error("Erreur lors de la soumission du contact", err);
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}
+      >
 
         {/* IDENTITY */}
         <div className="space-y-4">

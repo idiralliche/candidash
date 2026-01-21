@@ -75,7 +75,7 @@ type MetadataFormValues = z.infer<typeof metadataSchema>;
 type ExternalFormValues = z.infer<typeof externalSchema>;
 
 interface DocumentFormProps {
-  onSuccess: () => void;
+  onSuccess: (document?: Document) => void;
   initialData?: Document;
 }
 
@@ -87,8 +87,16 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
     isEditing && isExternalOrigin ? 'external' : 'upload'
   );
 
-  const { createExternal, uploadFile, isPending: isCreating } = useCreateDocument();
-  const { mutateAsync: updateDocument, isPending: isUpdating } = useUpdateDocument();
+  const {
+    createExternal,
+    uploadFile,
+    isPending: isCreating
+  } = useCreateDocument();
+
+  const {
+    mutateAsync: updateDocument,
+    isPending: isUpdating
+  } = useUpdateDocument();
   const { replaceFile, isPending: isReplacing } = useReplaceDocumentFile();
 
   const isPending = isCreating || isUpdating || isReplacing;
@@ -130,6 +138,8 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
 
   const onUploadSubmit = async (values: UploadFormValues | MetadataFormValues) => {
     try {
+      let createdDoc: Document | undefined;
+
       if (isEditing) {
         if (isExternalOrigin) {
           // --- COMPLEX SCENARIO: EXTERNAL MIGRATION -> LOCAL ---
@@ -169,7 +179,8 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
       } else {
         // --- SIMPLE SCENARIO: LOCAL CREATION ---
         const file = (values as UploadFormValues).file[0];
-        await uploadFile.mutateAsync({
+        // Capture the created document from the response
+        createdDoc = await uploadFile.mutateAsync({
           data: {
             file: file,
             name: values.name,
@@ -178,7 +189,8 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
           }
         });
       }
-      onSuccess();
+      // Pass the created document to the callback
+      onSuccess(createdDoc);
     } catch (error) {
       console.error(error);
     }
@@ -186,6 +198,8 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
 
   const onExternalSubmit = async (values: ExternalFormValues) => {
     try {
+      let createdDoc: Document | undefined;
+
       if (isEditing) {
         await updateDocument({
           documentId: initialData.id,
@@ -198,7 +212,8 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
           }
         });
       } else {
-        await createExternal.mutateAsync({
+        // Capture the created document from the response
+        createdDoc = await createExternal.mutateAsync({
           data: {
             name: values.name,
             type: values.type,
@@ -209,7 +224,8 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
           }
         });
       }
-      onSuccess();
+      // Pass the created document to the callback
+      onSuccess(createdDoc);
     } catch (error) {
       console.error(error);
     }
@@ -217,12 +233,22 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
 
   // --- RENDER ---
   return (
-    <Tabs value={tab} onValueChange={(v) => setTab(v as 'upload' | 'external')} className="w-full">
+    <Tabs
+      value={tab}
+      onValueChange={(v) => setTab(v as 'upload' | 'external')}
+      className="w-full"
+    >
       <TabsList className="grid w-full grid-cols-2 bg-surface-base border border-white-light">
-        <TabsTrigger value="upload" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+        <TabsTrigger
+          value="upload"
+          className="data-[state=active]:bg-primary data-[state=active]:text-white"
+        >
             <UploadCloud className="h-4 w-4 mr-2"/> Fichier Local
         </TabsTrigger>
-        <TabsTrigger value="external" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+        <TabsTrigger
+          value="external"
+          className="data-[state=active]:bg-primary data-[state=active]:text-white"
+        >
             <LinkIcon className="h-4 w-4 mr-2"/> Lien Externe
         </TabsTrigger>
       </TabsList>
@@ -230,7 +256,10 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
       {/* --- TAB: UPLOAD (Local) --- */}
       <TabsContent value="upload" className="mt-4">
         <Form {...uploadForm}>
-          <form onSubmit={uploadForm.handleSubmit(onUploadSubmit)} className="space-y-4">
+          <form
+            onSubmit={uploadForm.handleSubmit(onUploadSubmit)}
+            className="space-y-4"
+          >
 
             {/* DROPZONE AREA */}
             {!isLocalEdit ? (
@@ -289,7 +318,10 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
       {/* --- TAB: EXTERNAL (Link) --- */}
       <TabsContent value="external" className="mt-4">
         <Form {...externalForm}>
-          <form onSubmit={externalForm.handleSubmit(onExternalSubmit)} className="space-y-4">
+          <form
+            onSubmit={externalForm.handleSubmit(onExternalSubmit)}
+            className="space-y-4"
+          >
 
             <SmartFormField
               control={externalForm.control}
@@ -352,7 +384,11 @@ function FileUploader({
     }
   }, [onChange]);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+  } = useDropzone({
     onDrop,
     maxFiles: 1,
     multiple: false

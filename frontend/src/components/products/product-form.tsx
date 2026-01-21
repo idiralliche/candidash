@@ -21,8 +21,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useCreateProduct } from '@/hooks/products/use-create-products';
-import { useUpdateProduct } from '@/hooks/products/use-update-products';
+import { useCreateProduct } from '@/hooks/products/use-create-product';
+import { useUpdateProduct } from '@/hooks/products/use-update-product';
 import { useCompanies } from '@/hooks/companies/use-companies';
 import { Product } from '@/api/model';
 
@@ -37,14 +37,23 @@ const productSchema = z.object({
 type ProductFormValues = z.infer<typeof productSchema>;
 
 interface ProductFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (product?: Product) => void;
   className?: string;
   initialData?: Product;
 }
 
 export function ProductForm({ onSuccess, className, initialData }: ProductFormProps) {
-  const { mutate: createProduct, isPending: isCreating, error: createError } = useCreateProduct();
-  const { mutate: updateProduct, isPending: isUpdating, error: updateError } = useUpdateProduct();
+  const {
+    mutateAsync: createProduct,
+    isPending: isCreating,
+    error: createError
+  } = useCreateProduct();
+
+  const {
+    mutateAsync: updateProduct,
+    isPending: isUpdating,
+    error: updateError
+  } = useUpdateProduct();
   const { companies, isLoading: isLoadingCompanies } = useCompanies();
 
   const isEditing = !!initialData;
@@ -78,7 +87,7 @@ export function ProductForm({ onSuccess, className, initialData }: ProductFormPr
     }
   }, [initialData, form]);
 
-  function onSubmit(values: ProductFormValues) {
+  async function onSubmit(values: ProductFormValues) {
     const companyId = parseInt(values.company_id);
     const payload = {
       name: values.name,
@@ -88,23 +97,30 @@ export function ProductForm({ onSuccess, className, initialData }: ProductFormPr
       technologies_used: values.technologies_used || null,
     };
 
-    const options = {
-      onSuccess: () => {
-        form.reset();
-        if (onSuccess) onSuccess();
-      },
-    };
+    try {
+      let resultProduct: Product | undefined;
 
-    if (isEditing && initialData) {
-      updateProduct({ productId: initialData.id, data: payload }, options);
-    } else {
-      createProduct({ data: payload }, options);
+      if (isEditing && initialData) {
+         const result = await updateProduct({ productId: initialData.id, data: payload });
+         resultProduct = result as unknown as Product;
+      } else {
+         resultProduct = await createProduct({ data: payload });
+      }
+
+      form.reset();
+      if (onSuccess) onSuccess(resultProduct);
+
+    } catch (err) {
+      console.error("Erreur lors de la soumission du produit", err);
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}
+      >
 
         {/* IDENTITY */}
         <div className="space-y-4">
@@ -126,7 +142,11 @@ export function ProductForm({ onSuccess, className, initialData }: ProductFormPr
             description="L'entreprise qui développe ou vend ce produit."
           >
             {(field) => (
-               <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingCompanies}>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+                disabled={isLoadingCompanies}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une entreprise" />
                 </SelectTrigger>

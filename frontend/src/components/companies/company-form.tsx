@@ -22,7 +22,6 @@ import { useCreateCompany } from '@/hooks/companies/use-create-company';
 import { useUpdateCompany } from '@/hooks/companies/use-update-company';
 import { Company } from '@/api/model';
 
-// Validation schema
 const companySchema = z.object({
   name: z.string().min(1, "Le nom est requis").max(255, "Maximum 255 caractères"),
   siret: z.string().max(14).refine((val) => !val || /^\d{14}$/.test(val), {
@@ -39,15 +38,23 @@ const companySchema = z.object({
 type CompanyFormValues = z.infer<typeof companySchema>;
 
 interface CompanyFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (company?: Company) => void;
   className?: string;
   initialData?: Company;
 }
 
 export function CompanyForm({ onSuccess, className, initialData }: CompanyFormProps) {
   const { companies } = useCompanies();
-  const { mutate: createCompany, isPending: isCreating, error } = useCreateCompany();
-  const { mutate: updateCompany, isPending: isUpdating } = useUpdateCompany();
+  const {
+    mutateAsync: createCompany,
+    isPending: isCreating,
+    error
+  } = useCreateCompany();
+
+  const {
+    mutateAsync: updateCompany,
+    isPending: isUpdating
+  } = useUpdateCompany();
 
   const isEditing = !!initialData;
   const isPending = isCreating || isUpdating;
@@ -66,7 +73,6 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
     },
   });
 
-  // Reset form when initialData changes
   useEffect(() => {
     if (initialData) {
       form.reset({
@@ -82,7 +88,7 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
     }
   }, [initialData, form]);
 
-  function onSubmit(values: CompanyFormValues) {
+  async function onSubmit(values: CompanyFormValues) {
     if (values.siret && companies) {
       const duplicate = companies.find(c => c.siret === values.siret && c.id !== initialData?.id);
       if (duplicate) {
@@ -105,23 +111,30 @@ export function CompanyForm({ onSuccess, className, initialData }: CompanyFormPr
       notes: values.notes || null,
     };
 
-    const options = {
-      onSuccess: () => {
-        form.reset();
-        if (onSuccess) onSuccess();
-      },
-    };
+    try {
+      let resultCompany: Company | undefined;
 
-    if (isEditing && initialData) {
-      updateCompany({ companyId: initialData.id, data: payload }, options);
-    } else {
-      createCompany({ data: payload }, options);
+      if (isEditing && initialData) {
+         const result = await updateCompany({ companyId: initialData.id, data: payload });
+         resultCompany = result as unknown as Company;
+      } else {
+         resultCompany = await createCompany({ data: payload });
+      }
+
+      form.reset();
+      if (onSuccess) onSuccess(resultCompany);
+
+    } catch (err) {
+      console.error("Error submitting company form", err);
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-4 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={`space-y-4 ${className} pr-2 max-h-[80vh] overflow-y-auto`}
+      >
 
         {/* Name */}
         <SmartFormField
