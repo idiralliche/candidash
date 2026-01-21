@@ -4,10 +4,8 @@ import {
   MapPin,
   Globe,
   FingerprintPattern,
-  Star,
 } from "lucide-react";
 import { IconBox } from "@/components/ui/icon-box";
-import { Badge } from '@/components/ui/badge';
 import { Company } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
 
@@ -16,8 +14,10 @@ interface CompanyCardProps {
   onClick?: (company: Company) => void;
   onEdit?: (company: Company) => void;
   onDelete?: (company: Company) => void;
-  isLinked?: boolean;
-  customActions?: ReactNode;
+  variant?: "default" | "compact";
+  isHighlighted?: boolean;
+  badges?: ReactNode;
+  extraActions?: ReactNode;
 }
 
 export function CompanyCard({
@@ -25,20 +25,24 @@ export function CompanyCard({
   onClick,
   onEdit,
   onDelete,
-  isLinked = false,
-  customActions,
+  variant ="default",
+  isHighlighted = false,
+  badges,
+  extraActions,
 }: CompanyCardProps) {
+  const isCompact = variant === "compact";
+
   return (
     <EntityCard
       onClick={onClick && (() => onClick(company))}
-      hoverPalette={isLinked ? "blue" : "primary"}
+      hoverPalette={isHighlighted ? "blue" : "primary"}
       className={onClick ? "cursor-pointer" : "cursor-default"}
     >
 
       {/* IDENTITY ZONE */}
       <EntityCard.Identity>
         <IconBox
-          palette={isLinked ? "blue" : "red"}
+          palette={isHighlighted ? "blue" : "red"}
           groupHover
         >
           <Building2 className="h-5 w-5" />
@@ -59,19 +63,13 @@ export function CompanyCard({
 
       {/* META ZONE */}
       <EntityCard.Meta>
-        {isLinked && (
+        {badges && (
           <div className="sm:mx-auto">
-            <Badge
-              variant="subtle"
-              palette="blue"
-            >
-              <Star className="mr-2 h-4 w-4" />
-              Principale
-            </Badge>
+            {badges}
           </div>
         )}
 
-        {onEdit && (
+        {!isCompact && (
           <>
             {/* Headquarters */}
             <div className={`${company.headquarters ? "flex items-center gap-2" : "hidden sm:block "} sm:mx-auto`}>
@@ -106,8 +104,9 @@ export function CompanyCard({
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(company))}
         onDelete={onDelete && (() => onDelete(company))}
-        customActions={customActions}
-      />
+      >
+        {extraActions}
+      </EntityCard.Actions>
     </EntityCard>
   );
 }
