@@ -108,13 +108,12 @@ export function DocumentsPage() {
         ) : (
           <div className="flex flex-col gap-3">
             {sortedDocuments.map((doc) => (
-              <div key={doc.id} onClick={() => setSelectedDocument(doc)} className="cursor-pointer">
                 <DocumentCard
                   document={doc}
+                  onClick={setSelectedDocument}
                   onEdit={setEditingDocument}
                   onDelete={setDocumentToDelete}
                 />
-              </div>
             ))}
           </div>
         )}

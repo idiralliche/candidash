@@ -47,12 +47,13 @@ export function SmartFormField<T extends FieldValues, TName extends Path<T>>({
       name={name}
       render={({ field }) => (
         <FormItem className={cn("w-full", containerClassName)}>
-          {label && <FormLabel className="text-white">{label}</FormLabel>}
+          {label && (
+            <FormLabel className="text-white">{label}</FormLabel>
+          )}
           <FormControl>
             {children ? (
               children(field)
             ) : Component ? (
-              // On passe className ici au composant
               <Component {...field} {...props} className={className} />
             ) : null}
           </FormControl>

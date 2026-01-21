@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
   // 1. Base Styles (Geometry, Fonts, Focus states)
-  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-nowrap",
   {
     variants: {
       // 2. Structural Variants (The "Look")
