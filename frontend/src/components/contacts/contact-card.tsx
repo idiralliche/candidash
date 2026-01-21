@@ -7,22 +7,29 @@ import {
   Contact as ContactIcon,
 } from 'lucide-react';
 import { IconBox } from '@/components/ui/icon-box';
-
 import { Contact } from '@/api/model';
 import { EntityCard } from '@/components/shared/entity-card';
 
 interface ContactCardProps {
   contact: Contact;
-  onClick: (contact: Contact) => void;
-  onEdit: (contact: Contact) => void;
-  onDelete: (contact: Contact) => void;
+  onClick?: (contact: Contact) => void;
+  onEdit?: (contact: Contact) => void;
+  onDelete?: (contact: Contact) => void;
 }
 
-export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardProps) {
+export function ContactCard({
+  contact,
+  onClick,
+  onEdit,
+  onDelete,
+}: ContactCardProps) {
   const company = contact.company;
 
   return (
-    <EntityCard onClick={() => onClick(contact)}>
+    <EntityCard
+      onClick={onClick && (() => onClick(contact))}
+      className={onClick ? "cursor-pointer" : "cursor-default"}
+    >
 
       {/* IDENTITY ZONE */}
       <EntityCard.Identity className="sm:w-[45%]">
@@ -69,10 +76,9 @@ export function ContactCard({ contact, onClick, onEdit, onDelete }: ContactCardP
 
       {/* ACTIONS ZONE */}
       <EntityCard.Actions
-        onEdit={() => onEdit(contact)}
-        onDelete={() => onDelete(contact)}
+        onEdit={onEdit && (() => onEdit(contact))}
+        onDelete={onDelete && (() => onDelete(contact))}
       />
-
     </EntityCard>
   );
 }

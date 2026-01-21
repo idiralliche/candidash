@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { DestructiveMenuItem } from '@/components/ui/dropdown-menu-item-destructive';
+import { Fab } from '@/components/ui/fab';
 
 // --- STYLES ---
 
@@ -63,7 +64,12 @@ interface EntityCardProps extends VariantProps<typeof cardVariants> {
  * Root component for entity cards.
  * Handles global layout, hover states, and click interactions.
  */
-function EntityCard({ children, onClick, className, hoverPalette }: EntityCardProps) {
+function EntityCard({
+  children,
+  onClick,
+  className,
+  hoverPalette,
+}: EntityCardProps) {
   return (
     <div
       onClick={onClick}
@@ -79,7 +85,10 @@ function EntityCard({ children, onClick, className, hoverPalette }: EntityCardPr
  * Contains the icon and title/subtitle.
  * Default width is w-48 (approx 12rem) to align columns across list items.
  */
-function Identity({ children, className }: { children: ReactNode; className?: string }) {
+function Identity({
+  children,
+  className
+}: { children: ReactNode; className?: string }) {
   return (
     <div className={cn("flex items-center gap-4 min-w-0 sm:w-48 shrink-0", className)}>
       {children}
@@ -96,7 +105,12 @@ interface InfoProps extends VariantProps<typeof infoVariants> {
     className?: string;
 }
 
-function Info({ title, subtitle, className, hoverPalette }: InfoProps) {
+function Info({
+  title,
+  subtitle,
+  className,
+  hoverPalette,
+}: InfoProps) {
   return (
     <div className={cn("flex flex-col gap-1 min-w-0", className)}>
       <h3 className={cn(infoVariants({ hoverPalette }))}>
@@ -111,7 +125,10 @@ function Info({ title, subtitle, className, hoverPalette }: InfoProps) {
  * Metadata Zone (Center / Right)
  * Flexible space for secondary info (location, stats, tags).
  */
-function Meta({ children, className }: { children: ReactNode; className?: string }) {
+function Meta({
+  children,
+  className,
+}: { children: ReactNode; className?: string }) {
   return (
     <div className={cn("flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400 min-w-0", className)}>
       {children}
@@ -127,14 +144,20 @@ interface ActionsProps {
   onEdit?: (e: React.MouseEvent) => void;
   onDelete?: (e: React.MouseEvent) => void;
   children?: ReactNode;
+  customActions?: ReactNode;
 }
 
-function Actions({ onEdit, onDelete, children }: ActionsProps) {
+function Actions({
+  onEdit,
+  onDelete,
+  children,
+  customActions,
+}: ActionsProps) {
   return (
     <div className="absolute top-4 right-4 sm:static sm:pl-2 flex items-center gap-2">
       {children}
 
-      {(onEdit || onDelete) && (
+      {(onEdit && onDelete) ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -172,6 +195,23 @@ function Actions({ onEdit, onDelete, children }: ActionsProps) {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
+      ) : (
+        <>
+          {customActions}
+          { onDelete && (
+            <Fab
+              variant="ghost"
+              palette="primary"
+              size="icon"
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                onDelete(e);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Fab>
+          )}
+        </>
       )}
     </div>
   );

@@ -2,6 +2,7 @@ import {
   Target,
   CheckCircle2,
   Circle,
+  Calendar,
 } from 'lucide-react';
 
 import { Action } from '@/api/model';
@@ -11,23 +12,27 @@ import { Badge } from '@/components/ui/badge';
 
 interface ActionCardProps {
   action: Action;
-  onClick: (action: Action) => void;
-  onEdit: (action: Action) => void;
-  onDelete: (action: Action) => void;
+  onClick?: (action: Action) => void;
+  onEdit?: (action: Action) => void;
+  onDelete?: (action: Action) => void;
 }
 
 export function ActionCard({
   action,
   onClick,
   onEdit,
-  onDelete
+  onDelete,
 }: ActionCardProps) {
   const isCompleted = !!action.completed_date;
   const application = action.application;
   const opportunity = application?.opportunity;
+  const scheduled_event = action.scheduled_event;
 
   return (
-    <EntityCard onClick={() => onClick(action)}>
+    <EntityCard
+      onClick={onClick && (() => onClick(action))}
+      className={onClick ? "cursor-pointer" : "cursor-default"}
+    >
       <EntityCard.Identity>
         <IconBox
           palette={isCompleted ? 'green' : 'blue'}
@@ -48,6 +53,16 @@ export function ActionCard({
       </EntityCard.Identity>
 
       <EntityCard.Meta>
+        <div className={`${scheduled_event ? ("flex items-center gap-2") : ("hidden")} sm:mx-auto`}>
+          {scheduled_event && (
+            <>
+              <Calendar className="w-3 h-3" />
+              <span className="truncate max-w-[150px]">
+                {scheduled_event.title}
+              </span>
+            </>
+          )}
+        </div>
         <Badge
           variant={isCompleted ? "subtle" : "solid"}
           palette={isCompleted ? "green" : "blue"}
@@ -67,8 +82,8 @@ export function ActionCard({
       </EntityCard.Meta>
 
       <EntityCard.Actions
-        onEdit={() => onEdit(action)}
-        onDelete={() => onDelete(action)}
+        onEdit={onEdit && (() => onEdit(action))}
+        onDelete={onDelete && (() => onDelete(action))}
       />
     </EntityCard>
   );

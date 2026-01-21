@@ -5,16 +5,14 @@ import {
   Building2,
 } from "lucide-react";
 import { IconBox } from "@/components/ui/icon-box";
-import {
-  Product,
-} from "@/api/model";
+import { Product } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
 
 interface ProductCardProps {
   product: Product;
-  onClick: (product: Product) => void;
-  onEdit: (product: Product) => void;
-  onDelete: (product: Product) => void;
+  onClick?: (product: Product) => void;
+  onEdit?: (product: Product) => void;
+  onDelete?: (product: Product) => void;
 }
 
 export function ProductCard({
@@ -26,7 +24,10 @@ export function ProductCard({
   const company = product.company;
 
   return (
-    <EntityCard onClick={() => onClick(product)}>
+    <EntityCard
+      onClick={onClick && (() => onClick(product))}
+      className={onClick ? "cursor-pointer" : "cursor-default"}
+    >
 
       {/* IDENTITY ZONE */}
       <EntityCard.Identity>
@@ -53,19 +54,19 @@ export function ProductCard({
       {/* META ZONE */}
       <EntityCard.Meta>
         {/* Technologies Stack */}
-        {product.technologies_used ? (
-          <div className="flex items-center gap-2 truncate sm:mx-auto max-w-[200px]">
-            <Code2 className="h-3.5 w-3.5 text-gray-500 shrink-0" />
-            <span className="truncate text-xs text-gray-500">
-              {product.technologies_used}
-            </span>
-          </div>
-        ) : (
-          <div className="hidden sm:block sm:mx-auto" />
-        )}
+        <div className={`${product.technologies_used ? "flex items-center gap-2" : "hidden sm:block "} sm:mx-auto`}>
+          {product.technologies_used && (
+            <>
+              <Code2 className="h-3.5 w-3.5 text-gray-500 shrink-0" />
+              <span className="truncate max-w-[150px]">
+                {product.technologies_used}
+              </span>
+            </>
+          )}
+        </div>
 
         {/* Custom Action: Website Link */}
-        {product.website && (
+        {(onClick && product.website) && (
           <div
             className="hidden sm:flex items-center gap-1.5 text-xs text-blue-400/80 hover:text-blue-400 hover:underline px-2 py-1 rounded cursor-pointer z-10"
             onClick={(e) => {
@@ -81,10 +82,9 @@ export function ProductCard({
 
       {/* ACTIONS ZONE */}
       <EntityCard.Actions
-        onEdit={() => onEdit(product)}
-        onDelete={() => onDelete(product)}
+        onEdit={onEdit && (() => onEdit(product))}
+        onDelete={onDelete && (() => onDelete(product))}
       />
-
     </EntityCard>
   );
 }

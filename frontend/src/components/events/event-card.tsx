@@ -19,12 +19,17 @@ import { getEventStatusPalette } from '@/lib/semantic-ui';
 
 interface EventCardProps {
   event: ScheduledEvent;
-  onClick: (event: ScheduledEvent) => void;
-  onEdit: (event: ScheduledEvent) => void;
-  onDelete: (event: ScheduledEvent) => void;
+  onClick?: (event: ScheduledEvent) => void;
+  onEdit?: (event: ScheduledEvent) => void;
+  onDelete?: (event: ScheduledEvent) => void;
 }
 
-export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) {
+export function EventCard({
+  event,
+  onClick,
+  onEdit,
+  onDelete
+}: EventCardProps) {
   const date = new Date(event.scheduled_date);
 
   const getIconForMethod = (method?: string) => {
@@ -38,8 +43,9 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
 
   return (
     <EntityCard
-      onClick={() => onClick(event)}
+      onClick={onClick && (() => onClick(event))}
       hoverPalette="blue"
+      className={onClick ? "cursor-pointer" : "cursor-default"}
     >
 
       {/* IDENTITY: Date Box as Icon + Title */}
@@ -59,7 +65,9 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
           hoverPalette="blue"
           subtitle={
             <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span className="truncate">{event.event_type || "Événement"}</span>
+              {event.event_type && (
+                <span className="truncate">{event.event_type}</span>
+              )}
               {event.communication_method && (
                  <>
                    <span>•</span>
@@ -93,12 +101,11 @@ export function EventCard({ event, onClick, onEdit, onDelete }: EventCardProps) 
         </div>
       </EntityCard.Meta>
 
-      {/* ACTIONS */}
+      {/* ACTIONS ZONE */}
       <EntityCard.Actions
-        onEdit={() => onEdit(event)}
-        onDelete={() => onDelete(event)}
+        onEdit={onEdit && (() => onEdit(event))}
+        onDelete={onDelete && (() => onDelete(event))}
       />
-
     </EntityCard>
   );
 }

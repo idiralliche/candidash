@@ -15,9 +15,9 @@ import { getApplicationStatusPalette } from '@/lib/semantic-ui';
 
 interface ApplicationCardProps {
   application: Application;
-  onClick: (app: Application) => void;
-  onEdit: (app: Application) => void;
-  onDelete: (app: Application) => void;
+  onClick?: (app: Application) => void;
+  onEdit?: (app: Application) => void;
+  onDelete?: (app: Application) => void;
 }
 
 export function ApplicationCard({
@@ -30,7 +30,10 @@ export function ApplicationCard({
   const opportunity = application.opportunity;
 
   return (
-    <EntityCard onClick={() => onClick(application)}>
+    <EntityCard
+      onClick={onClick && (() => onClick(application))}
+      className={onClick ? "cursor-pointer" : "cursor-default"}
+    >
       <EntityCard.Identity>
         <IconBox palette="orange" groupHover>
           <Layers className="h-5 w-5" />
@@ -64,9 +67,10 @@ export function ApplicationCard({
         )}
       </EntityCard.Meta>
 
+      {/* ACTIONS ZONE */}
       <EntityCard.Actions
-        onEdit={() => onEdit(application)}
-        onDelete={() => onDelete(application)}
+        onEdit={onEdit && (() => onEdit(application))}
+        onDelete={onDelete && (() => onDelete(application))}
       />
     </EntityCard>
   );

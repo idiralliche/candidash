@@ -15,9 +15,9 @@ import { getApplicationTypePalette } from '@/lib/semantic-ui';
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
-  onClick: (opportunity: Opportunity) => void;
-  onEdit: (opportunity: Opportunity) => void;
-  onDelete: (opportunity: Opportunity) => void;
+  onClick?: (opportunity: Opportunity) => void;
+  onEdit?: (opportunity: Opportunity) => void;
+  onDelete?: (opportunity: Opportunity) => void;
 }
 
 export function OpportunityCard({
@@ -29,7 +29,10 @@ export function OpportunityCard({
   const company = opportunity.company;
 
   return (
-    <EntityCard onClick={() => onClick(opportunity)}>
+    <EntityCard
+      onClick={onClick && (() => onClick(opportunity))}
+      className={onClick ? "cursor-pointer" : "cursor-default"}
+    >
 
       {/* IDENTITY ZONE */}
       <EntityCard.Identity className="sm:w-[45%]">
@@ -78,8 +81,8 @@ export function OpportunityCard({
 
       {/* ACTIONS ZONE */}
       <EntityCard.Actions
-        onEdit={() => onEdit(opportunity)}
-        onDelete={() => onDelete(opportunity)}
+        onEdit={onEdit && (() => onEdit(opportunity))}
+        onDelete={onDelete && (() => onDelete(opportunity))}
       />
 
     </EntityCard>

@@ -9,6 +9,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Loader2 } from 'lucide-react';
+import { ReactNode } from 'react';
 
 interface EntityDeleteDialogProps {
   /**
@@ -39,6 +40,11 @@ interface EntityDeleteDialogProps {
    * Optional error message to display
    */
   error?: string;
+  /**
+   * Optional custom description to override default warning message.
+   * Useful for cascading deletion warnings.
+   */
+  description?: ReactNode;
 }
 
 const genderMap: Record<string, { article: string; suffix: string; demonstrative: string }> = {
@@ -52,18 +58,6 @@ const genderMap: Record<string, { article: string; suffix: string; demonstrative
 /**
  * Generic reusable delete confirmation dialog.
  * Replaces duplicated AlertDialog patterns across pages.
- *
- * @example
- * ```
- * <EntityDeleteDialog
- *   open={!!companyToDelete}
- *   onOpenChange={(open) => !open && setCompanyToDelete(null)}
- *   entityType="entreprise"
- *   entityLabel={companyToDelete?.name || ''}
- *   onConfirm={handleDelete}
- *   isDeleting={isDeleting}
- * />
- * ```
  */
 export function EntityDeleteDialog({
   open,
@@ -73,19 +67,33 @@ export function EntityDeleteDialog({
   onConfirm,
   isDeleting,
   error,
+  description,
 }: EntityDeleteDialogProps) {
   const { article, suffix, demonstrative } = genderMap[entityType] || { article: "Le ", suffix: "" };
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <AlertDialogContent className="bg-surface-base border-white-light text-white">
         <AlertDialogHeader>
-          <AlertDialogTitle>Supprimer {demonstrative} {entityType} ?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Supprimer {demonstrative} {entityType} ?
+          </AlertDialogTitle>
           <AlertDialogDescription className="text-gray-400">
-            Cette action est irréversible. {article}{entityType}{" "}
-            <span className="font-bold text-white">{entityLabel}</span>{" "}
-            sera supprimé{suffix} définitivement.
+            {description ? (
+              description
+            ) : (
+              <>
+                Cette action est irréversible. {article}{entityType}{" "}
+                <span className="font-bold text-white">{entityLabel}</span>{" "}
+                sera supprimé{suffix} définitivement.
+              </>
+            )}
           </AlertDialogDescription>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-sm mt-2">{error}</p>
+          )}
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>
