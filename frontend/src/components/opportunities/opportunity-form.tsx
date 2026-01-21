@@ -1,36 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {
-  Loader2,
-  Briefcase,
-  Tag,
-  Globe,
-  MapPin,
-  Wifi,
-  Euro,
-  Info,
-  Link as LinkIcon
-} from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { SmartFormField } from '@/components/ui/form-field-wrapper';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 import { useCreateOpportunity } from '@/hooks/opportunities/use-create-opportunity';
 import { useUpdateOpportunity } from '@/hooks/opportunities/use-update-opportunity';
-import { useCompanies } from '@/hooks/companies/use-companies';
 import { Opportunity } from '@/api/model';
+import { OpportunityFormFields} from '@/components/opportunities/opportunity-form-fields';
 
 const opportunitySchema = z.object({
   // Required
@@ -88,8 +68,11 @@ interface OpportunityFormProps {
   initialData?: Opportunity;
 }
 
-export function OpportunityForm({ onSuccess, className, initialData }: OpportunityFormProps) {
-  const { companies, isLoading: isLoadingCompanies } = useCompanies();
+export function OpportunityForm({
+  onSuccess,
+  className,
+  initialData
+}: OpportunityFormProps) {
   const { mutate: createOpportunity, isPending: isCreating, error } = useCreateOpportunity();
   const { mutate: updateOpportunity, isPending: isUpdating } = useUpdateOpportunity();
 
@@ -190,265 +173,12 @@ export function OpportunityForm({ onSuccess, className, initialData }: Opportuni
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}
+      >
 
-        {/* --- SECTION 1: ESSENTIALS --- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">Informations Principales</h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SmartFormField
-              control={form.control}
-              name="job_title"
-              label="Titre du poste *"
-              component={Input}
-              placeholder="Ex: Senior Backend Developer"
-              leadingIcon={Briefcase}
-              maxLength={255}
-            />
-
-            <SmartFormField
-              control={form.control}
-              name="company_id"
-              label="Entreprise"
-            >
-              {(field) => (
-                <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={isLoadingCompanies}
-                >
-                  <SelectTrigger
-                      className="w-full"
-                      onClear={field.value ? () => field.onChange("") : undefined}
-                  >
-                    <SelectValue placeholder="Sélectionner (Optionnel)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {companies?.map(c => (
-                      <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </SmartFormField>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SmartFormField
-              control={form.control}
-              name="position_type"
-              label="Type de poste"
-              component={Input}
-              placeholder="Ex: Backend, DevOps..."
-              leadingIcon={Tag}
-              maxLength={100}
-            />
-
-            <SmartFormField
-              control={form.control}
-              name="application_type"
-              label="Type de candidature *"
-            >
-              {(field) => (
-                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="job_posting">Offre d'emploi</SelectItem>
-                    <SelectItem value="spontaneous">Spontanée</SelectItem>
-                    <SelectItem value="reached_out">Contact Recruteur</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            </SmartFormField>
-          </div>
-
-          <SmartFormField
-            control={form.control}
-            name="source"
-            label="Source"
-            component={Input}
-            placeholder="Ex: LinkedIn, Malt, Chasseur de tête..."
-            leadingIcon={Globe}
-            maxLength={100}
-          />
-        </div>
-
-        {/* --- SECTION 2: CONTRACT & LOCATION --- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">Contrat & Localisation</h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SmartFormField
-              control={form.control}
-              name="contract_type"
-              label="Type de Contrat"
-            >
-              {(field) => (
-                <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    value={field.value}
-                >
-                  <SelectTrigger
-                      className="w-full"
-                      onClear={field.value ? () => field.onChange(null) : undefined}
-                  >
-                    <SelectValue placeholder="Non spécifié" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="permanent">CDI</SelectItem>
-                    <SelectItem value="fixed_term">CDD</SelectItem>
-                    <SelectItem value="freelance">Freelance</SelectItem>
-                    <SelectItem value="contractor">Portage</SelectItem>
-                    <SelectItem value="internship">Stage</SelectItem>
-                    <SelectItem value="apprenticeship">Alternance</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            </SmartFormField>
-
-            <SmartFormField
-              control={form.control}
-              name="location"
-              label="Ville / Pays"
-              component={Input}
-              placeholder="Ex: Paris"
-              leadingIcon={MapPin}
-              maxLength={500}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SmartFormField
-              control={form.control}
-              name="remote_policy"
-              label="Politique Télétravail"
-            >
-              {(field) => (
-                <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    value={field.value}
-                >
-                  <SelectTrigger
-                      className="w-full"
-                      onClear={field.value ? () => field.onChange(null) : undefined}
-                  >
-                    <SelectValue placeholder="Non spécifié" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="on_site">Sur site (100%)</SelectItem>
-                    <SelectItem value="full_remote">Full Remote</SelectItem>
-                    <SelectItem value="hybrid">Hybride</SelectItem>
-                    <SelectItem value="flexible">Flexible</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            </SmartFormField>
-
-            <SmartFormField
-              control={form.control}
-              name="remote_details"
-              label="Détails Télétravail"
-              component={Input}
-              placeholder="Ex: 2 jours/semaine, obligatoire le mardi..."
-              leadingIcon={Wifi}
-              maxLength={5000}
-            />
-          </div>
-        </div>
-
-        {/* --- SECTION 3: SALARY --- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">Rémunération</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <SmartFormField
-              control={form.control}
-              name="salary_min"
-              label="Min (€)"
-              component={Input}
-              type="number"
-              placeholder="40000"
-              leadingIcon={Euro}
-            />
-            <SmartFormField
-              control={form.control}
-              name="salary_max"
-              label="Max (€)"
-              component={Input}
-              type="number"
-              placeholder="55000"
-              leadingIcon={Euro}
-            />
-          </div>
-          <SmartFormField
-            control={form.control}
-            name="salary_info"
-            label="Infos Rémunération"
-            component={Input}
-            placeholder="Ex: + BSPCE, primes, participation..."
-            leadingIcon={Info}
-            maxLength={2000}
-          />
-        </div>
-
-        {/* --- SECTION 4: TECH & SKILLS --- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">Compétences</h3>
-          <SmartFormField
-            control={form.control}
-            name="required_skills"
-            label="Compétences requises"
-            component={Textarea}
-            placeholder="Ex: Anglais courant, Gestion de projet..."
-            maxLength={5000}
-            showCharCount
-          />
-          <SmartFormField
-            control={form.control}
-            name="technologies"
-            label="Technologies"
-            component={Textarea}
-            placeholder="Ex: Python, React, AWS, Docker..."
-            maxLength={5000}
-            showCharCount
-          />
-        </div>
-
-        {/* --- SECTION 5: DETAILS --- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">Détails</h3>
-          <SmartFormField
-            control={form.control}
-            name="job_posting_url"
-            label="Lien de l'offre"
-            component={Input}
-            placeholder="https://..."
-            leadingIcon={LinkIcon}
-            maxLength={255}
-          />
-          <SmartFormField
-            control={form.control}
-            name="job_description"
-            label="Description complète"
-            component={Textarea}
-            placeholder="Collez la description ici..."
-            maxLength={5000}
-            showCharCount
-          />
-          <SmartFormField
-            control={form.control}
-            name="recruitment_process"
-            label="Processus de recrutement"
-            component={Textarea}
-            placeholder="Ex: 1. RH, 2. Tech, 3. Fit..."
-            maxLength={10000}
-            showCharCount
-          />
-        </div>
+        <OpportunityFormFields control={form.control} />
 
         {error && (
           <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center">

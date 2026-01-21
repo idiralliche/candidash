@@ -2,33 +2,18 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {
-  Loader2,
-  Banknote,
-  FileText,
-  Mail
-} from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { FormSwitch } from '@/components/ui/form-switch';
-import { SmartFormField } from '@/components/ui/form-field-wrapper';
-import { DatePicker } from '@/components/ui/date-picker';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 import { useCreateApplication } from '@/hooks/applications/use-create-application';
 import { useUpdateApplication } from '@/hooks/applications/use-update-application';
-import { useOpportunities } from '@/hooks/opportunities/use-opportunities';
-import { useDocuments } from '@/hooks/documents/use-documents';
-import { Application, ApplicationStatus } from '@/api/model';
-import { LABELS_APPLICATION_STATUS, getLabel } from '@/lib/dictionaries';
+import {
+  Application,
+  ApplicationStatus,
+} from '@/api/model';
+import { ApplicationFormFields } from '@/components/applications/application-form-fields';
 
 // Zod Schema
 const applicationSchema = z.object({
@@ -49,14 +34,23 @@ interface ApplicationFormProps {
   initialData?: Application;
 }
 
-export function ApplicationForm({ onSuccess, className, initialData }: ApplicationFormProps) {
+export function ApplicationForm({
+  onSuccess,
+  className,
+  initialData,
+}: ApplicationFormProps) {
   // Hooks
-  const { mutate: createApplication, isPending: isCreating, error: createError } = useCreateApplication();
-  const { mutate: updateApplication, isPending: isUpdating, error: updateError } = useUpdateApplication();
+  const {
+    mutate: createApplication,
+    isPending: isCreating,
+    error: createError
+  } = useCreateApplication();
 
-  // Data Loaders
-  const { opportunities, isLoading: isLoadingOpportunities } = useOpportunities();
-  const { documents, isLoading: isLoadingDocuments } = useDocuments();
+  const {
+    mutate: updateApplication,
+    isPending: isUpdating,
+    error: updateError
+  } = useUpdateApplication();
 
   const isEditing = !!initialData;
   const isPending = isCreating || isUpdating;
@@ -128,168 +122,16 @@ export function ApplicationForm({ onSuccess, className, initialData }: Applicati
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}
+      >
 
-        {/* --- CONTEXT (Opportunity) --- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">Contexte</h3>
-
-          <SmartFormField
-            control={form.control}
-            name="opportunity_id"
-            label="Opportunité *"
-            description="Le poste auquel vous postulez."
-          >
-            {(field) => (
-              <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingOpportunities}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une opportunité" />
-                </SelectTrigger>
-                <SelectContent>
-                  {opportunities?.map(op => (
-                    <SelectItem key={op.id} value={op.id.toString()}>
-                      {op.job_title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </SmartFormField>
-        </div>
-
-        {/* --- DETAILS --- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">Détails</h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             {/* Date Picker */}
-            <SmartFormField
-              control={form.control}
-              name="application_date"
-              label="Date de candidature *"
-            >
-              {(field) => (
-                <DatePicker
-                  date={field.value}
-                  onSelect={field.onChange}
-                  disabled={false}
-                />
-              )}
-            </SmartFormField>
-
-            {/* Status Select */}
-            <SmartFormField
-              control={form.control}
-              name="status"
-              label="Statut *"
-            >
-              {(field) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Statut" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(ApplicationStatus).map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {getLabel(LABELS_APPLICATION_STATUS, status)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </SmartFormField>
-          </div>
-
-          <SmartFormField
-            control={form.control}
-            name="salary_expectation"
-            label="Prétentions Salariales (€)"
-            component={Input}
-            type="number"
-            placeholder="Ex: 45000"
-            leadingIcon={Banknote}
-          />
-        </div>
-
-        {/* --- DOCUMENTS --- */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary">Documents</h3>
-
-          {/* Resume Select with Clear Button */}
-          <SmartFormField
-            control={form.control}
-            name="resume_used_id"
-            label="CV utilisé"
-          >
-            {(field) => (
-              <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingDocuments}>
-                <SelectTrigger
-                  className="w-full"
-                  onClear={field.value ? () => field.onChange("") : undefined}
-                >
-                   <div className="flex items-center gap-2 truncate">
-                      <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                      <SelectValue placeholder="Sélectionner un CV" />
-                   </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {documents?.map(doc => (
-                    <SelectItem key={doc.id} value={doc.id.toString()}>
-                      {doc.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </SmartFormField>
-
-          {/* Cover Letter Select with Clear Button */}
-          <SmartFormField
-            control={form.control}
-            name="cover_letter_id"
-            label="Lettre de motivation"
-          >
-            {(field) => (
-              <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingDocuments}>
-                <SelectTrigger
-                  className="w-full"
-                  onClear={field.value ? () => field.onChange("") : undefined}
-                >
-                    <div className="flex items-center gap-2 truncate">
-                      <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                      <SelectValue placeholder="Sélectionner une lettre" />
-                   </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {documents?.map(doc => (
-                    <SelectItem key={doc.id} value={doc.id.toString()}>
-                      {doc.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </SmartFormField>
-        </div>
-
-        {/* --- OPTIONS --- */}
-        {isEditing && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-primary">Archiver</h3>
-            <SmartFormField
-              control={form.control}
-              name="is_archived"
-            >
-              {(field) => (
-                <FormSwitch
-                  {...field}
-                  label="Archiver cette candidature"
-                  description="Masque la candidature des listes par défaut."
-                />
-              )}
-            </SmartFormField>
-          </div>
-        )}
+        <ApplicationFormFields
+          control={form.control}
+          hideOpportunitySelect={false}
+          hideArchiveSwitch={!isEditing}
+        />
 
         {/* ERROR MESSAGE */}
         {error && (
