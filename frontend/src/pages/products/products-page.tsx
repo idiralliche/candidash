@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { Plus, Package } from 'lucide-react';
 
 import { useProducts } from '@/hooks/products/use-products';
-import { useDeleteProduct } from '@/hooks/products/use-delete-products';
+import { useDeleteProduct } from '@/hooks/products/use-delete-product';
 import { Product } from '@/api/model';
 
 import { Fab } from '@/components/ui/fab';

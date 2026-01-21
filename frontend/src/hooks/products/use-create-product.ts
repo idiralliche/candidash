@@ -1,5 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useCreateProductApiV1ProductsPost, getGetProductsApiV1ProductsGetQueryKey } from '@/api/products/products';
+import {
+  useCreateProductApiV1ProductsPost,
+  getGetProductsApiV1ProductsGetQueryKey
+} from '@/api/products/products';
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
