@@ -144,20 +144,22 @@ interface ActionsProps {
   onEdit?: (e: React.MouseEvent) => void;
   onDelete?: (e: React.MouseEvent) => void;
   children?: ReactNode;
-  customActions?: ReactNode;
 }
 
 function Actions({
   onEdit,
   onDelete,
   children,
-  customActions,
 }: ActionsProps) {
+  const showDropdown = !!onEdit && !!onDelete;
+  const showSingleEdit = !!onEdit && !onDelete;
+  const showSingleDelete = !!onDelete && !onEdit;
+
   return (
     <div className="absolute top-4 right-4 sm:static sm:pl-2 flex items-center gap-2">
       {children}
 
-      {(onEdit && onDelete) ? (
+      {showDropdown && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -195,23 +197,34 @@ function Actions({
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-      ) : (
-        <>
-          {customActions}
-          { onDelete && (
-            <Fab
-              variant="ghost"
-              palette="primary"
-              size="icon"
-              onClick={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                onDelete(e);
-              }}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Fab>
-          )}
-        </>
+      )}
+
+      {showSingleEdit && (
+        <Button
+          variant="ghost"
+          palette="blue"
+          size="icon"
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            onEdit!(e);
+          }}
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+      )}
+
+      {showSingleDelete && (
+        <Fab
+          variant="ghost"
+          palette="primary"
+          size="icon"
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            onDelete(e);
+          }}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Fab>
       )}
     </div>
   );
