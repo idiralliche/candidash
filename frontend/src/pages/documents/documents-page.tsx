@@ -107,9 +107,9 @@ export function DocumentsPage() {
           />
         ) : (
           <div className="flex flex-col gap-3">
-            {sortedDocuments.map((doc) => (
+            {sortedDocuments.map((document) => (
                 <DocumentCard
-                  document={doc}
+                  document={document}
                   onClick={setSelectedDocument}
                   onEdit={setEditingDocument}
                   onDelete={setDocumentToDelete}

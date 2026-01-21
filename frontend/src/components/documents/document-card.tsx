@@ -5,8 +5,6 @@ import {
   Download,
   Calendar,
   Loader2,
-  FileCheck,
-  Mail,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -29,9 +27,10 @@ interface DocumentCardProps {
   onClick?: (document: Document) => void;
   onEdit?: (document: Document) => void;
   onDelete?: (document: Document) => void;
-  isResume?: boolean;
-  isCoverLetter?: boolean;
-  customActions?: ReactNode;
+  variant?: "default" | "compact";
+  isHighlighted?: boolean;
+  badges?: ReactNode;
+  extraActions?: ReactNode;
 }
 
 export function DocumentCard({
@@ -39,9 +38,10 @@ export function DocumentCard({
   onClick,
   onEdit,
   onDelete,
-  isResume = false,
-  isCoverLetter = false,
-  customActions,
+  variant ="default",
+  isHighlighted = false,
+  badges,
+  extraActions,
 }: DocumentCardProps) {
   const { downloadDocument, isDownloading } = useDownloadDocument();
   const palette = getFormatPalette(document.format);
@@ -56,12 +56,12 @@ export function DocumentCard({
     downloadDocument(document);
   };
 
-  const isLinked = isResume || isCoverLetter;
+  const isCompact = variant === 'compact';
 
   return (
     <EntityCard
       onClick={onClick && (() => onClick(document))}
-      hoverPalette={isLinked ? "blue" : "primary"}
+      hoverPalette={isHighlighted ? "blue" : "primary"}
       className={onClick ? "cursor-pointer" : "cursor-default"}
     >
 
@@ -85,23 +85,9 @@ export function DocumentCard({
       </EntityCard.Identity>
 
       {/* META ZONE */}
-      <EntityCard.Meta  className="sm:justify-between">
+      <EntityCard.Meta className="sm:justify-between">
         <div className="hidden sm:flex items-center gap-2">
-          {isLinked && (
-            <Badge variant="subtle" palette="blue">
-              {isResume ? (
-                <>
-                  <FileCheck className="mr-2 h-4 w-4" />
-                  CV
-                </>
-              ) : (
-                <>
-                  <Mail className="mr-2 h-4 w-4" />
-                  LM
-                </>
-              )}
-            </Badge>
-          )}
+          {badges}
         </div>
         <div className="flex items-center gap-2">
           <Badge
@@ -112,7 +98,7 @@ export function DocumentCard({
             {getLabel(LABELS_DOCUMENT_FORMAT, document.format)}
           </Badge>
         </div>
-        {onEdit && (
+        {!isCompact && (
           <div className="hidden sm:flex items-center gap-2 text-xs">
             <Calendar className="h-3.5 w-3.5 text-gray-500" />
             <span>
@@ -126,10 +112,9 @@ export function DocumentCard({
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(document))}
         onDelete={onDelete && (() => onDelete(document))}
-        customActions={onDelete && (customActions)}
       >
         {/* Quick Download Button */}
-        {onEdit && (
+        {!isCompact && (
           <Button
             variant="ghost"
             palette="gray"
@@ -148,6 +133,7 @@ export function DocumentCard({
             )}
           </Button>
         )}
+        {extraActions}
       </EntityCard.Actions>
 
     </EntityCard>
