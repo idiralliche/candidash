@@ -16,6 +16,7 @@ import { documentsRoute } from '@/routes/documents';
 import { productsRoute } from '@/routes/products';
 import { applicationsRoute } from '@/routes/applications';
 import { actionsRoute } from '@/routes/actions';
+import { applicationWizardRoute } from '@/routes/application-wizard';
 
 // Create Route Tree
 const routeTree = rootRoute.addChildren([
@@ -32,6 +33,7 @@ const routeTree = rootRoute.addChildren([
     documentsRoute,
     productsRoute,
     applicationsRoute,
+    applicationWizardRoute,
     actionsRoute,
   ]),
 ]);
