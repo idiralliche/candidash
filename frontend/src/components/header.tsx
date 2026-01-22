@@ -54,38 +54,70 @@ export function Header() {
         {/* --- DESKTOP NAVIGATION LINKS --- */}
         {isAuthenticated && (
           <nav className="hidden md:flex items-center gap-6">
-             <Link to="/opportunities" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
-               <Briefcase className="h-4 w-4" />
-               Opportunités
-             </Link>
-             <Link to="/applications" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
-               <Layers className="h-4 w-4" />
-               Candidatures
-             </Link>
-             <Link to="/companies" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
-               <Building2 className="h-4 w-4" />
-               Entreprises
-             </Link>
-             <Link to="/scheduled-events" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
-               <CalendarClock className="h-4 w-4" />
-               Agenda
-             </Link>
-             <Link to="/actions" className={navLinkClass} activeProps={{ className: '!text-white font-bold' }}>
+            <Link
+              to="/opportunities"
+              className={navLinkClass}
+              activeProps={{ className: "!text-white font-bold" }}
+            >
+              <Briefcase className="h-4 w-4" />
+              Opportunités
+            </Link>
+            <Link
+              to="/applications"
+              className={navLinkClass}
+              activeProps={{ className: "!text-white font-bold" }}
+            >
+              <Layers className="h-4 w-4" />
+              Candidatures
+            </Link>
+            <Link
+              to="/companies"
+              className={navLinkClass}
+              activeProps={{ className: "!text-white font-bold" }}
+            >
+              <Building2 className="h-4 w-4" />
+              Entreprises
+            </Link>
+            <Link
+              to="/contacts"
+              className={navLinkClass}
+              activeProps={{ className: "!text-white font-bold" }}
+            >
+              <Contact className="h-4 w-4" />
+              Contacts
+            </Link>
+            <Link
+              to="/documents"
+              className={navLinkClass}
+              activeProps={{ className: "!text-white font-bold" }}
+            >
+              <Files className="h-4 w-4" />
+              Documents
+            </Link>
+            <Link
+              to="/products"
+              className={navLinkClass}
+              activeProps={{ className: "!text-white font-bold" }}
+            >
+              <Package className="h-4 w-4" />
+              Produits
+            </Link>
+            <Link
+              to="/scheduled-events"
+              className={navLinkClass}
+              activeProps={{ className: "!text-white font-bold" }}
+            >
+              <CalendarClock className="h-4 w-4" />
+              Agenda
+            </Link>
+            <Link
+              to="/actions"
+              className={navLinkClass}
+              activeProps={{ className: '!text-white font-bold' }}
+            >
               <CheckCheck className="h-4 w-4" />
               Actions
             </Link>
-             <Link to="/contacts" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
-               <Contact className="h-4 w-4" />
-               Contacts
-             </Link>
-             <Link to="/documents" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
-               <Files className="h-4 w-4" />
-               Documents
-             </Link>
-             <Link to="/products" className={navLinkClass} activeProps={{ className: "!text-white font-bold" }}>
-               <Package className="h-4 w-4" />
-               Produits
-             </Link>
           </nav>
         )}
       </div>
@@ -95,31 +127,49 @@ export function Header() {
         {isAuthenticated ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-white-light bg-white-subtle  hover:bg-white-light ">
+              <Button
+                variant="ghost"
+                className="relative h-10 w-10 rounded-full border border-white-light bg-white-subtle  hover:bg-white-light"
+              >
                 <User className="h-5 w-5 text-white" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-surface-modal text-white border-white-light" align="end">
+            <DropdownMenuContent
+              className="w-56 bg-surface-modal text-white border-white-light"
+              align="end"
+            >
 
-              <DropdownMenuLabel className="truncate max-w-[200px]" title={`${user?.first_name} ${user?.last_name}`}>
+              <DropdownMenuLabel
+                className="truncate max-w-[200px]"
+                title={`${user?.first_name} ${user?.last_name}`}
+              >
                 {user?.first_name} {user?.last_name}
               </DropdownMenuLabel>
 
               <DropdownMenuSeparator className="bg-white-light " />
 
-              <DropdownMenuItem className="cursor-pointer focus:bg-white-light  focus:text-white" onClick={() => navigate({ to: '/dashboard' })}>
+              <DropdownMenuItem
+                className="cursor-pointer focus:bg-white-light  focus:text-white"
+                onClick={() => navigate({ to: '/dashboard' })}
+              >
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 <span>Tableau de bord</span>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="cursor-pointer focus:bg-white-light  focus:text-white" onClick={() => navigate({ to: '/account' })}>
+              <DropdownMenuItem
+                className="cursor-pointer focus:bg-white-light  focus:text-white"
+                onClick={() => navigate({ to: '/account' })}
+              >
                 <User className="mr-2 h-4 w-4" />
                 <span>Mon compte</span>
               </DropdownMenuItem>
 
               <DropdownMenuSeparator className="bg-white-light " />
 
-              <DropdownMenuItem className="cursor-pointer text-red-500 focus:bg-red-500/10 focus:text-red-500" onClick={handleLogout}>
+              <DropdownMenuItem
+                className="cursor-pointer text-red-500 focus:bg-red-500/10 focus:text-red-500"
+                onClick={handleLogout}
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Se déconnecter</span>
               </DropdownMenuItem>
@@ -127,10 +177,16 @@ export function Header() {
           </DropdownMenu>
         ) : (
           <>
-            <Link to="/login" className="rounded-xl border border-primary px-5 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10">
+            <Link
+              to="/login"
+              className="rounded-xl border border-primary px-5 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10"
+            >
               Connexion
             </Link>
-            <Link to="/register" className="rounded-xl bg-primary px-5 py-2 text-sm font-bold text-white shadow-lg transition-all hover:bg-primary-hover">
+            <Link
+              to="/register"
+              className="rounded-xl bg-primary px-5 py-2 text-sm font-bold text-white shadow-lg transition-all hover:bg-primary-hover"
+            >
               Créer un compte
             </Link>
           </>
@@ -138,7 +194,9 @@ export function Header() {
       </nav>
 
       {/* --- MOBILE MENU BUTTON --- */}
-      <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-white-light text-white hover:bg-white-subtle  md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+      <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-white-light text-white hover:bg-white-subtle  md:hidden"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      >
         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
@@ -152,7 +210,9 @@ export function Header() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                        <User size={16} />
                     </div>
-                    <span className="text-white font-medium">{user?.first_name} {user?.last_name}</span>
+                    <span className="text-white font-medium">
+                      {user?.first_name} {user?.last_name}
+                    </span>
                   </div>
 
                   {/* Added Mobile Links */}
@@ -184,24 +244,6 @@ export function Header() {
                   </Link>
 
                   <Link
-                    to="/scheduled-events"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <CalendarClock size={18} />
-                    Agenda
-                  </Link>
-
-                  <Link
-                    to="/actions"
-                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <CheckCheck size={18} />
-                    Actions
-                  </Link>
-
-                  <Link
                     to="/contacts"
                     className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
                     onClick={() => setIsMenuOpen(false)}
@@ -226,6 +268,24 @@ export function Header() {
                   >
                     <Package size={18} />
                     Produits
+                  </Link>
+
+                  <Link
+                    to="/scheduled-events"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white-subtle  hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <CalendarClock size={18} />
+                    Agenda
+                  </Link>
+
+                  <Link
+                    to="/actions"
+                    className="flex items-center gap-2 rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <CheckCheck size={18} />
+                    Actions
                   </Link>
 
                   <Link
