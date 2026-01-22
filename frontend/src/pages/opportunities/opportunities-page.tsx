@@ -1,6 +1,14 @@
-import { useState, useMemo } from 'react';
+import {
+  useState,
+  useMemo,
+} from 'react';
+import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner';
-import { Plus, Briefcase } from 'lucide-react';
+import {
+  Plus,
+  Briefcase,
+  Wand2,
+} from 'lucide-react';
 
 import { useOpportunities } from '@/hooks/opportunities/use-opportunities';
 import { useDeleteOpportunity } from '@/hooks/opportunities/use-delete-opportunity';
@@ -9,6 +17,7 @@ import { Opportunity } from '@/api/model';
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EmptyState } from '@/components/shared/empty-state';
+import { Button } from '@/components/ui/button.tsx';
 
 // Layout Components
 import { PageLayout } from '@/components/layouts/page-layout';
@@ -56,22 +65,34 @@ export function OpportunitiesPage() {
     }
   };
 
+  const navigate = useNavigate();
+
   return (
     <PageLayout>
       <PageHeader
         title="Opportunités"
-        action={
-          <FormDialog
-            title="Nouvelle Opportunité"
-            description="Ajoutez une nouvelle opportunité à votre pipeline."
-            trigger={
-              <Fab>
-                <Plus className="h-5 w-5" />
-              </Fab>
-            }
+        secondaryAction={
+          <Button
+            variant="outline"
+            palette="primary"
+            onClick={() => navigate({ to: '/application-wizard' })}
           >
-            {(close) => <OpportunityForm onSuccess={close} />}
-          </FormDialog>
+            <Wand2 className="mr-2 h-4 w-4" />
+            Assistant Candidature
+          </Button>
+        }
+        action={
+            <FormDialog
+              title="Nouvelle Opportunité"
+              description="Ajoutez une nouvelle opportunité à votre pipeline."
+              trigger={
+                <Fab>
+                  <Plus className="h-5 w-5" />
+                </Fab>
+              }
+            >
+              {(close) => <OpportunityForm onSuccess={close} />}
+            </FormDialog>
         }
       />
 

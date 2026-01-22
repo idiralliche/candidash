@@ -1,8 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner';
-import { Plus, Briefcase } from 'lucide-react';
+import {
+  Plus,
+  Briefcase,
+  Wand2,
+} from 'lucide-react';
 
 import { Fab } from '@/components/ui/fab';
+import { Button } from '@/components/ui/button.tsx';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EmptyState } from '@/components/shared/empty-state';
 
@@ -21,7 +27,10 @@ import { useApplications } from '@/hooks/applications/use-applications';
 import { useDeleteApplication } from '@/hooks/applications/use-delete-application';
 import { useFilteredEntities } from '@/hooks/shared/use-filtered-entities';
 import { Application } from '@/api/model';
-import { getLabel, LABELS_APPLICATION_STATUS } from '@/lib/dictionaries';
+import {
+  getLabel,
+  LABELS_APPLICATION_STATUS,
+} from '@/lib/dictionaries';
 
 // Feature Components
 import { ApplicationForm } from '@/components/applications/application-form';
@@ -78,6 +87,8 @@ export function ApplicationsPage() {
     return applicationToDelete.opportunity?.job_title || "cette candidature";
   };
 
+  const navigate = useNavigate();
+
   return (
     <PageLayout>
       <PageHeader
@@ -87,6 +98,16 @@ export function ApplicationsPage() {
           onChange: setSearch,
           placeholder: "Rechercher par poste, statut...",
         }}
+        secondaryAction={
+          <Button
+            variant="outline"
+            palette="primary"
+            onClick={() => navigate({ to: '/application-wizard' })}
+          >
+            <Wand2 className="mr-2 h-4 w-4" />
+            Assistant Candidature
+          </Button>
+        }
         action={
           <FormDialog
             title="Nouvelle Candidature"
