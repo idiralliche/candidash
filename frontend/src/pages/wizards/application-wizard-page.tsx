@@ -184,6 +184,7 @@ export function ApplicationWizardPage() {
   };
 
   const handleFinish = () => {
+    setCurrentStep(1);
     actions.clearWizard();
     toast.success("Dossier de candidature créé avec succès !");
     navigate({ to: '/opportunities' });

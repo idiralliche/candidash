@@ -62,7 +62,13 @@ export function useWizardStore() {
   // Persist to localStorage on state change
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const hasData = state.applicationId || state.opportunityId || state.createdCompanies.length > 0;
+
+      if (hasData || (state.lastStep && state.lastStep > 1)) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
     }
   }, [state]);
 
