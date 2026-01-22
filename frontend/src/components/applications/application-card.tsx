@@ -49,22 +49,26 @@ export function ApplicationCard({
       </EntityCard.Identity>
 
       <EntityCard.Meta>
-        <Badge
-          variant="subtle"
-          palette={getApplicationStatusPalette(application.status)}
-        >
-          {getLabel(LABELS_APPLICATION_STATUS, application.status)}
-        </Badge>
+        <div className="flex justify-start min-w-0 items-center gap-2">
+          {application.is_archived && (
+            <Badge
+              variant="subtle"
+              palette="yellow"
+            >
+              <Archive className="mr-2 h-3 w-3" />
+              Archivée
+            </Badge>
+          )}
+        </div>
 
-        {application.is_archived && (
+        <div className="flex justify-start lg:justify-end min-w-0">
           <Badge
             variant="subtle"
-            palette="yellow"
+            palette={getApplicationStatusPalette(application.status)}
           >
-            <Archive className="mr-2 h-3 w-3" />
-            Archivée
+            {getLabel(LABELS_APPLICATION_STATUS, application.status)}
           </Badge>
-        )}
+        </div>
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}

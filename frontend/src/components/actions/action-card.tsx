@@ -53,32 +53,35 @@ export function ActionCard({
       </EntityCard.Identity>
 
       <EntityCard.Meta>
-        <div className={`${scheduled_event ? ("flex items-center gap-2") : ("hidden")} sm:mx-auto`}>
+        <div className="flex justify-start min-w-0 items-center gap-2">
           {scheduled_event && (
             <>
-              <Calendar className="w-3 h-3" />
-              <span className="truncate max-w-[150px]">
+              <Calendar className="w-3.5 h-3.5" />
+              <span className="truncate">
                 {scheduled_event.title}
               </span>
             </>
           )}
         </div>
-        <Badge
-          variant={isCompleted ? "subtle" : "solid"}
-          palette={isCompleted ? "green" : "blue"}
-        >
-          {isCompleted ? (
-            <>
-              <CheckCircle2 className="mr-1.5 h-3 w-3" />
-              Terminée
-            </>
-          ) : (
-            <>
-              <Circle className="mr-1.5 h-3 w-3" />
-              À faire
-            </>
-          )}
-        </Badge>
+
+        <div className="flex justify-start lg:justify-center min-w-0">
+          <Badge
+            variant={isCompleted ? "subtle" : "solid"}
+            palette={isCompleted ? "green" : "blue"}
+          >
+            {isCompleted ? (
+              <>
+                <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
+                Terminée
+              </>
+            ) : (
+              <>
+                <Circle className="mr-2 h-3.5 w-3.5" />
+                À faire
+              </>
+            )}
+          </Badge>
+        </div>
       </EntityCard.Meta>
 
       <EntityCard.Actions

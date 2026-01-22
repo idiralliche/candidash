@@ -35,7 +35,7 @@ export function OpportunityCard({
     >
 
       {/* IDENTITY ZONE */}
-      <EntityCard.Identity className="sm:w-[45%]">
+      <EntityCard.Identity>
         <IconBox
           palette="emerald"
           groupHover
@@ -48,7 +48,7 @@ export function OpportunityCard({
           subtitle={company && (
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <Building2 className="h-3 w-3" />
-              <span className="truncate">
+              <span className="truncate max-w-[150px]">
                 {company.name}
               </span>
             </div>
@@ -58,25 +58,31 @@ export function OpportunityCard({
 
       {/* META ZONE */}
       <EntityCard.Meta>
-        {/* Application Type Badge */}
-        <Badge
-          variant="subtle"
-          palette={getApplicationTypePalette(opportunity.application_type)}
-        >
-          {getLabel(LABELS_APPLICATION, opportunity.application_type)}
-        </Badge>
-
         {/* Location */}
-        {opportunity.location ? (
-          <div className="flex items-center gap-2 truncate text-xs sm:mx-auto">
-            <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
-            <span className="truncate max-w-[150px]">
-              {opportunity.location}
-            </span>
-          </div>
-        ) : (
-          <div className="hidden sm:block sm:mx-auto" />
-        )}
+        <div className="flex justify-start min-w-0">
+          {opportunity.location && (
+            <div className="flex items-center gap-2 truncate text-xs">
+              <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
+              <span className="truncate max-w-[150px]">
+                {opportunity.location}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Application Type Badge */}
+        <div className="flex justify-start lg:justify-center">
+          <Badge
+            variant="subtle"
+            palette={getApplicationTypePalette(opportunity.application_type)}
+          >
+            {getLabel(LABELS_APPLICATION, opportunity.application_type)}
+          </Badge>
+        </div>
+
+        <div className="flex justify-start lg:justify-end items-center min-w-0 gap-2">
+          {/* TODO : Add link to main contact */}
+        </div>
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}

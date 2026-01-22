@@ -5,6 +5,7 @@ import {
   Building2,
 } from "lucide-react";
 import { IconBox } from "@/components/ui/icon-box";
+import { Button } from '@/components/ui/button.tsx';
 import { Product } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
 
@@ -13,6 +14,7 @@ interface ProductCardProps {
   onClick?: (product: Product) => void;
   onEdit?: (product: Product) => void;
   onDelete?: (product: Product) => void;
+  variant?: "default" | "compact";
 }
 
 export function ProductCard({
@@ -20,8 +22,10 @@ export function ProductCard({
   onClick,
   onEdit,
   onDelete,
+  variant ="default",
 }: ProductCardProps) {
   const company = product.company;
+  const isCompact = variant === "compact";
 
   return (
     <EntityCard
@@ -54,30 +58,38 @@ export function ProductCard({
       {/* META ZONE */}
       <EntityCard.Meta>
         {/* Technologies Stack */}
-        <div className={`${product.technologies_used ? "flex items-center gap-2" : "hidden sm:block "} sm:mx-auto`}>
+        <div className="flex justify-start min-w-0">
           {product.technologies_used && (
-            <>
-              <Code2 className="h-3.5 w-3.5 text-gray-500 shrink-0" />
-              <span className="truncate max-w-[150px]">
+            <div className="flex items-center gap-2">
+              <Code2 className="h-3.5 w-3.5 text-gray-500"/>
+              <span className="truncate max-w-[150px] text-xs ">
                 {product.technologies_used}
               </span>
-            </>
+            </div>
           )}
         </div>
 
+        <div className="flex justify-start lg:justify-center">
+          {/* TODO : Add link to opportunity */}
+        </div>
+
         {/* Custom Action: Website Link */}
-        {(onClick && product.website) && (
-          <div
-            className="hidden sm:flex items-center gap-1.5 text-xs text-blue-400/80 hover:text-blue-400 hover:underline px-2 py-1 rounded cursor-pointer z-10"
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(product.website!, "_blank", "noopener,noreferrer");
-            }}
-          >
-            <Globe className="h-3 w-3" />
-            Visiter le site
-          </div>
-        )}
+        <div className="flex justify-start lg:justify-end min-w-0">
+          {(!isCompact && product.website) && (
+            <Button
+              variant="link"
+              palette="blue"
+              className="text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(product.website!, "_blank", "noopener,noreferrer");
+              }}
+            >
+              <Globe className="h-3 w-3" />
+              Visiter le site
+            </Button>
+          )}
+        </div>
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}

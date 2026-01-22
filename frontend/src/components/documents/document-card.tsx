@@ -66,7 +66,7 @@ export function DocumentCard({
     >
 
       {/* IDENTITY ZONE */}
-      <EntityCard.Identity className="sm:w-[45%]">
+      <EntityCard.Identity>
         <IconBox
           palette={palette}
           groupHover
@@ -85,11 +85,8 @@ export function DocumentCard({
       </EntityCard.Identity>
 
       {/* META ZONE */}
-      <EntityCard.Meta className="sm:justify-between">
-        <div className="hidden sm:flex items-center gap-2">
-          {badges}
-        </div>
-        <div className="flex items-center gap-2">
+      <EntityCard.Meta>
+        <div className="flex justify-start min-w-0">
           <Badge
             variant="subtle"
             palette={palette}
@@ -98,14 +95,21 @@ export function DocumentCard({
             {getLabel(LABELS_DOCUMENT_FORMAT, document.format)}
           </Badge>
         </div>
-        {!isCompact && (
-          <div className="hidden sm:flex items-center gap-2 text-xs">
-            <Calendar className="h-3.5 w-3.5 text-gray-500" />
-            <span>
-              {format(new Date(document.created_at), 'dd MMM yyyy', { locale: fr })}
-            </span>
-          </div>
-        )}
+
+        <div className="flex justify-start lg:justify-center">
+          {badges}
+        </div>
+
+        <div className="flex justify-start lg:justify-end">
+          {!isCompact && (
+            <div className="flex items-center gap-2 text-xs">
+              <Calendar className="h-3.5 w-3.5 text-gray-500" />
+              <span>
+                {format(new Date(document.created_at), 'dd MMM yyyy', { locale: fr })}
+              </span>
+            </div>
+          )}
+        </div>
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
@@ -119,7 +123,7 @@ export function DocumentCard({
             variant="ghost"
             palette="gray"
             size="icon"
-            className="hidden sm:flex"
+            className="hidden md:flex"
             onClick={handleDownloadClick}
             disabled={isDownloading}
             title={document.is_external ? "Ouvrir le lien" : "Télécharger"}

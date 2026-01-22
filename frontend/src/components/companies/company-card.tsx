@@ -8,6 +8,7 @@ import {
 import { IconBox } from "@/components/ui/icon-box";
 import { Company } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
+import { Button } from '@/components/ui/button.tsx';
 
 interface CompanyCardProps {
   company: Company;
@@ -63,41 +64,37 @@ export function CompanyCard({
 
       {/* META ZONE */}
       <EntityCard.Meta>
-        {badges && (
-          <div className="sm:mx-auto">
-            {badges}
-          </div>
-        )}
+        <div className="flex justify-start min-w-0 items-center gap-2">
+          {!isCompact && company.headquarters && (
+            <>
+              <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
+              <span className="truncate max-w-[150px]">
+                {company.headquarters}
+              </span>
+            </>
+          )}
+        </div>
 
-        {!isCompact && (
-          <>
-            {/* Headquarters */}
-            <div className={`${company.headquarters ? "flex items-center gap-2" : "hidden sm:block "} sm:mx-auto`}>
-              {company.headquarters && (
-                <>
-                  <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
-                  <span className="truncate max-w-[150px]">
-                    {company.headquarters}
-                  </span>
-                </>
-              )}
-            </div>
+        <div className="flex justify-start lg:justify-center">
+          {badges}
+        </div>
 
-            {/* Website */}
-            {company.website && (
-              <div
-                className="hidden sm:flex items-center gap-1.5 text-xs text-blue-400/80 hover:text-blue-400 hover:underline px-2 py-1 rounded cursor-pointer z-10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(company.website!, "_blank", "noopener,noreferrer");
-                }}
-              >
-                <Globe className="h-3 w-3" />
-                Visiter le site
-              </div>
-            )}
-          </>
-        )}
+        <div className="flex justify-start lg:justify-end min-w-0">
+          {!isCompact && company.website && (
+            <Button
+              variant="link"
+              palette="blue"
+              className="text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(company.website!, "_blank", "noopener,noreferrer");
+              }}
+            >
+              <Globe className="h-3 w-3" />
+              Visiter le site
+            </Button>
+          )}
+        </div>
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
