@@ -24,7 +24,7 @@ import { Fab } from '@/components/ui/fab';
 
 // Card Hover Border Colors
 const cardVariants = cva(
-  "group relative flex flex-col sm:flex-row sm:items-center bg-surface-base border border-white-subtle rounded-xl p-4 gap-4 transition-all duration-200 hover:bg-surface-hover hover:shadow-md hover:-translate-y-[1px] cursor-pointer",
+  "group relative grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center bg-surface-base border border-white-subtle rounded-xl p-4 gap-4 transition-all duration-200 hover:bg-surface-hover hover:shadow-md hover:-translate-y-[1px] cursor-pointer",
   {
     variants: {
       hoverPalette: {
@@ -90,7 +90,11 @@ function Identity({
   className
 }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("flex items-center gap-4 min-w-0 sm:w-48 shrink-0", className)}>
+    <div className={cn(
+      "flex flex-col items-start gap-3 w-full",
+      "md:flex-row md:items-center md:gap-4 md:w-48 md:shrink-0",
+      className
+    )}>
       {children}
     </div>
   );
@@ -112,7 +116,10 @@ function Info({
   hoverPalette,
 }: InfoProps) {
   return (
-    <div className={cn("flex flex-col gap-1 min-w-0", className)}>
+    <div className={cn(
+       "flex flex-col gap-1 min-w-0 w-full",
+      className
+    )}>
       <h3 className={cn(infoVariants({ hoverPalette }))}>
         {title}
       </h3>
@@ -130,14 +137,18 @@ function Meta({
   className,
 }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("flex flex-1 items-center justify-between sm:justify-end gap-6 text-sm text-gray-400 min-w-0", className)}>
+    <div className={cn(
+      "flex flex-wrap items-center text-sm text-gray-400 min-w-0",
+      "flex-col gap-2 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-4",
+      className
+    )}>
       {children}
     </div>
   );
 }
 
 /**
- * Actions Zone (Far Right)
+ * Actions Zone
  * Includes the standard Dropdown menu (Edit/Delete).
  */
 interface ActionsProps {
@@ -154,81 +165,62 @@ function Actions({
   const showDropdown = !!onEdit && !!onDelete;
   const showSingleEdit = !!onEdit && !onDelete;
   const showSingleDelete = !!onDelete && !onEdit;
+  const showStandard = showDropdown || showSingleEdit || showSingleDelete;
 
   return (
-    <div className="absolute top-4 right-4 sm:static sm:pl-2 flex items-center gap-2">
-      {children}
+    // MAIN CONTAINER
+    <div className="col-span-1 w-full flex mt-2 md:col-span-1 md:w-auto md:mt-0 md:justify-end md:gap-2 md:items-center">
 
-      {showDropdown && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              palette="gray"
-              size="icon"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MoreHorizontal className="h-4 w-4" />
+      {/* 1. CHILDREN (Custom Actions) */}
+      {children && (
+        <div className={cn(
+          "flex w-full items-center gap-2",
+          "justify-center",
+          "md:w-auto md:justify-end"
+        )}>
+          {children}
+        </div>
+      )}
+
+      {/* 2. STANDARD ACTIONS (Dropdown / Fab / Btn) */}
+      {showStandard && (
+        <div className="absolute top-4 right-4 md:static">
+
+          {showDropdown && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" palette="gray" size="icon" onClick={(e) => e.stopPropagation()}>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-surface-base border-white-light text-white">
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(e); }}>
+                  <Pencil className="mr-2 h-4 w-4" /> Modifier
+                </DropdownMenuItem>
+                <DestructiveMenuItem onClick={(e) => { e.stopPropagation(); onDelete(e); }}>
+                  <Trash2 className="mr-2 h-4 w-4" /> Supprimer
+                </DestructiveMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
+          {showSingleEdit && (
+            <Button variant="ghost" palette="blue" size="icon" onClick={(e) => { e.stopPropagation(); onEdit!(e); }}>
+              <Pencil className="h-4 w-4" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-surface-base border-white-light text-white">
-            {onEdit && (
-              <DropdownMenuItem
-                className="cursor-pointer focus:bg-white-light focus:text-white"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(e);
-                }}
-              >
-                <Pencil className="mr-2 h-4 w-4" />
-                Modifier
-              </DropdownMenuItem>
-            )}
-            {onDelete && (
-              <DestructiveMenuItem
-                onClick={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  onDelete(e);
-                }}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Supprimer
-              </DestructiveMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
+          )}
 
-      {showSingleEdit && (
-        <Button
-          variant="ghost"
-          palette="blue"
-          size="icon"
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            onEdit!(e);
-          }}
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-      )}
-
-      {showSingleDelete && (
-        <Fab
-          variant="ghost"
-          palette="primary"
-          size="icon"
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            onDelete(e);
-          }}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Fab>
+          {showSingleDelete && (
+            <Fab variant="ghost" palette="primary" size="icon" onClick={(e) => { e.stopPropagation(); onDelete!(e); }}>
+              <Trash2 className="h-4 w-4" />
+            </Fab>
+          )}
+        </div>
       )}
     </div>
   );
 }
+
 
 // Composition
 EntityCard.Identity = Identity;
