@@ -79,15 +79,13 @@ export function WizardStepCompanies({
   ) => {
     const isLinked = extraProps.linkedCompanyId === company.id;
     const mainCompanyBadge = isLinked && (
-      <div className="sm:mx-auto">
-        <Badge
-          variant="subtle"
-          palette="blue"
-        >
-          <Star className="mr-2 h-4 w-4" />
-          Principale
-        </Badge>
-      </div>
+      <Badge
+        variant="subtle"
+        palette="blue"
+      >
+        <Star className="mr-2 h-3.5 w-3.5" />
+        Principale
+      </Badge>
     )
 
     const switchLinkToOpportunity = extraProps && (
@@ -96,15 +94,15 @@ export function WizardStepCompanies({
         palette="red"
         className="flex items-center gap-2"
       >
-        <label className={`text-sm p-2 flex justify-between items-center ${isLinked ? "text-primary" : ""}`}>
+        <label className={`text-sm p-1.5 flex justify-between items-center ${isLinked ? "text-primary" : ""}`}>
           {isLinked ? (
             <>
-              <StarOff className="mr-2 h-4 w-4"/>
+              <StarOff className="mr-2 h-3.5 w-3.5"/>
               Dissocier
             </>
           ) : (
             <>
-              <Star className="mr-2 h-4 w-4"/>
+              <Star className="mr-2 h-3.5 w-3.5"/>
               Associer
             </>
           )}
@@ -121,6 +119,7 @@ export function WizardStepCompanies({
         key={company.id}
         company={company}
         onDelete={() => onDelete(company)}
+        variant="compact"
         isHighlighted={isLinked}
         badges={mainCompanyBadge}
         extraActions={switchLinkToOpportunity}

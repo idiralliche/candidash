@@ -121,18 +121,18 @@ export function WizardStepDocuments({
       >
         <div
           key="resume"
-          className="flex flex-row items-center justify-between p-2 gap-2"
+          className="flex flex-row items-center justify-between p-1.5 gap-2"
           title={isResume ? "Dissocier en tant que CV" : "Associer en tant que CV"}
         >
           <label className={`text-sm flex justify-between items-center ${isResume ? "text-primary line-through" : ""}`}>
             {isResume ? (
               <>
-                <FileXCorner className="mr-2 h-4 w-4" />
+                <FileXCorner className="mr-2 h-3.5 w-3.5" />
                 Dissocier
               </>
             ) : (
               <>
-                <FilePlusCorner className="mr-2 h-4 w-4" />
+                <FilePlusCorner className="mr-2 h-3.5 w-3.5" />
                 Associer
               </>
             )}
@@ -146,19 +146,19 @@ export function WizardStepDocuments({
         </div>
         <div
           key="coverLetter"
-          className="flex flex-row items-center justify-between p-2 gap-2"
+          className="flex flex-row items-center justify-between p-1.5 gap-2"
           title={isCoverLetter ? "Dissocier en tant que lettre de motivation" : "Associer en tant que lettre de motivation"}
         >
           <label className={`text-sm flex justify-between items-center ${isCoverLetter ? "text-primary line-through" : ""}`}>
             {isCoverLetter ? (
               <>
-                <MailX className="mr-2 h-4 w-4" />
+                <MailX className="mr-2 h-3.5 w-3.5" />
                 Dissocier
               </>
             ) : (
               <>
 
-              <MailPlus className="mr-2 h-4 w-4" />
+              <MailPlus className="mr-2 h-3.5 w-3.5" />
                 Associer
               </>
             )}

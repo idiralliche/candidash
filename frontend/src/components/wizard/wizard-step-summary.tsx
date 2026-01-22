@@ -9,7 +9,10 @@ import {
   Calendar,
   CheckCheck,
   LucideIcon,
+  Mail,
+  FileCheck
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -153,7 +156,8 @@ export function WizardStepSummary({
           <CompanyCard
             key={company.id}
             company={company}
-            isLinked={state.linkedCompanyId === company.id}
+            isHighlighted={state.linkedCompanyId === company.id}
+            variant="compact"
           />
         ))
       )}
@@ -193,8 +197,23 @@ export function WizardStepSummary({
         state.createdDocuments.map(doc => (
           <DocumentCard
             document={doc}
-            isResume={state.resumeDocumentId === doc.id}
-            isCoverLetter={state.coverLetterDocumentId === doc.id}
+            variant="compact"
+            isHighlighted={state.resumeDocumentId === doc.id || state.coverLetterDocumentId === doc.id}
+            badges={(state.resumeDocumentId === doc.id || state.coverLetterDocumentId === doc.id) && (
+              <Badge variant="subtle" palette="blue">
+                {state.resumeDocumentId === doc.id ? (
+                  <>
+                    <FileCheck className="mr-2 h-4 w-4" />
+                    CV
+                  </>
+                ) : (
+                  <>
+                    <Mail className="mr-2 h-4 w-4" />
+                    LM
+                  </>
+                )}
+              </Badge>
+            )}
           />
         ))
       )}
@@ -213,6 +232,7 @@ export function WizardStepSummary({
           <ProductCard
             key={product.id}
             product={product}
+            variant="compact"
           />
         ))
       ) : (

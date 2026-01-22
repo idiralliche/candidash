@@ -25,6 +25,7 @@ export function WizardStepProducts({
       key={product.id}
       product={product}
       onDelete={() => onDelete(product)}
+      variant="compact"
     />
   );
 
