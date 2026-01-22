@@ -261,7 +261,7 @@ export function ApplicationWizardPage() {
                   {currentStepData?.description}
                 </p>
               </div>
-              <div className="text-sm text-muted-foreground bg-surface-alt px-3 py-1 rounded-full border border-border">
+              <div className="text-sm text-muted-foreground bg-surface-alt px-3 py-1 rounded-full border border-border text-nowrap">
                 Étape {currentStep} / {WIZARD_STEPS.length}
               </div>
             </CardTitle>
