@@ -1,7 +1,4 @@
-import { Link, useNavigate } from '@tanstack/react-router';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { Link } from '@tanstack/react-router';
 import {
   Loader2,
   Mail,
@@ -22,54 +19,10 @@ import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
 
-import { useRegisterApiV1AuthRegisterPost } from '@/api/authentication/authentication';
-
-const registerSchema = z.object({
-  first_name: z.string().min(2, { message: "Minimum 2 caractères" }),
-  last_name: z.string().min(2, { message: "Minimum 2 caractères" }),
-  email: z.string().email({ message: "Email invalide" }),
-  password: z.string().min(8, { message: "Le mot de passe doit faire au moins 8 caractères" }),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Les mots de passe ne correspondent pas",
-  path: ["confirmPassword"],
-});
-
-type RegisterFormValues = z.infer<typeof registerSchema>;
+import { useRegisterPageLogic } from '@/hooks/authentication/use-register-page-logic';
 
 export function RegisterPage() {
-  const navigate = useNavigate();
-
-  const { mutate: register, isPending, error } = useRegisterApiV1AuthRegisterPost({
-    mutation: {
-      onSuccess: () => {
-        navigate({ to: '/login' });
-      },
-    },
-  });
-
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      first_name: '',
-      last_name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-  });
-
-  function onSubmit(values: RegisterFormValues) {
-    register({
-      data: {
-        email: values.email,
-        password: values.password,
-        first_name: values.first_name,
-        last_name: values.last_name,
-        confirm_password: values.confirmPassword,
-      }
-    });
-  }
+  const logic = useRegisterPageLogic();
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">
@@ -81,12 +34,12 @@ export function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Form {...logic.form}>
+            <form onSubmit={logic.form.handleSubmit(logic.onSubmit)} className="space-y-4">
 
               <div className="grid grid-cols-2 gap-4">
                 <SmartFormField
-                  control={form.control}
+                  control={logic.form.control}
                   name="first_name"
                   label="Prénom"
                   component={Input}
@@ -94,7 +47,7 @@ export function RegisterPage() {
                   leadingIcon={User}
                 />
                 <SmartFormField
-                  control={form.control}
+                  control={logic.form.control}
                   name="last_name"
                   label="Nom"
                   component={Input}
@@ -104,7 +57,7 @@ export function RegisterPage() {
               </div>
 
               <SmartFormField
-                control={form.control}
+                control={logic.form.control}
                 name="email"
                 label="Email"
                 component={Input}
@@ -113,7 +66,7 @@ export function RegisterPage() {
               />
 
               <SmartFormField
-                control={form.control}
+                control={logic.form.control}
                 name="password"
                 label="Mot de passe"
                 component={Input}
@@ -123,7 +76,7 @@ export function RegisterPage() {
               />
 
               <SmartFormField
-                control={form.control}
+                control={logic.form.control}
                 name="confirmPassword"
                 label="Confirmer le mot de passe"
                 component={Input}
@@ -132,7 +85,7 @@ export function RegisterPage() {
                 leadingIcon={Lock}
               />
 
-              {error && (
+              {logic.error && (
                 <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center animate-in fade-in slide-in-from-top-1">
                   Une erreur est survenue (l'email existe peut-être déjà).
                 </div>
@@ -143,9 +96,9 @@ export function RegisterPage() {
                 variant="solid"
                 palette="primary"
                 className="w-full"
-                disabled={isPending}
+                disabled={logic.isPending}
               >
-                {isPending ? (
+                {logic.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Création...

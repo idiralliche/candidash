@@ -1,12 +1,8 @@
-import { useEffect } from 'react';
-import { useNavigate, Link } from '@tanstack/react-router';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { Link } from '@tanstack/react-router';
 import {
   Loader2,
   Mail,
-  Lock,
+  Lock
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -22,50 +18,10 @@ import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
 
-// API & Context
-import { useLoginApiV1AuthLoginPost } from '@/api/authentication/authentication';
-import { useAuth } from '@/hooks/shared/use-auth';
-
-const loginSchema = z.object({
-  username: z.string().email({ message: "Email invalide" }),
-  password: z.string().min(1, { message: "Mot de passe requis" }),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { useLoginPageLogic } from '@/hooks/authentication/use-login-page-logic';
 
 export function LoginPage() {
-  const navigate = useNavigate();
-  const { login: authLogin, isAuthenticated } = useAuth();
-
-  // Redirect to dashboard if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate({ to: '/dashboard' });
-    }
-  }, [isAuthenticated, navigate]);
-
-  const { mutate: submitLogin, isPending, error } = useLoginApiV1AuthLoginPost({
-    mutation: {
-      onSuccess: (data) => {
-        authLogin(data.access_token);
-        // Navigation will happen automatically via useEffect above
-      },
-    },
-  });
-
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { username: '', password: '' },
-  });
-
-  function onSubmit(values: LoginFormValues) {
-    submitLogin({
-      data: {
-        username: values.username,
-        password: values.password
-      }
-    });
-  }
+  const logic = useLoginPageLogic();
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">
@@ -77,11 +33,11 @@ export function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Form {...logic.form}>
+            <form onSubmit={logic.form.handleSubmit(logic.onSubmit)} className="space-y-4">
 
               <SmartFormField
-                control={form.control}
+                control={logic.form.control}
                 name="username"
                 label="Email"
                 component={Input}
@@ -90,7 +46,7 @@ export function LoginPage() {
               />
 
               <SmartFormField
-                control={form.control}
+                control={logic.form.control}
                 name="password"
                 label="Mot de passe"
                 component={Input}
@@ -99,7 +55,7 @@ export function LoginPage() {
                 leadingIcon={Lock}
               />
 
-              {error && (
+              {logic.error && (
                 <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center animate-in fade-in slide-in-from-top-1">
                   Identifiants incorrects. Veuillez réessayer.
                 </div>
@@ -110,9 +66,9 @@ export function LoginPage() {
                 variant="solid"
                 palette="primary"
                 className="w-full"
-                disabled={isPending}
+                disabled={logic.isPending}
               >
-                {isPending ? (
+                {logic.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Connexion...
