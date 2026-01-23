@@ -53,8 +53,8 @@ export function ApplicationFormFields<T extends FieldValues>({
 
   return (
     <>
-      {/* Opportunity Select (conditionally hidden) */}
-      {!hideOpportunitySelect && (
+      {/* Opportunity */}
+      {!hideOpportunitySelect && ( // pre-selected in wizard form
         <SmartFormField
           control={control}
           name={"opportunity_id" as Path<T>}
@@ -87,7 +87,7 @@ export function ApplicationFormFields<T extends FieldValues>({
         <h3 className="text-lg font-semibold text-primary">Détails</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Date Picker */}
+          {/* Application Date */}
           <SmartFormField
             control={control}
             name={"application_date" as Path<T>}
@@ -102,14 +102,17 @@ export function ApplicationFormFields<T extends FieldValues>({
             )}
           </SmartFormField>
 
-          {/* Status Select */}
+          {/* Status */}
           <SmartFormField
             control={control}
             name={"status" as Path<T>}
             label="Statut *"
           >
             {(field) => (
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Statut" />
                 </SelectTrigger>
@@ -140,7 +143,7 @@ export function ApplicationFormFields<T extends FieldValues>({
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-primary">Documents</h3>
 
-        {/* Resume Select with Clear Button */}
+        {/* Resume */}
         <SmartFormField
           control={control}
           name={"resume_used_id" as Path<T>}
@@ -172,7 +175,7 @@ export function ApplicationFormFields<T extends FieldValues>({
           )}
         </SmartFormField>
 
-        {/* Cover Letter Select with Clear Button */}
+        {/* Cover Letter */}
         <SmartFormField
           control={control}
           name={"cover_letter_id" as Path<T>}
@@ -205,7 +208,7 @@ export function ApplicationFormFields<T extends FieldValues>({
         </SmartFormField>
       </div>
 
-      {/* Archive Switch (conditionally hidden) */}
+      {/* Archive Switch */}
       {!hideArchiveSwitch && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">Archiver</h3>

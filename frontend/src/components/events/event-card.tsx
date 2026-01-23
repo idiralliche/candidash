@@ -5,6 +5,7 @@ import {
   MapPin,
   Video,
   Phone,
+  Mail,
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -37,6 +38,7 @@ export function EventCard({
       case 'video': return <Video className="h-3 w-3" />;
       case 'phone': return <Phone className="h-3 w-3" />;
       case 'in_person': return <MapPin className="h-3 w-3" />;
+      case 'email': return <Mail className="h-3 w-3" />;
       default: return <Clock className="h-3 w-3" />;
     }
   };

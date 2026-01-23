@@ -1,4 +1,3 @@
-// frontend/src/components/events/calendar-view.tsx
 import { useState } from 'react';
 import {
   format,
