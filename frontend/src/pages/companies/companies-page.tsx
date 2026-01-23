@@ -1,11 +1,7 @@
-import { useState, useMemo } from 'react';
-import { toast } from 'sonner';
-import { Plus, Building2 } from 'lucide-react';
-
-import { useCompanies } from '@/hooks/companies/use-companies';
-import { useDeleteCompany } from '@/hooks/companies/use-delete-company';
-import { Company } from '@/api/model';
-import { useProducts } from '@/hooks/products/use-products';
+import {
+  Plus,
+  Building2,
+} from 'lucide-react';
 
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
@@ -26,41 +22,11 @@ import { CompanyForm } from '@/components/companies/company-form';
 import { CompanyDetails } from '@/components/companies/company-details';
 import { CompanyCard } from '@/components/companies/company-card';
 
+// Logic Hook
+import { useCompaniesPageLogic } from '@/hooks/companies/use-companies-page-logic';
+
 export function CompaniesPage() {
-  const { companies, isLoading } = useCompanies();
-  const { mutate: deleteCompany, isPending: isDeleting } = useDeleteCompany();
-
-  // State
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null);
-  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
-  const [deleteError, setDeleteError] = useState('');
-  const { products: allProducts } = useProducts();
-  const selectedCompanyProducts = useMemo(() => {
-    if (!selectedCompany || !allProducts) return [];
-    return allProducts.filter(p => p.company_id === selectedCompany.id);
-  }, [selectedCompany, allProducts]);
-
-  // Sorting Logic
-  const sortedCompanies = useMemo(() => {
-    if (!companies) return [];
-    return [...companies].sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-  }, [companies]);
-
-  const handleDelete = async () => {
-    if (!companyToDelete) return;
-    setDeleteError('');
-    try {
-      await deleteCompany({ companyId: companyToDelete.id });
-      toast.success('Entreprise supprimée avec succès');
-      setCompanyToDelete(null);
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      setDeleteError('Une erreur est survenue lors de la suppression.');
-    }
-  };
+  const logic = useCompaniesPageLogic();
 
   return (
     <PageLayout>
@@ -82,22 +48,22 @@ export function CompaniesPage() {
       />
 
       <PageContent>
-        {isLoading ? (
+        {logic.isLoading ? (
           <CardListSkeleton />
-        ) : sortedCompanies.length === 0 ? (
+        ) : logic.sortedCompanies.length === 0 ? (
           <EmptyState
             icon={Building2}
             message="Aucune entreprise trouvée. Commencez par en ajouter une !"
           />
         ) : (
           <div className="flex flex-col gap-3">
-            {sortedCompanies.map(company => (
+            {logic.sortedCompanies.map(company => (
               <CompanyCard
                 key={company.id}
                 company={company}
-                onClick={setSelectedCompany}
-                onEdit={setEditingCompany}
-                onDelete={setCompanyToDelete}
+                onClick={logic.setSelectedCompany}
+                onEdit={logic.setEditingCompany}
+                onDelete={logic.setCompanyToDelete}
               />
             ))}
           </div>
@@ -106,36 +72,30 @@ export function CompaniesPage() {
 
       {/* DETAILS SHEET */}
       <EntitySheet
-        open={!!selectedCompany}
-        onOpenChange={(open) => !open && setSelectedCompany(null)}
+        open={!!logic.selectedCompany}
+        onOpenChange={(open) => !open && logic.setSelectedCompany(null)}
         title="Fiche Entreprise"
       >
-        {selectedCompany && (
+        {logic.selectedCompany && (
           <CompanyDetails
-            company={selectedCompany}
-            products={selectedCompanyProducts}
-            onEdit={(c) => {
-              setSelectedCompany(null);
-              setEditingCompany(c);
-            }}
-            onDelete={(c) => {
-              setSelectedCompany(null);
-              setCompanyToDelete(c);
-            }}
+            company={logic.selectedCompany}
+            products={logic.selectedCompanyProducts}
+            onEdit={logic.openEditFromDetails}
+            onDelete={logic.openDeleteFromDetails}
           />
         )}
       </EntitySheet>
 
       {/* EDIT DIALOG */}
       <FormDialog
-        open={!!editingCompany}
-        onOpenChange={(open) => !open && setEditingCompany(null)}
+        open={!!logic.editingCompany}
+        onOpenChange={(open) => !open && logic.setEditingCompany(null)}
         title="Modifier l'entreprise"
         description="Modifiez les informations de l'entreprise."
       >
-        {(close) => editingCompany && (
+        {(close) => logic.editingCompany && (
           <CompanyForm
-            initialData={editingCompany}
+            initialData={logic.editingCompany}
             onSuccess={close}
           />
         )}
@@ -143,18 +103,13 @@ export function CompaniesPage() {
 
       {/* DELETE ALERT */}
       <EntityDeleteDialog
-        open={!!companyToDelete}
-        onOpenChange={(open) => {
-          if (!open) {
-            setCompanyToDelete(null);
-            setDeleteError('');
-          }
-        }}
+        open={!!logic.companyToDelete}
+        onOpenChange={logic.closeDeleteDialog}
         entityType="entreprise"
-        entityLabel={companyToDelete?.name || ''}
-        onConfirm={handleDelete}
-        isDeleting={isDeleting}
-        error={deleteError}
+        entityLabel={logic.companyToDelete?.name || ''}
+        onConfirm={logic.handleDelete}
+        isDeleting={logic.isDeleting}
+        error={logic.deleteError}
       />
     </PageLayout>
   );

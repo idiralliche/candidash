@@ -1,10 +1,7 @@
-import { useState, useMemo } from 'react';
-import { toast } from 'sonner';
-import { Plus, Package } from 'lucide-react';
-
-import { useProducts } from '@/hooks/products/use-products';
-import { useDeleteProduct } from '@/hooks/products/use-delete-product';
-import { Product } from '@/api/model';
+import {
+  Plus,
+  Package,
+} from 'lucide-react';
 
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
@@ -25,36 +22,11 @@ import { ProductForm } from '@/components/products/product-form';
 import { ProductDetails } from '@/components/products/product-details';
 import { ProductCard } from '@/components/products/product-card';
 
+// Logic Hook
+import { useProductsPageLogic } from '@/hooks/products/use-products-page-logic';
+
 export function ProductsPage() {
-  const { products, isLoading } = useProducts();
-  const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
-
-  // State
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [deleteError, setDeleteError] = useState('');
-
-  // Sorting Logic
-  const sortedProducts = useMemo(() => {
-    if (!products) return [];
-    return [...products].sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-  }, [products]);
-
-  const handleDelete = async () => {
-    if (!productToDelete) return;
-    setDeleteError('');
-    try {
-      await deleteProduct({ productId: productToDelete.id });
-      toast.success('Produit supprimé avec succès');
-      setProductToDelete(null);
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      setDeleteError('Une erreur est survenue lors de la suppression.');
-    }
-  };
+  const logic = useProductsPageLogic();
 
   return (
     <PageLayout>
@@ -76,22 +48,22 @@ export function ProductsPage() {
       />
 
       <PageContent>
-        {isLoading ? (
+        {logic.isLoading ? (
           <CardListSkeleton />
-        ) : sortedProducts.length === 0 ? (
+        ) : logic.sortedProducts.length === 0 ? (
           <EmptyState
             icon={Package}
             message="Aucun produit trouvé. Commencez par en ajouter un !"
           />
         ) : (
           <div className="flex flex-col gap-3">
-            {sortedProducts.map(product => (
+            {logic.sortedProducts.map(product => (
               <ProductCard
                 key={product.id}
                 product={product}
-                onClick={setSelectedProduct}
-                onEdit={setEditingProduct}
-                onDelete={setProductToDelete}
+                onClick={logic.setSelectedProduct}
+                onEdit={logic.setEditingProduct}
+                onDelete={logic.setProductToDelete}
               />
             ))}
           </div>
@@ -100,35 +72,29 @@ export function ProductsPage() {
 
       {/* DETAILS SHEET */}
       <EntitySheet
-        open={!!selectedProduct}
-        onOpenChange={(open) => !open && setSelectedProduct(null)}
+        open={!!logic.selectedProduct}
+        onOpenChange={(open) => !open && logic.setSelectedProduct(null)}
         title="Fiche Produit"
       >
-        {selectedProduct && (
+        {logic.selectedProduct && (
           <ProductDetails
-            product={selectedProduct}
-            onEdit={(p) => {
-              setSelectedProduct(null);
-              setEditingProduct(p);
-            }}
-            onDelete={(p) => {
-              setSelectedProduct(null);
-              setProductToDelete(p);
-            }}
+            product={logic.selectedProduct}
+            onEdit={logic.openEditFromDetails}
+            onDelete={logic.openDeleteFromDetails}
           />
         )}
       </EntitySheet>
 
       {/* EDIT DIALOG */}
       <FormDialog
-        open={!!editingProduct}
-        onOpenChange={(open) => !open && setEditingProduct(null)}
+        open={!!logic.editingProduct}
+        onOpenChange={(open) => !open && logic.setEditingProduct(null)}
         title="Modifier le produit"
         description="Modifiez les informations du produit."
       >
-        {(close) => editingProduct && (
+        {(close) => logic.editingProduct && (
           <ProductForm
-            initialData={editingProduct}
+            initialData={logic.editingProduct}
             onSuccess={close}
           />
         )}
@@ -136,18 +102,13 @@ export function ProductsPage() {
 
       {/* DELETE ALERT */}
       <EntityDeleteDialog
-        open={!!productToDelete}
-        onOpenChange={(open) => {
-          if (!open) {
-            setProductToDelete(null);
-            setDeleteError('');
-          }
-        }}
+        open={!!logic.productToDelete}
+        onOpenChange={logic.closeDeleteDialog}
         entityType="produit"
-        entityLabel={productToDelete?.name || ''}
-        onConfirm={handleDelete}
-        isDeleting={isDeleting}
-        error={deleteError}
+        entityLabel={logic.productToDelete?.name || ''}
+        onConfirm={logic.handleDelete}
+        isDeleting={logic.isDeleting}
+        error={logic.deleteError}
       />
     </PageLayout>
   );

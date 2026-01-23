@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Plus, FileText } from 'lucide-react';
-import { toast } from 'sonner';
+import {
+  Plus,
+  FileText,
+} from 'lucide-react';
 
-import { useDocuments } from '@/hooks/documents/use-documents';
-import { useDeleteDocument } from '@/hooks/documents/use-delete-document';
 import { Button } from '@/components/ui/button';
 import { Fab } from '@/components/ui/fab';
 import { EmptyState } from '@/components/shared/empty-state';
+import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 
 // Layout Components
 import { PageLayout } from '@/components/layouts/page-layout';
@@ -17,49 +17,17 @@ import { PageContent } from '@/components/layouts/page-content';
 import { FormDialog } from '@/components/shared/form-dialog';
 import { EntitySheet } from '@/components/shared/entity-sheet';
 import { EntityDeleteDialog } from '@/components/shared/entity-delete-dialog';
-import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 
 // Feature Components
 import { DocumentCard } from '@/components/documents/document-card';
 import { DocumentForm } from '@/components/documents/document-form';
 import { DocumentDetails } from '@/components/documents/document-details';
-import { Document } from '@/api/model';
+
+// Logic Hook
+import { useDocumentsPageLogic } from '@/hooks/documents/use-documents-page-logic';
 
 export function DocumentsPage() {
-  const { documents, isLoading, isError } = useDocuments();
-  const { mutate: deleteDocument, isPending: isDeleting } = useDeleteDocument();
-
-  // State
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
-  const [editingDocument, setEditingDocument] = useState<Document | null>(null);
-  const [documentToDelete, setDocumentToDelete] = useState<Document | null>(null);
-  const [deleteError, setDeleteError] = useState('');
-
-  // Sorting by date (newest first)
-  const sortedDocuments = documents?.slice().sort((a, b) =>
-    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
-
-  // Handlers
-  const handleDelete = async () => {
-    if (!documentToDelete) return;
-    setDeleteError('');
-
-    deleteDocument({ documentId: documentToDelete.id }, {
-      onSuccess: () => {
-        toast.success('Document supprimé avec succès');
-        // Close sheet if we deleted the currently viewed document
-        if (selectedDocument?.id === documentToDelete.id) {
-          setSelectedDocument(null);
-        }
-        setDocumentToDelete(null);
-      },
-      onError: (error) => {
-        console.error('Erreur lors de la suppression:', error);
-        setDeleteError("Erreur lors de la suppression du document.");
-      }
-    });
-  };
+  const logic = useDocumentsPageLogic();
 
   return (
     <PageLayout>
@@ -81,13 +49,13 @@ export function DocumentsPage() {
       />
 
       <PageContent>
-        {isLoading ? (
+        {logic.isLoading ? (
           <CardListSkeleton />
-        ) : isError ? (
+        ) : logic.isError ? (
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
             Erreur lors du chargement des documents.
           </div>
-        ) : !sortedDocuments || sortedDocuments.length === 0 ? (
+        ) : !logic.sortedDocuments || logic.sortedDocuments.length === 0 ? (
           <EmptyState
             icon={FileText}
             message="Aucun document"
@@ -107,12 +75,13 @@ export function DocumentsPage() {
           />
         ) : (
           <div className="flex flex-col gap-3">
-            {sortedDocuments.map((document) => (
+            {logic.sortedDocuments.map((document) => (
                 <DocumentCard
+                  key={document.id}
                   document={document}
-                  onClick={setSelectedDocument}
-                  onEdit={setEditingDocument}
-                  onDelete={setDocumentToDelete}
+                  onClick={logic.setSelectedDocument}
+                  onEdit={logic.setEditingDocument}
+                  onDelete={logic.setDocumentToDelete}
                 />
             ))}
           </div>
@@ -122,12 +91,12 @@ export function DocumentsPage() {
       {/* EDIT DIALOG */}
       <FormDialog
         title="Modifier le document"
-        open={!!editingDocument}
-        onOpenChange={(open) => !open && setEditingDocument(null)}
+        open={!!logic.editingDocument}
+        onOpenChange={(open) => !open && logic.setEditingDocument(null)}
       >
-        {(close) => editingDocument && (
+        {(close) => logic.editingDocument && (
           <DocumentForm
-            initialData={editingDocument}
+            initialData={logic.editingDocument}
             onSuccess={close}
           />
         )}
@@ -135,38 +104,28 @@ export function DocumentsPage() {
 
       {/* DETAILS SHEET */}
       <EntitySheet
-        open={!!selectedDocument}
-        onOpenChange={(open) => !open && setSelectedDocument(null)}
+        open={!!logic.selectedDocument}
+        onOpenChange={(open) => !open && logic.setSelectedDocument(null)}
         title="Détails du document"
       >
-        {selectedDocument && (
+        {logic.selectedDocument && (
           <DocumentDetails
-            document={selectedDocument}
-            onEdit={(doc) => {
-              setSelectedDocument(null);
-              setEditingDocument(doc);
-            }}
-            onDelete={(doc) => {
-              setDocumentToDelete(doc);
-            }}
+            document={logic.selectedDocument}
+            onEdit={logic.openEditFromDetails}
+            onDelete={logic.openDeleteFromDetails}
           />
         )}
       </EntitySheet>
 
       {/* DELETE CONFIRMATION */}
       <EntityDeleteDialog
-        open={!!documentToDelete}
-        onOpenChange={(open) => {
-          if (!open) {
-            setDocumentToDelete(null);
-            setDeleteError('');
-          }
-        }}
+        open={!!logic.documentToDelete}
+        onOpenChange={logic.closeDeleteDialog}
         entityType="document"
-        entityLabel={documentToDelete?.name || ''}
-        onConfirm={handleDelete}
-        isDeleting={isDeleting}
-        error={deleteError}
+        entityLabel={logic.documentToDelete?.name || ''}
+        onConfirm={logic.handleDelete}
+        isDeleting={logic.isDeleting}
+        error={logic.deleteError}
       />
     </PageLayout>
   );
