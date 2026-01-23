@@ -8,7 +8,7 @@ import {
   Product,
 } from '@/api/model';
 
-interface WizardState {
+export interface WizardState {
   applicationId: number | null;
   opportunityId: number | null;
   linkedCompanyId: number | null;
@@ -21,6 +21,7 @@ interface WizardState {
   createdEvents: ScheduledEvent[];
   createdActions: Action[];
   lastStep?: number;
+  highestVisitedStep?: number;
 }
 
 const STORAGE_KEY = 'wizard_session_v1';
@@ -38,6 +39,7 @@ const INITIAL_STATE: WizardState = {
   createdEvents: [],
   createdActions: [],
   lastStep: 1,
+  highestVisitedStep: 1,
 };
 
 export function useWizardStore() {
@@ -62,9 +64,9 @@ export function useWizardStore() {
   // Persist to localStorage on state change
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const hasData = state.applicationId || state.opportunityId || state.createdCompanies.length > 0;
+      const hasData = state.applicationId || state.opportunityId;
 
-      if (hasData || (state.lastStep && state.lastStep > 1)) {
+      if (hasData || (state.highestVisitedStep && state.highestVisitedStep > 1)) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } else {
         localStorage.removeItem(STORAGE_KEY);
@@ -76,6 +78,10 @@ export function useWizardStore() {
   const setLastStep = (step: number) => {
     setState(prev => ({ ...prev, lastStep: step }));
   };
+
+  const setHighestVisitedStep = (step: number) => {
+    setState(prev => ({ ...prev, highestVisitedStep: step }));
+  }
 
   const setInitIds = (appId: number, oppId: number) => {
     setState(prev => ({ ...prev, applicationId: appId, opportunityId: oppId }));
@@ -166,6 +172,7 @@ export function useWizardStore() {
   return {
     state,
     setLastStep,
+    setHighestVisitedStep,
     setInitIds,
     setLinkedCompanyId,
     setResumeDocumentId,
@@ -185,3 +192,5 @@ export function useWizardStore() {
     clearWizard,
   };
 }
+export type WizardStore = ReturnType<typeof useWizardStore>;
+export type WizardActions = Omit<WizardStore, 'state'>;

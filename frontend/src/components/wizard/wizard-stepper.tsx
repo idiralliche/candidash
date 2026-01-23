@@ -15,7 +15,6 @@ interface WizardStepItem {
   id: number;
   title: string;
   icon?: LucideIcon;
-  disabled?: boolean;
 }
 
 interface WizardStepperProps {
@@ -23,13 +22,15 @@ interface WizardStepperProps {
   steps: WizardStepItem[];
   onStepClick: (stepId: number) => void;
   completedSteps: number[];
+  highestVisitedStep: number;
 }
 
 export function WizardStepper({
   currentStep,
   steps,
   onStepClick,
-  completedSteps
+  completedSteps,
+  highestVisitedStep,
 }: WizardStepperProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -86,7 +87,7 @@ export function WizardStepper({
             {steps.map((step) => {
               const isCompleted = completedSteps.includes(step.id);
               const isCurrent = currentStep === step.id;
-              const isClickable = !step.disabled;
+              const isClickable = isCompleted;
 
               return (
                 <div
@@ -137,7 +138,8 @@ export function WizardStepper({
         {steps.map((step, index) => {
           const isCompleted = completedSteps.includes(step.id);
           const isCurrent = currentStep === step.id;
-          const isClickable = !step.disabled;
+          const isClickable = step.id <= highestVisitedStep;
+          const isLastVisited = step.id === highestVisitedStep
           const isLast = index === steps.length - 1;
 
           return (
@@ -150,18 +152,19 @@ export function WizardStepper({
                 onClick={() => isClickable && onStepClick(step.id)}
                 className={cn(
                   "flex items-center gap-3 cursor-pointer group px-2 py-1 rounded-md transition-colors",
-                  !isClickable && "cursor-not-allowed opacity-50",
-                  isClickable && "hover:bg-white/5"
+                  isCurrent ? "bg-info/5 hover:bg-info/10" :
+                    isClickable ? "bg-white-subtle hover:bg-white-subtle/10" : "bg-transparent cursor-not-allowed opacity-30",
                 )}
               >
                 <div className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all",
-                  isCompleted ? "bg-primary border-primary text-white" :
-                    isCurrent ? "bg-primary/20 border-primary text-primary" :
-                      "bg-surface-alt border-white-light/20 text-gray-500"
+                  isCompleted ? "border-success text-success" :
+                    isCurrent ? "border-info text-info" :
+                    isClickable ? "border-warning text-warning" :
+                      "border-muted-foreground text-muted-foreground"
                 )}>
                   {isCompleted ?
-                    <Check className="w-4 h-4" /> :
+                    <Check className="w-5 h-5" /> :
                     (step.icon ?
                       <step.icon className="w-4 h-4" /> :
                       <span className="text-xs">{step.id}</span>
@@ -171,9 +174,10 @@ export function WizardStepper({
                 <div className="flex flex-col">
                   <span className={cn(
                     "text-sm font-medium whitespace-nowrap",
-                    isCurrent ?
-                      "text-primary" :
-                      isCompleted ? "text-white" : "text-gray-500"
+                    isCompleted ? "text-success" :
+                      isCurrent ? "text-info" :
+                        isClickable? "text-warning" :
+                        "text-muted-foreground"
                   )}>
                     {step.title}
                   </span>
@@ -182,7 +186,8 @@ export function WizardStepper({
               {!isLast && (
                 <div className={cn(
                   "h-[2px] w-full mx-4 rounded-full flex-1",
-                  isCompleted ? "bg-primary" : "bg-white-light/10"
+                  isCompleted ? "bg-success" :  "bg-muted-foreground",
+                  (!isClickable || isLastVisited) && ("opacity-30")
                 )} />
               )}
             </div>
