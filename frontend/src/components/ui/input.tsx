@@ -1,6 +1,8 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { FieldCharCountInfo } from '@/components/ui/field-char-count'
+import { useDebounce } from '@/hooks/shared/use-debounce'
 
 const inputContainerVariants = cva(
   "flex items-center w-full rounded-md border transition-colors cursor-text",
@@ -37,12 +39,63 @@ export interface InputProps
     Omit<VariantProps<typeof inputContainerVariants>, "disabled"> {
   leadingIcon?: React.ElementType
   trailingIcon?: React.ElementType
+  showCharCount?: boolean
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, variant, size, disabled, leadingIcon: LeadingIcon, trailingIcon: TrailingIcon, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({
+  className,
+  type,
+  variant,
+  size,
+  disabled,
+  leadingIcon: LeadingIcon,
+  trailingIcon: TrailingIcon,
+  maxLength,
+  value = "",
+  showCharCount = false,
+  onChange,
+  ...props
+}, ref) => {
 
-    return (
+  const [internalValue, setInternalValue] = React.useState<string>(String(value));
+  const debouncedValue = useDebounce(internalValue, 150);
+
+  React.useEffect(() => {
+    setInternalValue(String(value));
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInternalValue(newValue);
+    let finalValue = newValue;
+
+    if (maxLength && newValue.length > maxLength) {
+      finalValue = newValue.slice(0, maxLength);
+
+      setTimeout(() => {
+        const cursorPos = e.target.selectionStart;
+        if (cursorPos && cursorPos > maxLength) {
+          e.target.setSelectionRange(maxLength, maxLength);
+        }
+      }, 0);
+    }
+
+    if (onChange) {
+      const newEvent = {
+        ...e,
+        target: { ...e.target, value: finalValue },
+        currentTarget: { ...e.currentTarget, value: finalValue }
+      };
+      onChange(newEvent);
+    }
+  };
+
+  const currentLength = debouncedValue.length;
+  const remainingChars = maxLength ? (maxLength - currentLength) : 0;
+  const requiresDisable = !!disabled;
+
+  return (
+    <>
       <div
         className={cn(
           inputContainerVariants({ variant, size, disabled: Boolean(disabled) }),
@@ -51,7 +104,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         onClick={(e) => {
           const target = e.target as HTMLElement;
           if (target.tagName !== "INPUT") {
-             target.querySelector("input")?.focus();
+            target.querySelector("input")?.focus();
           }
         }}
       >
@@ -67,7 +120,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             "flex h-full w-full bg-transparent p-0 text-sm outline-none placeholder:text-muted-foreground file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-0",
           )}
           ref={ref}
-          disabled={disabled}
+          disabled={requiresDisable}
+          value={value}
+          onChange={handleChange}
+          maxLength={maxLength}
           {...props}
         />
 
@@ -77,9 +133,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </div>
         )}
       </div>
-    );
-  }
-);
+
+      <FieldCharCountInfo
+        showCharCount={showCharCount}
+        maxLength={maxLength}
+        remainingChars={maxLength ? remainingChars : undefined}
+        type={type}
+      />
+    </>
+  );
+});
 
 Input.displayName = "Input";
 

@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Loader2 } from 'lucide-react';
 import { ReactNode } from 'react';
+import { genderMap } from '@/lib/semantic-ui.ts';
 
 interface EntityDeleteDialogProps {
   /**
@@ -46,14 +47,6 @@ interface EntityDeleteDialogProps {
    */
   description?: ReactNode;
 }
-
-const genderMap: Record<string, { article: string; suffix: string; demonstrative: string }> = {
-  événement: { article: "L'", suffix: "e", demonstrative: "cet" },
-  entreprise: { article: "L'", suffix: "e", demonstrative: "cette" },
-  opportunité: { article: "L'", suffix: "e", demonstrative: "cette" },
-  contact: { article: "Le ", suffix: "", demonstrative: "ce" },
-  document: { article: "Le ", suffix: "", demonstrative: "ce" },
-};
 
 /**
  * Generic reusable delete confirmation dialog.

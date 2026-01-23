@@ -57,3 +57,33 @@ export function formatBytes(bytes: number, decimals = 2) {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+/**
+ * Enum representing the types of input elements that are relevant for a character counter.
+ * These types allow users to enter text freely, making them suitable for character counting.
+ */
+export enum CharCountCompatibleInputTypes {
+  TEXT = 'text',          // Standard text input
+  PASSWORD = 'password',  // Password input (masked text)
+  EMAIL = 'email',        // Email input
+  URL = 'url',            // URL input
+  TEL = 'tel',            // Telephone number input
+  SEARCH = 'search',      // Search input
+  TEXTAREA = 'textarea'   // Multi-line text input
+}
+
+/**
+ * Helper function to check if a given input type is relevant for a character counter.
+ * @param inputType - The type of the input element to check.
+ * @returns A boolean indicating whether the input type is relevant for a character counter.
+ */
+export const supportsCharCount = (
+  inputType: React.HTMLInputTypeAttribute | undefined
+): boolean => (
+  Object.values(
+    CharCountCompatibleInputTypes
+  ).includes(
+    inputType as CharCountCompatibleInputTypes
+  )
+);
+

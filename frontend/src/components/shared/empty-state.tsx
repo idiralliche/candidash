@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 interface EmptyStateProps {
   icon: LucideIcon;
   message: string;
-  action?: ReactNode; // CTA optionnel
+  action?: ReactNode;
 }
 
 export function EmptyState({ icon: Icon, message, action }: EmptyStateProps) {

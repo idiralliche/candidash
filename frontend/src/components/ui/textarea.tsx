@@ -1,6 +1,14 @@
-import * as React from "react"
+import {
+  useState,
+  useEffect,
+  forwardRef,
+  ComponentProps,
+  ChangeEvent,
+} from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { FieldCharCountInfo } from '@/components/ui/field-char-count'
+import { useDebounce } from '@/hooks/shared/use-debounce'
 
 const textareaContainerVariants = cva(
   "flex flex-col w-full rounded-md border transition-colors",
@@ -33,13 +41,13 @@ const textareaContainerVariants = cva(
 )
 
 export interface TextareaProps
-  extends Omit<React.ComponentProps<"textarea">, "size">,
+  extends Omit<ComponentProps<"textarea">, "size">,
     Omit<VariantProps<typeof textareaContainerVariants>, "disabled"> {
   showCharCount?: boolean
   resize?: "none" | "vertical" | "horizontal" | "both"
 }
 
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({
     className,
     variant,
@@ -48,11 +56,47 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     showCharCount = false,
     resize = "vertical",
     maxLength,
-    value,
+    value = "",
+    onChange,
     ...props
   }, ref) => {
-    const currentLength = typeof value === 'string' ? value.length : 0
-    const remainingChars = maxLength ? maxLength - currentLength : undefined
+
+    const [internalValue, setInternalValue] = useState<string>(String(value));
+    const debouncedValue = useDebounce(internalValue, 150);
+
+    useEffect(() => {
+      setInternalValue(String(value));
+    }, [value]);
+
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      const newValue = e.target.value;
+      setInternalValue(newValue);
+      let finalValue = newValue;
+
+      if (maxLength && newValue.length > maxLength) {
+        finalValue = newValue.slice(0, maxLength);
+
+        setTimeout(() => {
+          const cursorPos = e.target.selectionStart;
+          if (cursorPos && cursorPos > maxLength) {
+            e.target.setSelectionRange(maxLength, maxLength);
+          }
+        }, 0);
+      }
+
+      if (onChange) {
+        const newEvent = {
+          ...e,
+          target: { ...e.target, value: finalValue },
+          currentTarget: { ...e.currentTarget, value: finalValue }
+        };
+        onChange(newEvent);
+      }
+    };
+
+    const currentLength = debouncedValue.length;
+    const remainingChars = maxLength ? (maxLength - currentLength) : 0;
+    const requiresDisable = !!disabled;
 
     return (
       <div className="w-full">
@@ -75,32 +119,22 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               resize === "none" && "resize-none",
               resize === "vertical" && "resize-y",
               resize === "horizontal" && "resize-x",
-              resize === "both" && "resize",
+              resize === "both" && "resize"
             )}
             ref={ref}
-            disabled={disabled}
+            disabled={requiresDisable}
             maxLength={maxLength}
             value={value}
+            onChange={handleChange}
             {...props}
           />
         </div>
 
-        {/* Chars Count */}
-        {showCharCount && maxLength && (
-          <div className="mt-1 flex justify-end">
-            <span
-              className={cn(
-                "text-xs tabular-nums transition-colors font-medium",
-                "text-muted-foreground",
-                remainingChars !== undefined && remainingChars < 50 && remainingChars >= 10 && "text-yellow-500",
-                remainingChars !== undefined && remainingChars < 10 && remainingChars > 0 && "text-orange-500",
-                remainingChars === 0 && "text-destructive font-bold"
-              )}
-            >
-              {remainingChars} caractère{remainingChars !== 1 ? 's' : ''} restant{remainingChars !== 1 ? 's' : ''}
-            </span>
-          </div>
-        )}
+        <FieldCharCountInfo
+          showCharCount={showCharCount}
+          maxLength={maxLength}
+          remainingChars={maxLength ? remainingChars : undefined}
+        />
       </div>
     )
   }

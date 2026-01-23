@@ -88,3 +88,15 @@ export const getEventStatusPalette = (s?: EventStatus) => getPalette(s, EVENT_ST
 export const getFormatPalette = (f?: DocumentFormat) => getPalette(f, DOCUMENT_FORMAT_COLOR, 'gray');
 export const getApplicationTypePalette = (t?: ApplicationType) => getPalette(t, APPLICATION_TYPE_COLOR, 'gray');
 export const getApplicationStatusPalette = (s?: ApplicationStatus) => getPalette(s, APPLICATION_STATUS_COLOR, 'blue');
+
+
+export const genderMap: Record<string, { article: string; suffix: string; demonstrative: string }> = {
+  opportunité: { article: "L'", suffix: "e", demonstrative: "cette" },
+  candidature: { article: "La ", suffix: "e", demonstrative: "cette" },
+  entreprise: { article: "L'", suffix: "e", demonstrative: "cette" },
+  contacte: { article: "Le ", suffix: "", demonstrative: "ce" },
+  document: { article: "Le ", suffix: "", demonstrative: "ce" },
+  produit: { article: "Le ", suffix: "", demonstrative: "ce" },
+  événement: { article: "L'", suffix: "", demonstrative: "cet" },
+  action: { article: "L'", suffix: "", demonstrative: "cet" },
+};
