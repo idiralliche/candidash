@@ -30,16 +30,16 @@
     --primary-foreground: 0 0 100; /* Text on primary - Pure white */
 
     /* Destructive Color */
-    --destructive: 0 62.8 30.6; /* Destructive red #7f1d1d */
+    --destructive: 0 72 51; /* Destructive red #7f1d1d */
     --destructive-hover: 0 62.8 25; /* Destructive hover */
     --destructive-foreground: 210 40 98; /* Text on destructive */
 
     /* Neutral Surfaces (former secondary/muted/accent merged) */
-    --neutral: 217.2 32.6 17.5; /* Neutral surface #1e293b */
+    --neutral: 217 32.6 17.5; /* Neutral surface #1e293b */
     --neutral-foreground: 210 40 98; /* Text on neutral */
 
     /* Borders & Separators */
-    --border: 217.2 32.6 17.5; /* Standard borders */
+    --border: 217 32.6 17.5; /* Standard borders */
     --border-subtle: 220 10 15; /* Very subtle borders */
 
     /* Inputs */
