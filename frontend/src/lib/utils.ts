@@ -87,3 +87,26 @@ export const supportsCharCount = (
   )
 );
 
+export const formatSalary = (
+  min?: number | null,
+  max?: number | null
+): string | null => {
+  if (min == null && max == null) return null;
+
+  const fmt = new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  });
+
+  if (min != null && max != null) {
+    return `${fmt.format(min)} - ${fmt.format(max)}`;
+  }
+  if (min != null) {
+    return `> ${fmt.format(min)}`;
+  }
+  if (max != null) {
+    return `< ${fmt.format(max)}`;
+  }
+  return null;
+};
