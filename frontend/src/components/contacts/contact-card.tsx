@@ -5,16 +5,19 @@ import {
   Balloon,
   Link as LinkIcon,
   Contact as ContactIcon,
+  Award,
 } from 'lucide-react';
-import { IconBox } from '@/components/ui/icon-box';
 import { Contact } from '@/api/model';
 import { EntityCard } from '@/components/shared/entity-card';
+import { CardInfoBlock } from '@/components/shared/card-info-block';
 
 interface ContactCardProps {
   contact: Contact;
   onClick?: (contact: Contact) => void;
   onEdit?: (contact: Contact) => void;
   onDelete?: (contact: Contact) => void;
+  variant?: "default" | "minimal";
+  isHighlighted?: boolean;
 }
 
 export function ContactCard({
@@ -22,46 +25,45 @@ export function ContactCard({
   onClick,
   onEdit,
   onDelete,
+  variant ="default",
+  isHighlighted = false,
 }: ContactCardProps) {
   const company = contact.company;
+  const isMinimal = variant === "minimal";
 
   return (
     <EntityCard
       onClick={onClick && (() => onClick(contact))}
-      className={onClick ? "cursor-pointer" : "cursor-default"}
+      isHighlighted={isHighlighted}
+      isMinimal={isMinimal}
     >
-
       {/* IDENTITY ZONE */}
-      <EntityCard.Identity>
-        <IconBox
-          palette="purple"
-          shape="circle"
-          groupHover
-        >
-          <ContactIcon className="h-5 w-5" />
-        </IconBox>
-
+      <EntityCard.Identity
+        iconBoxProps={{
+          palette: "purple", //  isHighlighted -> palette: "blue"!
+          shape:"circle",
+        }}
+        icon={ContactIcon}
+      >
         <EntityCard.Info
           title={`${contact.first_name} ${contact.last_name}`}
-          subtitle={
-            contact.position && (
-              <p className="text-xs text-gray-400 truncate">
-                {contact.position}
-              </p>
-            )
-          }
+          subtitle={contact.position && (
+            <CardInfoBlock icon={Award}>
+              {contact.position}
+            </CardInfoBlock>
+          )}
         />
       </EntityCard.Identity>
 
       {/* META ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Meta>
         {/* Company or Status */}
-        <div className="flex justify-start min-w-0 items-center gap-2">
+        <div className="flex justify-start min-w-0">
           {company && (
-            <div className="flex items-center gap-2 text-xs text-gray-300 bg-white-subtle px-2 py-1 rounded">
-              <Building2 className="h-3.5 w-3.5" />
-              <span className="truncate">{company.name}</span>
-            </div>
+            <CardInfoBlock icon={Building2}>
+              {company.name}
+            </CardInfoBlock>
           )}
         </div>
 
@@ -79,6 +81,7 @@ export function ContactCard({
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(contact))}
         onDelete={onDelete && (() => onDelete(contact))}

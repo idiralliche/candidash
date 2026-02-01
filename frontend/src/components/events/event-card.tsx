@@ -6,10 +6,12 @@ import {
   Video,
   Phone,
   Mail,
+  CalendarCog,
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { EntityCard } from '@/components/shared/entity-card';
+import { CardInfoBlock } from '@/components/shared/card-info-block';
 
 import { ScheduledEvent } from '@/api/model';
 import {
@@ -23,15 +25,18 @@ interface EventCardProps {
   onClick?: (event: ScheduledEvent) => void;
   onEdit?: (event: ScheduledEvent) => void;
   onDelete?: (event: ScheduledEvent) => void;
+  variant?: "default" | "minimal";
 }
 
 export function EventCard({
   event,
   onClick,
   onEdit,
-  onDelete
+  onDelete,
+  variant ="default",
 }: EventCardProps) {
   const date = new Date(event.scheduled_date);
+  const isMinimal = variant === "minimal";
 
   const getIconForMethod = (method?: string) => {
     switch (method) {
@@ -47,49 +52,52 @@ export function EventCard({
     <EntityCard
       onClick={onClick && (() => onClick(event))}
       hoverPalette="blue"
-      className={onClick ? "cursor-pointer" : "cursor-default"}
+      isMinimal={isMinimal}
     >
-
       {/* IDENTITY: Date Box as Icon + Title */}
-      <EntityCard.Identity>
-        {/* Date Box (Custom Icon Placeholder) */}
-        <div className="flex flex-col items-center justify-center h-12 w-12 shrink-0 rounded-lg bg-surface-elevated border border-white-subtle text-white">
-          <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider leading-none">
-            {format(date, 'MMM', { locale: fr })}
-          </span>
-          <span className="text-lg font-bold leading-none mt-0.5">
-            {format(date, 'dd')}
-          </span>
-        </div>
-
+      <EntityCard.Identity
+        iconBoxProps={{
+          className:"flex-col !bg-[#1a2334] !opacity-100",
+          palette: "blue",
+          size:"lg",
+        }}
+        icon={
+          <>
+            {/* Date Box (Custom Icon Placeholder) */}
+            <span className="text-[10px] uppercase font-bold text-blue-200 tracking-wider leading-none">
+              {format(date, 'MMM', { locale: fr })}
+            </span>
+            <span className="text-lg font-bold leading-none text-blue-300 mt-0.5">
+              {format(date, 'dd')}
+            </span>
+          </>
+        }
+      >
         <EntityCard.Info
           title={event.title}
-          hoverPalette="blue"
           subtitle={event.event_type && (
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span className="truncate">{event.event_type}</span>
-            </div>
+            <CardInfoBlock icon={CalendarCog}>
+              {event.event_type}
+            </CardInfoBlock>
           )}
         />
       </EntityCard.Identity>
 
       {/* META: Status & Time */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Meta>
-        <div className="flex justify-start min-w-0 items-center gap-2">
-          <Clock className="h-3.5 w-3.5 text-gray-500" />
-          <span>{format(date, 'HH:mm')}</span>
-          {event.duration_minutes && (
-            <span>• {event.duration_minutes} min</span>
-          )}
+        <div className="flex justify-start min-w-0">
+          <CardInfoBlock icon={Clock}>
+            {format(date, 'HH:mm')}{event.duration_minutes && (` • ${event.duration_minutes} min`)}
+          </CardInfoBlock>
         </div>
 
         <div className="flex justify-start lg:justify-center">
             <Badge
               variant="subtle"
               palette={getEventStatusPalette(event.status)}
-              className="text-[10px] px-2 py-0.5 h-5"
             >
-                {getLabel(LABELS_EVENT_STATUS, event.status)}
+              {getLabel(LABELS_EVENT_STATUS, event.status)}
             </Badge>
         </div>
 
@@ -104,6 +112,7 @@ export function EventCard({
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(event))}
         onDelete={onDelete && (() => onDelete(event))}

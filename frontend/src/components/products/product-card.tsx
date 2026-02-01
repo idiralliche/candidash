@@ -4,17 +4,18 @@ import {
   Code2,
   Building2,
 } from "lucide-react";
-import { IconBox } from "@/components/ui/icon-box";
 import { Button } from '@/components/ui/button.tsx';
 import { Product } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
+import { CardInfoBlock } from '@/components/shared/card-info-block';
 
 interface ProductCardProps {
   product: Product;
   onClick?: (product: Product) => void;
   onEdit?: (product: Product) => void;
   onDelete?: (product: Product) => void;
-  variant?: "default" | "compact";
+  variant?: "default" | "compact" | "minimal";
+  isHighlighted?: boolean;
 }
 
 export function ProductCard({
@@ -23,49 +24,43 @@ export function ProductCard({
   onEdit,
   onDelete,
   variant ="default",
+  isHighlighted = false,
 }: ProductCardProps) {
   const company = product.company;
   const isCompact = variant === "compact";
+  const isMinimal = variant === "minimal";
 
   return (
     <EntityCard
       onClick={onClick && (() => onClick(product))}
-      className={onClick ? "cursor-pointer" : "cursor-default"}
+      isHighlighted={isHighlighted}
+      isMinimal={isMinimal}
     >
 
       {/* IDENTITY ZONE */}
-      <EntityCard.Identity>
-        <IconBox
-          palette="indigo"
-          groupHover
-        >
-          <Package className="h-5 w-5" />
-        </IconBox>
-
+      <EntityCard.Identity
+        iconBoxProps={{ palette: "indigo" }} //  isHighlighted -> palette: "blue"!
+        icon={Package}
+      >
         <EntityCard.Info
           title={product.name}
           subtitle={company?.name && (
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <Building2 className="h-3 w-3" />
-              <span className="truncate">
-                {company.name}
-              </span>
-            </div>
+            <CardInfoBlock icon={Building2}>
+              {company.name}
+            </CardInfoBlock>
           )}
         />
       </EntityCard.Identity>
 
       {/* META ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Meta>
         {/* Technologies Stack */}
         <div className="flex justify-start min-w-0">
           {product.technologies_used && (
-            <div className="flex items-center gap-2">
-              <Code2 className="h-3.5 w-3.5 text-gray-500"/>
-              <span className="truncate max-w-[150px] text-xs ">
-                {product.technologies_used}
-              </span>
-            </div>
+            <CardInfoBlock icon={Code2}>
+              {product.technologies_used}
+            </CardInfoBlock>
           )}
         </div>
 
@@ -93,6 +88,7 @@ export function ProductCard({
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(product))}
         onDelete={onDelete && (() => onDelete(product))}

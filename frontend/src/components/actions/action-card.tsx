@@ -3,11 +3,12 @@ import {
   CheckCircle2,
   Circle,
   Calendar,
+  Layers
 } from 'lucide-react';
 
 import { Action } from '@/api/model';
 import { EntityCard } from '@/components/shared/entity-card';
-import { IconBox } from '@/components/ui/icon-box';
+import { CardInfoBlock } from '@/components/shared/card-info-block';
 import { Badge } from '@/components/ui/badge';
 
 interface ActionCardProps {
@@ -15,6 +16,8 @@ interface ActionCardProps {
   onClick?: (action: Action) => void;
   onEdit?: (action: Action) => void;
   onDelete?: (action: Action) => void;
+  variant?: "default" | "minimal";
+  isHighlighted?: boolean;
 }
 
 export function ActionCard({
@@ -22,6 +25,8 @@ export function ActionCard({
   onClick,
   onEdit,
   onDelete,
+  variant ="default",
+  isHighlighted = false,
 }: ActionCardProps) {
   const isCompleted = !!action.completed_date;
   const application = action.application;
@@ -31,36 +36,31 @@ export function ActionCard({
   return (
     <EntityCard
       onClick={onClick && (() => onClick(action))}
-      className={onClick ? "cursor-pointer" : "cursor-default"}
+      isHighlighted={isHighlighted}
+      isMinimal={variant === "minimal"}
     >
-      <EntityCard.Identity>
-        <IconBox
-          palette={isCompleted ? 'green' : 'blue'}
-          groupHover
-        >
-          <Target className="h-5 w-5" />
-        </IconBox>
+      <EntityCard.Identity
+        iconBoxProps={{ palette: "green" }} // isHighlighted -> palette: "blue"!
+        icon={Target}
+      >
         <EntityCard.Info
           title={action.type}
-          subtitle={
-            <div className="flex flex-col gap-0.5">
-              <span className="text-xs text-gray-400">
-                {opportunity?.job_title || "Candidature inconnue"}
-              </span>
-            </div>
-          }
+          subtitle={opportunity && (
+            <CardInfoBlock icon={Layers}>
+              {opportunity.job_title}
+            </CardInfoBlock>
+          )}
         />
       </EntityCard.Identity>
 
+      {/* META ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Meta>
-        <div className="flex justify-start min-w-0 items-center gap-2">
+        <div className="flex justify-start min-w-0">
           {scheduled_event && (
-            <>
-              <Calendar className="w-3.5 h-3.5" />
-              <span className="truncate">
-                {scheduled_event.title}
-              </span>
-            </>
+            <CardInfoBlock icon={Calendar}>
+              {scheduled_event.title}
+            </CardInfoBlock>
           )}
         </div>
 
@@ -71,12 +71,12 @@ export function ActionCard({
           >
             {isCompleted ? (
               <>
-                <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
+                <CheckCircle2 className="h-3 w-3" />
                 Terminée
               </>
             ) : (
               <>
-                <Circle className="mr-2 h-3.5 w-3.5" />
+                <Circle className="h-3 w-3" />
                 À faire
               </>
             )}
@@ -84,6 +84,8 @@ export function ActionCard({
         </div>
       </EntityCard.Meta>
 
+      {/* ACTIONS ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(action))}
         onDelete={onDelete && (() => onDelete(action))}

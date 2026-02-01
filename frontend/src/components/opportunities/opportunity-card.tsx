@@ -4,8 +4,8 @@ import {
   MapPin,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { IconBox } from "@/components/ui/icon-box";
 import { EntityCard } from "@/components/shared/entity-card";
+import { CardInfoBlock } from '@/components/shared/card-info-block';
 import { Opportunity } from "@/api/model";
 import {
   LABELS_APPLICATION,
@@ -18,6 +18,8 @@ interface OpportunityCardProps {
   onClick?: (opportunity: Opportunity) => void;
   onEdit?: (opportunity: Opportunity) => void;
   onDelete?: (opportunity: Opportunity) => void;
+  variant?: "default" | "compact" | "minimal";
+  isHighlighted?: boolean;
 }
 
 export function OpportunityCard({
@@ -25,58 +27,55 @@ export function OpportunityCard({
   onClick,
   onEdit,
   onDelete,
+  variant ="default",
+  isHighlighted = false,
 }: OpportunityCardProps) {
   const company = opportunity.company;
+  const isCompact = variant === "compact";
+  const isMinimal = variant === "minimal";
 
   return (
     <EntityCard
       onClick={onClick && (() => onClick(opportunity))}
-      className={onClick ? "cursor-pointer" : "cursor-default"}
+      isHighlighted={isHighlighted}
+      isMinimal={isMinimal}
     >
-
       {/* IDENTITY ZONE */}
-      <EntityCard.Identity>
-        <IconBox
-          palette="emerald"
-          groupHover
-        >
-          <Briefcase className="h-5 w-5" />
-        </IconBox>
-
+      <EntityCard.Identity
+        iconBoxProps={{ palette: "emerald" }} //  isHighlighted -> palette: "blue"!
+        icon={Briefcase}
+      >
         <EntityCard.Info
           title={opportunity.job_title}
           subtitle={company && (
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <Building2 className="h-3 w-3" />
-              <span className="truncate max-w-[150px]">
-                {company.name}
-              </span>
-            </div>
+            <CardInfoBlock icon={Building2}>
+              {company.name}
+            </CardInfoBlock>
           )}
         />
       </EntityCard.Identity>
 
       {/* META ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Meta>
         {/* Location */}
         <div className="flex justify-start min-w-0">
-          {opportunity.location && (
-            <div className="flex items-center gap-2 truncate text-xs">
-              <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
-              <span className="truncate max-w-[150px]">
-                {opportunity.location}
-              </span>
-            </div>
+          {!isCompact && opportunity.location && (
+            <CardInfoBlock icon={MapPin}>
+              {opportunity.location}
+            </CardInfoBlock>
           )}
         </div>
 
         {/* Application Type Badge */}
-        <div className="flex justify-start lg:justify-center">
+        <div className={`${!isCompact ? "flex justify-start lg:justify-center" : ""}`}>
           <Badge
             variant="subtle"
             palette={getApplicationTypePalette(opportunity.application_type)}
           >
-            {getLabel(LABELS_APPLICATION, opportunity.application_type)}
+            {getLabel(
+              LABELS_APPLICATION, opportunity.application_type
+            ).split(/\s+/)[0]} {/* Offre | Candidature | Contacté */}
           </Badge>
         </div>
 
@@ -86,11 +85,11 @@ export function OpportunityCard({
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(opportunity))}
         onDelete={onDelete && (() => onDelete(opportunity))}
       />
-
     </EntityCard>
   );
 }

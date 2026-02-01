@@ -2,10 +2,11 @@ import { format } from 'date-fns';
 import {
   Layers,
   Archive,
+  Rocket,
 } from "lucide-react";
 import { Application } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
-import { IconBox } from "@/components/ui/icon-box";
+import { CardInfoBlock } from '@/components/shared/card-info-block';
 import { Badge } from "@/components/ui/badge";
 import {
   LABELS_APPLICATION_STATUS,
@@ -18,36 +19,44 @@ interface ApplicationCardProps {
   onClick?: (app: Application) => void;
   onEdit?: (app: Application) => void;
   onDelete?: (app: Application) => void;
+  variant?: "default" | "minimal";
+  isHighlighted?: boolean;
 }
 
 export function ApplicationCard({
   application,
   onClick,
   onEdit,
-  onDelete
+  onDelete,
+  variant ="default",
+  isHighlighted = false,
 }: ApplicationCardProps) {
   const applicationDate = new Date(application.application_date);
   const opportunity = application.opportunity;
+  const isMinimal = variant === "minimal";
 
   return (
     <EntityCard
       onClick={onClick && (() => onClick(application))}
-      className={onClick ? "cursor-pointer" : "cursor-default"}
+      isHighlighted={isHighlighted}
+      isMinimal={isMinimal}
     >
-      <EntityCard.Identity>
-        <IconBox palette="orange" groupHover>
-          <Layers className="h-5 w-5" />
-        </IconBox>
+      <EntityCard.Identity
+        iconBoxProps={{ palette: "orange" }} //  isHighlighted -> palette: "blue"!
+        icon={Layers}
+      >
         <EntityCard.Info
           title={opportunity?.job_title || "Opportunité inconnue"}
           subtitle={
-            <p className="text-xs text-gray-400">
+            <CardInfoBlock icon={Rocket}>
               {format(applicationDate, 'dd/MM/yyyy')}
-            </p>
+            </CardInfoBlock>
           }
         />
       </EntityCard.Identity>
 
+      {/* META ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Meta>
         <div className="flex justify-start min-w-0 items-center gap-2">
           {application.is_archived && (
@@ -55,7 +64,7 @@ export function ApplicationCard({
               variant="subtle"
               palette="yellow"
             >
-              <Archive className="mr-2 h-3 w-3" />
+              <Archive className="h-3 w-3" />
               Archivée
             </Badge>
           )}
@@ -72,6 +81,7 @@ export function ApplicationCard({
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(application))}
         onDelete={onDelete && (() => onDelete(application))}

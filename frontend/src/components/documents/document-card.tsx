@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
 import {
   FileText,
+  File,
   Link as LinkIcon,
   Download,
-  Calendar,
+  CalendarClock,
   Loader2,
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -11,8 +12,8 @@ import { fr } from 'date-fns/locale';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { IconBox } from '@/components/ui/icon-box';
 import { EntityCard } from '@/components/shared/entity-card';
+import { CardInfoBlock } from '@/components/shared/card-info-block';
 
 import { Document } from '@/api/model';
 import {
@@ -27,7 +28,7 @@ interface DocumentCardProps {
   onClick?: (document: Document) => void;
   onEdit?: (document: Document) => void;
   onDelete?: (document: Document) => void;
-  variant?: "default" | "compact";
+  variant?: "default" | "compact" | "minimal";
   isHighlighted?: boolean;
   badges?: ReactNode;
   extraActions?: ReactNode;
@@ -57,40 +58,38 @@ export function DocumentCard({
   };
 
   const isCompact = variant === 'compact';
+  const isMinimal = variant === 'minimal';
 
   return (
     <EntityCard
       onClick={onClick && (() => onClick(document))}
-      hoverPalette={isHighlighted ? "blue" : "primary"}
-      className={onClick ? "cursor-pointer" : "cursor-default"}
+      isHighlighted={isHighlighted}
+      isMinimal={isMinimal}
     >
 
       {/* IDENTITY ZONE */}
-      <EntityCard.Identity>
-        <IconBox
-          palette={palette}
-          groupHover
-        >
-          {getIcon()}
-        </IconBox>
-
+      <EntityCard.Identity
+        iconBoxProps={{ palette: palette }} //  isHighlighted -> palette: "blue"!
+        icon={getIcon()}
+      >
         <EntityCard.Info
           title={document.name}
           subtitle={
-            <p className="text-xs text-gray-400 truncate capitalize">
+            <CardInfoBlock icon={File}>
               {document.type}
-            </p>
+            </CardInfoBlock>
           }
         />
       </EntityCard.Identity>
 
       {/* META ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Meta>
         <div className="flex justify-start min-w-0">
           <Badge
             variant="subtle"
             palette={palette}
-            className="text-[10px] px-2 py-0.5 h-5"
+            className="text-[10px]"
           >
             {getLabel(LABELS_DOCUMENT_FORMAT, document.format)}
           </Badge>
@@ -102,17 +101,15 @@ export function DocumentCard({
 
         <div className="flex justify-start lg:justify-end">
           {!isCompact && (
-            <div className="flex items-center gap-2 text-xs">
-              <Calendar className="h-3.5 w-3.5 text-gray-500" />
-              <span>
-                {format(new Date(document.created_at), 'dd MMM yyyy', { locale: fr })}
-              </span>
-            </div>
+            <CardInfoBlock icon={CalendarClock}>
+              {format(new Date(document.created_at), 'dd MMM yyyy', { locale: fr })}
+            </CardInfoBlock>
           )}
         </div>
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(document))}
         onDelete={onDelete && (() => onDelete(document))}

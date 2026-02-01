@@ -5,8 +5,8 @@ import {
   Globe,
   FingerprintPattern,
 } from "lucide-react";
-import { IconBox } from "@/components/ui/icon-box";
 import { Company } from "@/api/model";
+import { CardInfoBlock } from '@/components/shared/card-info-block';
 import { EntityCard } from "@/components/shared/entity-card";
 import { Button } from '@/components/ui/button.tsx';
 
@@ -15,7 +15,7 @@ interface CompanyCardProps {
   onClick?: (company: Company) => void;
   onEdit?: (company: Company) => void;
   onDelete?: (company: Company) => void;
-  variant?: "default" | "compact";
+  variant?: "default" | "compact" | "minimal";
   isHighlighted?: boolean;
   badges?: ReactNode;
   extraActions?: ReactNode;
@@ -32,46 +32,39 @@ export function CompanyCard({
   extraActions,
 }: CompanyCardProps) {
   const isCompact = variant === "compact";
+  const isMinimal = variant === "minimal";
 
   return (
     <EntityCard
       onClick={onClick && (() => onClick(company))}
-      hoverPalette={isHighlighted ? "blue" : "primary"}
-      className={onClick ? "cursor-pointer" : "cursor-default"}
+      isHighlighted={isHighlighted}
+      isMinimal={isMinimal}
     >
 
       {/* IDENTITY ZONE */}
-      <EntityCard.Identity>
-        <IconBox
-          palette={isHighlighted ? "blue" : "red"}
-          groupHover
-        >
-          <Building2 className="h-5 w-5" />
-        </IconBox>
-
+      <EntityCard.Identity
+        // IconBox default -> palette: "primary"
+        // isHighlighted -> palette: "blue"!
+        icon={Building2}
+      >
         <EntityCard.Info
           title={company.name}
           subtitle={company.industry && (
-              <div className="flex items-center gap-2 text-xs text-gray-400">
-                <FingerprintPattern className="h-3 w-3" />
-                <span className="truncate">
-                  {company.industry}
-                </span>
-              </div>
+            <CardInfoBlock icon={FingerprintPattern}>
+              {company.industry}
+            </CardInfoBlock>
           )}
         />
       </EntityCard.Identity>
 
       {/* META ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Meta>
-        <div className="flex justify-start min-w-0 items-center gap-2">
+        <div className="flex justify-start min-w-0">
           {!isCompact && company.headquarters && (
-            <>
-              <MapPin className="h-3.5 w-3.5 text-gray-500 shrink-0" />
-              <span className="truncate max-w-[150px]">
-                {company.headquarters}
-              </span>
-            </>
+            <CardInfoBlock icon={MapPin}>
+              {company.headquarters}
+            </CardInfoBlock>
           )}
         </div>
 
@@ -98,6 +91,7 @@ export function CompanyCard({
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
+      {/*null if variant === "minimal"*/}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(company))}
         onDelete={onDelete && (() => onDelete(company))}
