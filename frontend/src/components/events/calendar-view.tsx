@@ -194,7 +194,7 @@ export function CalendarView({ events, onSelectEvent, onAddEvent }: CalendarView
                                 <Badge
                                   variant="subtle"
                                   palette={getEventStatusPalette(event.status)}
-                                  className="text-[10px] h-5 px-1.5"
+                                  className="text-[10px]"
                                 >
                                     {getLabel(LABELS_EVENT_STATUS, event.status)}
                                 </Badge>

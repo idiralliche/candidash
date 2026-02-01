@@ -2,6 +2,7 @@ import {
   ExternalLink,
   LucideIcon,
   Loader2,
+  Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -66,7 +67,11 @@ export function LinkCard({
         <p className={cn("text-sm text-white truncate", valueClassName)}>{value}</p>
       </div>
       {/* Show external link icon only if not loading */}
-      {!isLoading && isExternal && <ExternalLink className="h-4 w-4 text-gray-600 group-hover:text-white" />}
+      {!isLoading && (
+        isExternal || !!href ?
+          <ExternalLink className="h-4 w-4 text-gray-600 group-hover:text-white" /> :
+            <Download className="h-4 w-4 text-gray-600 group-hover:text-white" />
+      )}
     </>
   );
 

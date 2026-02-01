@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
   // Base styles: Focus rings, Flex layout, Transitions
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center  min-w-0 justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       // 1. Visual Style (Fill/Border)
@@ -41,8 +41,8 @@ const buttonVariants = cva(
         default: "h-10 px-4 py-2",
         sm: "h-9 px-3",
         lg: "h-11 px-8",
-        icon: "h-9 w-9 p-0",
-        "icon-xs": "h-6 w-6 p-0",
+        icon: "h-9 w-9 p-2",
+        "icon-xs": "h-6 w-6 p-1",
         fab: "h-12 px-6 shadow-lg hover:scale-105 transition-transform",
         "fab-icon": "h-12 w-12 p-0 shadow-lg hover:scale-105 transition-transform",
       },

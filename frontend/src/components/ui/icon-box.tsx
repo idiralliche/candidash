@@ -51,7 +51,15 @@ export interface IconBoxProps
     groupHover?: boolean;
 }
 
-export function IconBox({ className, palette, size, shape, border, groupHover, ...props }: IconBoxProps) {
+export function IconBox({
+  className,
+  palette,
+  size,
+  shape,
+  border,
+  groupHover,
+  ...props
+}: IconBoxProps) {
   return (
     <div
       className={cn(
