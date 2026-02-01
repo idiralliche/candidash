@@ -18,7 +18,14 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
 // Hooks & Types
-import { Document, Contact as ContactType, Company, Product, ScheduledEvent, Action } from '@/api/model';
+import {
+  Document,
+  Contact as ContactType,
+  Company,
+  Product,
+  ScheduledEvent,
+  Action,
+} from '@/api/model';
 import { useGetOpportunityApiV1OpportunitiesOpportunityIdGet } from '@/api/opportunities/opportunities';
 import { useGetApplicationApiV1ApplicationsApplicationIdGet } from '@/api/applications/applications';
 import { OpportunityCard } from '@/components/opportunities/opportunity-card.tsx';
@@ -200,15 +207,18 @@ export function WizardStepSummary({
             variant="compact"
             isHighlighted={state.resumeDocumentId === doc.id || state.coverLetterDocumentId === doc.id}
             badges={(state.resumeDocumentId === doc.id || state.coverLetterDocumentId === doc.id) && (
-              <Badge variant="subtle" palette="blue">
+              <Badge
+                variant="subtle"
+                palette="blue"
+              >
                 {state.resumeDocumentId === doc.id ? (
                   <>
-                    <FileCheck className="mr-2 h-4 w-4" />
+                    <FileCheck className="h-3 w-3" />
                     CV
                   </>
                 ) : (
                   <>
-                    <Mail className="mr-2 h-4 w-4" />
+                    <Mail className="h-3 w-3" />
                     LM
                   </>
                 )}

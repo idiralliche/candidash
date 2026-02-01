@@ -99,15 +99,18 @@ export function WizardStepDocuments({
     const isLinked = isResume || isCoverLetter;
 
     const coverOrResumeBadge = (isLinked) && (
-      <Badge variant="subtle" palette="blue">
+      <Badge
+        variant="subtle"
+        palette="blue"
+      >
         {isResume ? (
           <>
-            <FileCheck className="mr-2 h-4 w-4" />
+            <FileCheck className="h-3 w-3" />
             CV
           </>
         ) : (
           <>
-            <Mail className="mr-2 h-4 w-4" />
+            <Mail className="h-3 w-3" />
             LM
           </>
         )}
@@ -117,7 +120,7 @@ export function WizardStepDocuments({
       <Badge
         variant="outline"
         palette="red"
-        className="flex flex-col items-center"
+        className="flex-col"
       >
         <div
           key="resume"

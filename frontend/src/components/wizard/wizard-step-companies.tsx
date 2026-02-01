@@ -83,7 +83,7 @@ export function WizardStepCompanies({
         variant="subtle"
         palette="blue"
       >
-        <Star className="mr-2 h-3.5 w-3.5" />
+        <Star className="h-3 w-3" />
         Principale
       </Badge>
     )
@@ -92,7 +92,6 @@ export function WizardStepCompanies({
       <Badge
         variant="outline"
         palette="red"
-        className="flex items-center gap-2"
       >
         <label className={`text-sm p-1.5 flex justify-between items-center ${isLinked ? "text-primary" : ""}`}>
           {isLinked ? (
