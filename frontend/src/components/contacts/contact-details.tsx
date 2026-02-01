@@ -1,126 +1,58 @@
-import {
-  Building2,
-  Mail,
-  Phone,
-  Link as LinkIcon,
-  Trash2,
-  Quote,
-  FileText,
-  Compass,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { Award } from 'lucide-react';
+
 import { Contact } from "@/api/model";
+
+import { Badge } from "@/components/ui/badge";
+import { ContactDetailsContent } from "@/components/contacts/contact-details-content";
 import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
-import { DetailsBlock } from "@/components/shared/details-block";
-import { LinkCard } from "@/components/shared/link-card";
+import { DetailsMetaInfoBlock } from "@/components/shared/details-meta-info-block";
 
 interface ContactDetailsProps {
   contact: Contact;
-  onEdit?: (contact: Contact) => void;
-  onDelete?: (contact: Contact) => void;
+  onEdit: (contact: Contact) => void;
+  onDelete: (contact: Contact) => void;
 }
 
-export function ContactDetails({ contact, onEdit, onDelete }: ContactDetailsProps) {
-  const company = contact.company;
-
+export function ContactDetails({
+  contact,
+  onEdit,
+  onDelete,
+}: ContactDetailsProps) {
   return (
     <EntityDetailsSheet
-      title={`${contact.first_name} ${contact.last_name}`}
-      subtitle={contact.position || undefined}
-      badge={contact.is_independent_recruiter && (
-        <Badge
-          variant="subtle"
-          palette="purple"
-        >
-          Recruteur Indépendant
-        </Badge>
-      )}
-      metadata={company && (
-        <div className="flex items-center gap-2 rounded border border-white-light bg-white-subtle px-3 py-1.5 text-primary font-bold">
-          <Building2 className="h-4 w-4" />
-          {company.name}
-        </div>
-      )}
-
-      onEdit={onEdit ? () => onEdit(contact) : undefined}
-      footer={
-        onDelete && (
-          <Button
-            variant="ghost"
-            palette="destructive"
-            className="w-full"
-            onClick={() => onDelete(contact)}
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Supprimer le contact
-          </Button>
-        )
-      }
+      entityName="contacte"
+      onDelete={() => onDelete(contact)}
     >
+      <EntityDetailsSheet.Header>
+        <EntityDetailsSheet.Badges>
+          {contact.is_independent_recruiter && (
+            <Badge
+              variant="subtle"
+              palette="purple"
+            >
+              Recruteur Indépendant
+            </Badge>
+          )}
+        </EntityDetailsSheet.Badges>
 
-      <Separator className="bg-white-light mb-6" />
+        <EntityDetailsSheet.TitleRow
+          title={`${contact.first_name} ${contact.last_name}`}
+          onEdit={() => onEdit(contact)}
+        />
 
-      {/* CONTACT DETAILS GRID */}
-      <div className="space-y-4 mb-6">
-        <h3 className="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-2 select-none">
-          <Compass className="h-3 w-3" />
-          Coordonnées
-        </h3>
-        <div className="grid grid-cols-1 gap-3">
-          {contact.email && (
-            <LinkCard
-              href={`mailto:${contact.email}`}
-              icon={Mail}
-              label="Email"
-              value={contact.email}
+        <EntityDetailsSheet.Metadata>
+          {contact.position && (
+            <DetailsMetaInfoBlock
+              icon={Award}
+              variant="squareBadge"
+              label={contact.position}
+              firstLetterCase="upperCase"
             />
           )}
+        </EntityDetailsSheet.Metadata>
+      </EntityDetailsSheet.Header>
 
-          {contact.phone && (
-            <LinkCard
-              href={`tel:${contact.phone}`}
-              icon={Phone}
-              label="Téléphone"
-              value={contact.phone}
-              valueClassName="font-mono"
-            />
-          )}
-
-          {contact.linkedin && (
-            <LinkCard
-              href={contact.linkedin.startsWith("http") ? contact.linkedin : `https://linkedin.com${contact.linkedin}`}
-              icon={LinkIcon}
-              label="LinkedIn"
-              value={contact.linkedin}
-              isExternal
-              variant="blue"
-            />
-          )}
-        </div>
-      </div>
-
-      <Separator className="bg-white-light mb-6" />
-
-      {/* RELATIONSHIP NOTES */}
-      {contact.relationship_notes && (
-        <DetailsBlock icon={Quote} label="Contexte de rencontre">
-          <div className="italic relative pl-3">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-500/50 rounded-full"></div>
-            {contact.relationship_notes}
-          </div>
-        </DetailsBlock>
-      )}
-
-      {/* GENERAL NOTES */}
-      {contact.notes && (
-        <DetailsBlock icon={FileText} label="Notes">
-          <div className="whitespace-pre-wrap leading-relaxed">
-            {contact.notes}
-          </div>
-        </DetailsBlock>
-      )}
+      <ContactDetailsContent contact={contact} />
     </EntityDetailsSheet>
   );
 }

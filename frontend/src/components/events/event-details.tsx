@@ -1,166 +1,119 @@
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+
 import {
   Calendar,
   Clock,
   MapPin,
-  Trash2,
   Video,
   Phone,
-  Info,
   Mail,
   Podcast,
-  FileText,
-  Link as LinkIcon,
-  Navigation,
+  CalendarCog,
+  LucideIcon,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { ScheduledEvent } from "@/api/model";
-import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
-import { DetailsBlock } from "@/components/shared/details-block";
-import { LinkCard } from "@/components/shared/link-card";
 import {
   LABELS_EVENT_STATUS,
   LABELS_COMMUNICATION_METHOD,
   getLabel,
 } from "@/lib/dictionaries";
-
 import { getEventStatusPalette } from '@/lib/semantic-ui';
+
+import { ScheduledEvent } from "@/api/model";
+
+import { Badge } from "@/components/ui/badge";
+import { EventDetailsContent } from "@/components/events/event-details-content";
+import { EntityDetailsSheet } from "@/components/shared/entity-details-sheet";
+import {
+  DetailsMetaInfoBlock,
+  DetailsMetaInfoRowContainer,
+} from "@/components/shared/details-meta-info-block";
 
 interface EventDetailsProps {
   event: ScheduledEvent;
-  onEdit?: (event: ScheduledEvent) => void;
-  onDelete?: (event: ScheduledEvent) => void;
+  onEdit: (event: ScheduledEvent) => void;
+  onDelete: (event: ScheduledEvent) => void;
 }
 
-export function EventDetails({ event, onEdit, onDelete }: EventDetailsProps) {
+export function EventDetails({
+  event,
+  onEdit,
+  onDelete
+}: EventDetailsProps) {
 
   // Helper to get icon based on communication method
-  const getMethodIcon = (method?: string) => {
+  const getMethodIcon = (method?: string) : LucideIcon => {
     switch (method) {
-      case 'video': return <Video className="h-4 w-4 text-primary" />;
-      case 'phone': return <Phone className="h-4 w-4 text-primary" />;
-      case 'in_person': return <MapPin className="h-4 w-4 text-primary" />;
-      case 'email': return <Mail className="h-4 w-4 text-primary" />;
-      default: return <Podcast className="h-4 w-4 text-primary" />;
+      case 'video': return Video;
+      case 'phone': return Phone;
+      case 'in_person': return MapPin;
+      case 'email': return Mail;
+      default: return Podcast;
     }
   };
 
   return (
     <EntityDetailsSheet
-      title={event.title}
-      badge={
-        <Badge
-          variant="subtle"
-          palette={getEventStatusPalette(event.status)}
-        >
-          {getLabel(LABELS_EVENT_STATUS, event.status)}
-        </Badge>
-      }
-      subtitle={event.event_type || undefined}
-      onEdit={onEdit ? () => onEdit(event) : undefined}
-      footer={
-        onDelete && (
-          <Button
-            variant="ghost"
-            palette="destructive"
-            className="w-full"
-            onClick={() => onDelete(event)}
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Supprimer l'événement
-          </Button>
-        )
-      }
+      entityName="événement"
+      onDelete={() => onDelete(event)}
     >
-      <Separator className="bg-white-light mb-6" />
+      <EntityDetailsSheet.Header>
+        <EntityDetailsSheet.Badges>
+          <Badge
+            variant="subtle"
+            palette={getEventStatusPalette(event.status)}
+          >
+            {getLabel(LABELS_EVENT_STATUS, event.status)}
+          </Badge>
+        </EntityDetailsSheet.Badges>
 
-      {/* DATE, TIME & COMMUNICATION METHOD */}
-     <div className="flex flex-wrap gap-2 text-sm text-muted-foreground pt-1 w-full mb-6">
-        {/* Date */}
-        <div className="flex items-center gap-2 rounded border border-white-light bg-white-subtle px-3 py-1.5 text-gray-300 font-bold">
-          <Calendar className="h-4 w-4 text-primary" />
-          {format(new Date(event.scheduled_date), "EEEE dd/MM/yyyy", { locale: fr })}
-        </div>
+        <EntityDetailsSheet.TitleRow
+          title={event.title}
+          onEdit={() => onEdit(event)}
+        />
 
-        {/* Time & Duration */}
-        <div className="flex items-center gap-2 rounded border border-white-light bg-white-subtle px-3 py-1.5 text-gray-300 font-bold">
-          <Clock className="h-4 w-4 text-primary" />
-          {format(new Date(event.scheduled_date), "HH:mm")}
-          {event.duration_minutes && (
-            <span className="text-muted-foreground ml-1">({event.duration_minutes} min)</span>
+        <EntityDetailsSheet.Metadata>
+
+          {event.event_type && (
+            <DetailsMetaInfoBlock
+              icon={CalendarCog}
+              label= {event.event_type}
+            />
           )}
-        </div>
 
-        {/* Communication Method */}
-        {event.communication_method && (
-          <div className="flex items-center gap-2 rounded border border-white-light bg-white-subtle px-3 py-1.5 text-gray-300 font-bold">
-            {getMethodIcon(event.communication_method)}
-            {getLabel(LABELS_COMMUNICATION_METHOD, event.communication_method)}
-          </div>
-        )}
-      </div>
+          <DetailsMetaInfoRowContainer>
+            {/* Date */}
+            <DetailsMetaInfoBlock
+              icon={Calendar}
+              variant="squareBadge"
+              label={format(new Date(event.scheduled_date), "EEEE dd/MM/yyyy", { locale: fr })}
+              firstLetterCase="upperCase"
+            />
 
-      {/* CONNECTION DETAILS */}
-      {(event.event_link || event.phone_number) && (
-        <div className="space-y-4 mb-6">
-          <h3 className="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-2">
-            <Info className="h-3 w-3" />
-            Détails de connexion
-          </h3>
+            {/* Time & Duration */}
+            <DetailsMetaInfoBlock
+              icon={Clock}
+              variant="squareBadge"
+              label={`${format(new Date(event.scheduled_date), "HH:mm")} (${event.duration_minutes} min)`}
+              firstLetterCase="upperCase"
+            />
 
-          <div className="grid grid-cols-1 gap-3">
-            {/* Link */}
-            {event.event_link && (
-              <LinkCard
-                href={event.event_link}
-                icon={LinkIcon}
-                label="Lien Visio"
-                value={event.event_link}
-                isExternal
-                variant="blue"
+            {/* Communication Method */}
+            {event.communication_method && (
+              <DetailsMetaInfoBlock
+                icon={getMethodIcon(event.communication_method)}
+                variant="squareBadge"
+                label={getLabel(LABELS_COMMUNICATION_METHOD, event.communication_method)}
+                firstLetterCase="upperCase"
               />
             )}
+          </DetailsMetaInfoRowContainer>
 
-            {/* Phone */}
-            {event.phone_number && (
-              <LinkCard
-                href={`tel:${event.phone_number}`}
-                icon={Phone}
-                label="Téléphone"
-                value={event.phone_number}
-                valueClassName="font-mono"
-              />
-            )}
-          </div>
-        </div>
-      )}
+        </EntityDetailsSheet.Metadata>
+      </EntityDetailsSheet.Header>
 
-      {/* Location */}
-      {event.location && (
-        <DetailsBlock icon={MapPin} label="Adresse / Lieu">
-          {event.location}
-        </DetailsBlock>
-      )}
-
-      {/* INSTRUCTIONS */}
-      {event.instructions && (
-        <DetailsBlock icon={Navigation} label="Instructions">
-          {event.instructions}
-        </DetailsBlock>
-      )}
-
-      {/* PERSONAL NOTES */}
-      {event.notes && (
-        <DetailsBlock icon={FileText} label="Notes Personnelles">
-          <div className="whitespace-pre-wrap leading-relaxed">
-            {event.notes}
-          </div>
-        </DetailsBlock>
-      )}
+      <EventDetailsContent event={event} />
     </EntityDetailsSheet>
   );
 }
