@@ -6,7 +6,7 @@ import { genderMap } from '@/lib/semantic-ui.ts';
 interface FormSubmitButtonProps {
   isPending: boolean;
   isEditing: boolean;
-  entityType: string;
+  entityType?: string;
   saveActionLabel?: string;
   editLabel?: ReactNode | string;
 }
@@ -18,7 +18,11 @@ export function FormSubmitButton ({
   saveActionLabel="Ajouter",
   editLabel="Enregistrer les modifications",
 } : FormSubmitButtonProps) {
-  const { article } = genderMap[entityType] || { article: "Le "};
+  const saveLabel = () => {
+    if (!entityType) return saveActionLabel;
+    const { article } = genderMap[entityType] || { article: "Le "};
+    return `${saveActionLabel} ${article}${entityType}`;
+  }
 
   return (
     <Button
@@ -34,7 +38,7 @@ export function FormSubmitButton ({
           {isEditing ? "Enregistrement..." : "Ajout en cours..."}
         </>
       ) : (
-        isEditing ? (editLabel) : `${saveActionLabel} ${article}${entityType}`
+        isEditing ? (editLabel) : saveLabel()
       )}
     </Button>
   )
