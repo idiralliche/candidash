@@ -82,7 +82,6 @@ export function ApplicationsPage() {
       <EntitySheet
         open={!!logic.selectedApplication}
         onOpenChange={(open) => !open && logic.setSelectedApplication(null)}
-        title="Détail Candidature"
       >
         {logic.selectedApplication && (
           <ApplicationDetails

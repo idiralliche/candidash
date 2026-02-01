@@ -74,7 +74,6 @@ export function CompaniesPage() {
       <EntitySheet
         open={!!logic.selectedCompany}
         onOpenChange={(open) => !open && logic.setSelectedCompany(null)}
-        title="Fiche Entreprise"
       >
         {logic.selectedCompany && (
           <CompanyDetails

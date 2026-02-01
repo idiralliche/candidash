@@ -74,7 +74,6 @@ export function ProductsPage() {
       <EntitySheet
         open={!!logic.selectedProduct}
         onOpenChange={(open) => !open && logic.setSelectedProduct(null)}
-        title="Fiche Produit"
       >
         {logic.selectedProduct && (
           <ProductDetails

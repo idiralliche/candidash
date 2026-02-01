@@ -73,7 +73,6 @@ export function OpportunitiesPage() {
       <EntitySheet
         open={!!logic.selectedOpportunity}
         onOpenChange={(open) => !open && logic.setSelectedOpportunity(null)}
-        title="Détails de l'opportunité"
       >
         {logic.selectedOpportunity && (
           <OpportunityDetails

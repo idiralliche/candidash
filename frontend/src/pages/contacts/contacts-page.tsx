@@ -82,7 +82,6 @@ export function ContactsPage() {
       <EntitySheet
         open={!!logic.selectedContact}
         onOpenChange={(open) => !open && logic.setSelectedContact(null)}
-        title="Fiche Contact"
       >
         {logic.selectedContact && (
           <ContactDetails

@@ -111,7 +111,6 @@ export function EventsPage() {
       <EntitySheet
         open={!!logic.selectedEvent}
         onOpenChange={(open) => !open && logic.setSelectedEvent(null)}
-        title="Détails"
       >
         {logic.selectedEvent && (
           <EventDetails

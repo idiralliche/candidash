@@ -106,7 +106,6 @@ export function DocumentsPage() {
       <EntitySheet
         open={!!logic.selectedDocument}
         onOpenChange={(open) => !open && logic.setSelectedDocument(null)}
-        title="Détails du document"
       >
         {logic.selectedDocument && (
           <DocumentDetails

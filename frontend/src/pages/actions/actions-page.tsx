@@ -74,7 +74,6 @@ export function ActionsPage() {
       <EntitySheet
         open={!!logic.selectedAction}
         onOpenChange={(open) => !open && logic.setSelectedAction(null)}
-        title="Détail de l'action"
       >
         {logic.selectedAction && (
           <ActionDetails
