@@ -4,9 +4,7 @@ import {
   Save,
   Info,
 } from 'lucide-react';
-
-import { FormSubmitButton } from '@/components/shared/form-submit-button';
-import { Form } from '@/components/ui/form';
+import { SmartForm } from '@/components/shared/smart-form';
 import { Input } from '@/components/ui/input';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
 import {
@@ -15,11 +13,11 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { DialogFooter } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Document } from '@/api/model';
 import { useDocumentFormLogic } from '@/hooks/documents/use-document-form-logic';
-import { FileUploader, SharedDocumentFields } from '@/components/documents/document-form-fields';
+import { SharedDocumentFields } from '@/components/documents/document-form-fields';
+import { FileUploader } from '@/components/ui/file-uploader'
 
 interface DocumentFormProps {
   onSuccess: (document?: Document) => void;
@@ -53,91 +51,69 @@ export function DocumentForm({ onSuccess, initialData }: DocumentFormProps) {
 
       {/* --- TAB: UPLOAD (Local) --- */}
       <TabsContent value="upload" className="mt-4">
-        <Form {...logic.uploadForm}>
-          <form
-            onSubmit={logic.onUploadSubmit}
-            className="space-y-4"
-          >
+        <SmartForm
+          form={logic.uploadForm}
+          onSubmit={logic.onUploadSubmit}
+          isEditing={logic.isEditing}
+          entityType="document"
+          editLabel={
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Enregistrer / Convertir
+            </>
+          }
+        >
+          {/* DROPZONE AREA */}
+          {!logic.isLocalEdit ? (
+            <SmartFormField
+              control={logic.uploadForm.control}
+              name="file"
+              label={logic.isEditing ? "Nouveau fichier (Remplacement) *" : "Fichier *"}
+            >
+              <FileUploader isEditing={logic.isEditing} />
+            </SmartFormField>
+          ) : (
+            <Alert className="bg-blue-500/10 border-blue-500/20 text-blue-200 py-2">
+              <Info className="h-4 w-4" />
+              <AlertDescription className="text-xs ml-2">
+                Le fichier ne peut pas être remplacé directement ici.
+                Pour changer le fichier, supprimez ce document et créez-en un nouveau.
+              </AlertDescription>
+            </Alert>
+          )}
 
-            {/* DROPZONE AREA */}
-            {!logic.isLocalEdit ? (
-               <SmartFormField
-                 control={logic.uploadForm.control}
-                 name="file"
-                 label={logic.isEditing ? "Nouveau fichier (Remplacement) *" : "Fichier *"}
-               >
-                 {(field) => (
-                   <FileUploader
-                      value={field.value as FileList | null}
-                      onChange={field.onChange}
-                      isEditing={logic.isEditing}
-                   />
-                 )}
-               </SmartFormField>
-            ) : (
-              <Alert className="bg-blue-500/10 border-blue-500/20 text-blue-200 py-2">
-                <Info className="h-4 w-4" />
-                <AlertDescription className="text-xs ml-2">
-                  Le fichier ne peut pas être remplacé directement ici.
-                  Pour changer le fichier, supprimez ce document et créez-en un nouveau.
-                </AlertDescription>
-              </Alert>
-            )}
+          <SharedDocumentFields control={logic.uploadForm.control} />
 
-            <SharedDocumentFields control={logic.uploadForm.control} />
-
-            <DialogFooter className="pt-4">
-                <FormSubmitButton
-                isPending={logic.isPending}
-                isEditing={logic.isEditing}
-                entityType="document"
-                editLabel={
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Enregistrer / Convertir
-                  </>
-                }
-              />
-            </DialogFooter>
-          </form>
-        </Form>
+        </SmartForm>
       </TabsContent>
 
       {/* --- TAB: EXTERNAL (Link) --- */}
       <TabsContent value="external" className="mt-4">
-        <Form {...logic.externalForm}>
-          <form
-            onSubmit={logic.onExternalSubmit}
-            className="space-y-4"
-          >
+        <SmartForm
+          form={logic.externalForm}
+          onSubmit={logic.onExternalSubmit}
+          isEditing={logic.isEditing}
+          entityType="lien"
+          editLabel={
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Enregistrer / Convertir
+            </>
+          }
+        >
+          <SmartFormField
+            control={logic.externalForm.control}
+            name="path"
+            label="URL du document *"
+            component={Input}
+            placeholder="https://docs.google.com/..."
+            leadingIcon={LinkIcon}
+            description={logic.isEditing && !logic.isExternalOrigin ? "Attention : Le fichier local actuel sera supprimé et remplacé par ce lien." : undefined}
+          />
 
-            <SmartFormField
-              control={logic.externalForm.control}
-              name="path"
-              label="URL du document *"
-              component={Input}
-              placeholder="https://docs.google.com/..."
-              leadingIcon={LinkIcon}
-              description={logic.isEditing && !logic.isExternalOrigin ? "Attention : Le fichier local actuel sera supprimé et remplacé par ce lien." : undefined}
-            />
+          <SharedDocumentFields control={logic.externalForm.control} />
 
-            <SharedDocumentFields control={logic.externalForm.control} />
-
-            <DialogFooter className="pt-4">
-              <FormSubmitButton
-                isPending={logic.isPending}
-                isEditing={logic.isEditing}
-                entityType="lien"
-                editLabel={
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Enregistrer / Convertir
-                  </>
-                }
-              />
-            </DialogFooter>
-          </form>
-        </Form>
+        </SmartForm>
       </TabsContent>
     </Tabs>
   );

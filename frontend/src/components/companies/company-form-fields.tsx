@@ -35,13 +35,10 @@ export function CompanyFormFields({ control }: CompanyFormFieldsProps) {
         control={control}
         name="is_intermediary"
       >
-        {(field) => (
-          <FormSwitch
-            {...field}
-            label="Est-ce un intermédiaire ?"
-            description="Cochez cette case s'il s'agit d'un cabinet de recrutement ou d'une ESN."
-          />
-        )}
+        <FormSwitch
+          label="Est-ce un intermédiaire ?"
+          description="Cochez cette case s'il s'agit d'un cabinet de recrutement ou d'une ESN."
+        />
       </SmartFormField>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -82,7 +79,7 @@ export function CompanyFormFields({ control }: CompanyFormFieldsProps) {
         <SmartFormField
           control={control}
           name="headquarters"
-          label="Siège Social"
+          label="Adresse Principale"
           component={Input}
           placeholder="Ville, Pays"
           leadingIcon={MapPin}

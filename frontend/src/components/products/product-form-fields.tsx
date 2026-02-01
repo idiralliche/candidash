@@ -4,22 +4,37 @@ import { Package, Globe } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { useCompanies } from '@/hooks/companies/use-companies';
+import { SmartSelect } from '@/components/ui/smart-select';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { ProductFormValues } from '@/hooks/products/use-product-form-logic';
+import { Company, Opportunity } from '@/api/model';
 
 interface ProductFormFieldsProps {
   control: Control<ProductFormValues>;
+  companies?: Company[];
+  isLoadingCompanies?: boolean;
+  opportunities?: Opportunity[];
+  isLoadingOpportunities?: boolean;
 }
 
-export function ProductFormFields({ control }: ProductFormFieldsProps) {
-  const { companies, isLoading: isLoadingCompanies } = useCompanies();
+export function ProductFormFields({
+  control,
+  companies,
+  isLoadingCompanies,
+  opportunities,
+  isLoadingOpportunities
+}: ProductFormFieldsProps) {
+
+  const opportunityOptions = (opportunities || []).map(opp => {
+    const label = opp.company?.name
+      ? `${opp.job_title} (${opp.company.name})`
+      : opp.job_title;
+
+    return {
+      label: label,
+      value: String(opp.id),
+    };
+  });
 
   return (
     <>
@@ -42,22 +57,33 @@ export function ProductFormFields({ control }: ProductFormFieldsProps) {
           label="Entreprise liée *"
           description="L'entreprise qui développe ou vend ce produit."
         >
-          {(field) => (
-            <Select
-              onValueChange={field.onChange}
-              value={field.value}
-              disabled={isLoadingCompanies}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner une entreprise" />
-              </SelectTrigger>
-              <SelectContent>
-                {companies?.map(c => (
-                  <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <SmartSelect
+            disabled={isLoadingCompanies}
+            placeholder={{topic: "entreprise", suffix:"e"}}
+            items={companies?.map(c => ({
+              key: c.id,
+              value: c.id.toString(),
+              label: c.name
+            }))}
+          />
+        </SmartFormField>
+      </div>
+
+      {/* CONTEXT (OPPORTUNITIES) */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-primary">Contexte</h3>
+
+        <SmartFormField
+            control={control}
+            name="opportunity_ids"
+            label="Opportunités liées"
+            description="Lier ce produit à une ou plusieurs opportunités existantes."
+        >
+          <MultiSelect
+            options={opportunityOptions}
+            placeholder="Choisir des opportunités..."
+            isLoading={isLoadingOpportunities}
+          />
         </SmartFormField>
       </div>
 

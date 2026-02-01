@@ -10,13 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FormSwitch } from '@/components/ui/form-switch';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SmartSelect } from '@/components/ui/smart-select';
 import { useCompanies } from '@/hooks/companies/use-companies';
 import { ContactFormValues } from '@/hooks/contacts/use-contact-form-logic';
 
@@ -73,24 +67,16 @@ export function ContactFormFields({ control }: ContactFormFieldsProps) {
           label="Entreprise liée"
           description="Optionnel."
         >
-          {(field) => (
-             <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  disabled={isLoadingCompanies}
-              >
-              <SelectTrigger
-                  onClear={field.value ? () => field.onChange("") : undefined}
-              >
-                <SelectValue placeholder="Aucune entreprise (Indépendant ou autre)" />
-              </SelectTrigger>
-              <SelectContent>
-                {companies?.map(c => (
-                  <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <SmartSelect
+            disabled={isLoadingCompanies}
+            isOptional
+            placeholder="Aucune entreprise (Indépendant ou autre)"
+            items={companies?.map(c => ({
+              key: c.id,
+              value: c.id.toString(),
+              label: c.name,
+            }))}
+          />
         </SmartFormField>
 
         {/* Independent Recruiter Switch */}
@@ -98,13 +84,10 @@ export function ContactFormFields({ control }: ContactFormFieldsProps) {
           control={control}
           name="is_independent_recruiter"
         >
-          {(field) => (
-            <FormSwitch
-              {...field}
-              label="Recruteur Indépendant"
-              description="Cochez si ce contact est un chasseur de tête ou cabinet externe."
-            />
-          )}
+          <FormSwitch
+            label="Recruteur Indépendant"
+            description="Cochez si ce contact est un chasseur de tête ou cabinet externe."
+          />
         </SmartFormField>
       </div>
 

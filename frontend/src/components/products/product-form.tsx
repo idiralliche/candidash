@@ -1,5 +1,4 @@
-import { FormSubmitButton } from '@/components/shared/form-submit-button';
-import { Form } from '@/components/ui/form';
+import { SmartForm } from '@/components/shared/smart-form';
 import { ProductFormFields } from '@/components/products/product-form-fields';
 
 import { Product } from '@/api/model';
@@ -9,33 +8,39 @@ interface ProductFormProps {
   onSuccess?: (product?: Product) => void;
   className?: string;
   initialData?: Product;
+  defaultOpportunityId?: number | null;
 }
 
-export function ProductForm({ onSuccess, className, initialData }: ProductFormProps) {
-  const logic = useProductFormLogic({ initialData, onSuccess });
+export function ProductForm({
+  onSuccess,
+  className,
+  initialData,
+  defaultOpportunityId
+}: ProductFormProps) {
+
+  const logic = useProductFormLogic({
+    initialData,
+    onSuccess,
+    defaultOpportunityId
+  });
 
   return (
-    <Form {...logic.form}>
-      <form
-        onSubmit={logic.onSubmit}
-        className={`space-y-6 ${className} pr-2 max-h-[80vh] overflow-y-auto`}
-      >
-        <ProductFormFields control={logic.form.control} />
-
-        {logic.error && (
-          <div className="rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive text-center">
-            Erreur lors de l'enregistrement.
-          </div>
-        )}
-
-        <div className="sticky bottom-0">
-          <FormSubmitButton
-            isPending={logic.isPending}
-            isEditing={logic.isEditing}
-            entityType="produit"
-          />
-        </div>
-      </form>
-    </Form>
+  <SmartForm
+    form={logic.form}
+    onSubmit={logic.onSubmit}
+    isPending={logic.isPending}
+    className={className}
+    error={logic.error}
+    isEditing={logic.isEditing}
+    entityType="produit"
+  >
+    <ProductFormFields
+      control={logic.form.control}
+      companies={logic.companies}
+      isLoadingCompanies={logic.isLoadingCompanies}
+      opportunities={logic.opportunities}
+      isLoadingOpportunities={logic.isLoadingOpportunities}
+    />
+  </SmartForm>
   );
 }

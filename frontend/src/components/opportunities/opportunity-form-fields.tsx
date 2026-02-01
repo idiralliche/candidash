@@ -17,13 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SmartSelect } from '@/components/ui/smart-select';
 import { useCompanies } from '@/hooks/companies/use-companies';
 import {
   LABELS_CONTRACT,
@@ -83,25 +77,15 @@ export function OpportunityFormFields<T extends OpportunityFormData>({
             name={"company_id" as FieldPath<T>}
             label="Entreprise"
           >
-            {(field) => (
-              <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  disabled={isLoadingCompanies}
-              >
-                <SelectTrigger
-                    className="w-full"
-                    onClear={field.value ? () => field.onChange("") : undefined}
-                >
-                  <SelectValue placeholder="Sélectionner (Optionnel)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {companies?.map(c => (
-                    <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <SmartSelect
+              disabled={isLoadingCompanies}
+              isOptional
+              items={companies?.map(c => ({
+                key: c.id,
+                value: c.id.toString(),
+                label: c.name,
+              }))}
+            />
           </SmartFormField>
         </div>
 
@@ -121,24 +105,12 @@ export function OpportunityFormFields<T extends OpportunityFormData>({
             name={"application_type" as FieldPath<T>}
             label="Type de candidature *"
           >
-            {(field) => (
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                value={field.value}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(LABELS_APPLICATION).map((key) => (
-                    <SelectItem key={key} value={key}>
-                      {getLabel(LABELS_APPLICATION, key)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <SmartSelect
+              items={Object.keys(LABELS_APPLICATION).map((key) => ({
+                value: key,
+                label: getLabel(LABELS_APPLICATION, key),
+              }))}
+            />
           </SmartFormField>
         </div>
 
@@ -163,27 +135,15 @@ export function OpportunityFormFields<T extends OpportunityFormData>({
             name={"contract_type" as FieldPath<T>}
             label="Type de Contrat"
           >
-            {(field) => (
-              <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  value={field.value}
-              >
-                <SelectTrigger
-                    className="w-full"
-                    onClear={field.value ? () => field.onChange(null) : undefined}
-                >
-                  <SelectValue placeholder="Non spécifié" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(LABELS_CONTRACT).map((key) => (
-                    <SelectItem key={key} value={key}>
-                      {getLabel(LABELS_CONTRACT, key)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <SmartSelect
+              disabled={isLoadingCompanies}
+              placeholder="Non spécifié"
+              isOptional
+              items={Object.keys(LABELS_CONTRACT).map((key) => ({
+                value: key,
+                label: getLabel(LABELS_CONTRACT, key),
+              }))}
+            />
           </SmartFormField>
 
           <SmartFormField
@@ -203,27 +163,14 @@ export function OpportunityFormFields<T extends OpportunityFormData>({
             name={"remote_policy" as FieldPath<T>}
             label="Politique Télétravail"
           >
-            {(field) => (
-              <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  value={field.value}
-              >
-                <SelectTrigger
-                    className="w-full"
-                    onClear={field.value ? () => field.onChange(null) : undefined}
-                >
-                  <SelectValue placeholder="Non spécifié" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(LABELS_REMOTE).map((key) => (
-                    <SelectItem key={key} value={key}>
-                      {getLabel(LABELS_REMOTE, key)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <SmartSelect
+              placeholder="Non spécifié"
+              isOptional
+              items={Object.keys(LABELS_REMOTE).map((key) => ({
+                value: key,
+                label: getLabel(LABELS_REMOTE, key),
+              }))}
+            />
           </SmartFormField>
 
           <SmartFormField

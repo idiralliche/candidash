@@ -12,13 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SmartSelect } from '@/components/ui/smart-select';
 
 import {
   LABELS_COMMUNICATION_METHOD,
@@ -50,13 +44,7 @@ export function EventFormFields({ control }: EventFormFieldsProps) {
           name="date"
           label="Date *"
         >
-          {(field) => (
-            <DatePicker
-              date={field.value}
-              onSelect={field.onChange}
-              variant="form-blue"
-            />
-          )}
+          <DatePicker variant="form-blue" />
         </SmartFormField>
 
         <div className="flex gap-2">
@@ -90,24 +78,14 @@ export function EventFormFields({ control }: EventFormFieldsProps) {
           name="status"
           label="Statut *"
         >
-          {(field) => (
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              value={field.value}
-            >
-              <SelectTrigger variant="form-blue">
-                <SelectValue placeholder="Sélectionner un statut" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(LABELS_EVENT_STATUS).map((key) => (
-                  <SelectItem key={key} value={key}>
-                    {getLabel(LABELS_EVENT_STATUS, key)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <SmartSelect
+            placeholder={{topic: "statut"}}
+            items={Object.keys(LABELS_EVENT_STATUS).map(status => ({
+              value: status,
+              label: getLabel(LABELS_EVENT_STATUS, status)
+            }))}
+            variant="form-blue"
+          />
         </SmartFormField>
 
         <SmartFormField
@@ -126,26 +104,15 @@ export function EventFormFields({ control }: EventFormFieldsProps) {
         name="communication_method"
         label="Moyen de communication"
       >
-        {(field) => (
-          <Select
-            onValueChange={field.onChange}
-            value={field.value || ""}
-          >
-            <SelectTrigger
-                variant="form-blue"
-                onClear={field.value ? () => field.onChange(null) : undefined}
-            >
-              <SelectValue placeholder="Choisir..." />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.keys(LABELS_COMMUNICATION_METHOD).map((key) => (
-                <SelectItem key={key} value={key}>
-                  {getLabel(LABELS_COMMUNICATION_METHOD, key)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+        <SmartSelect
+            placeholder="Choisir..."
+            isOptional
+            items={Object.keys(LABELS_COMMUNICATION_METHOD).map((key) => ({
+              value: key,
+              label: getLabel(LABELS_COMMUNICATION_METHOD, key)
+            }))}
+            variant="form-blue"
+          />
       </SmartFormField>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

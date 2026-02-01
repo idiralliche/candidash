@@ -11,14 +11,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { FormSwitch } from '@/components/ui/form-switch';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
+import { SmartSelect } from '@/components/ui/smart-select';
 import { DatePicker } from '@/components/ui/date-picker';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useOpportunities } from '@/hooks/opportunities/use-opportunities';
 import { useDocuments } from '@/hooks/documents/use-documents';
 import { ApplicationStatus } from '@/api/model';
@@ -61,24 +55,15 @@ export function ApplicationFormFields<T extends FieldValues>({
           label="Opportunité *"
           description="Le poste auquel vous postulez."
         >
-          {(field) => (
-            <Select
-              onValueChange={field.onChange}
-              value={field.value}
-              disabled={isLoadingOpportunities}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner une opportunité" />
-              </SelectTrigger>
-              <SelectContent>
-                {opportunities?.map(op => (
-                  <SelectItem key={op.id} value={op.id.toString()}>
-                    {op.job_title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <SmartSelect
+            disabled={isLoadingOpportunities}
+            placeholder={{topic: "opportunité", suffix:"e"}}
+            items={opportunities?.map(op => ({
+              key: op.id,
+              value: op.id.toString(),
+              label: op.job_title
+            }))}
+          />
         </SmartFormField>
       )}
 
@@ -93,13 +78,7 @@ export function ApplicationFormFields<T extends FieldValues>({
             name={"application_date" as Path<T>}
             label="Date de candidature *"
           >
-            {(field) => (
-              <DatePicker
-                date={field.value}
-                onSelect={field.onChange}
-                disabled={false}
-              />
-            )}
+            <DatePicker disabled={false} />
           </SmartFormField>
 
           {/* Status */}
@@ -108,23 +87,14 @@ export function ApplicationFormFields<T extends FieldValues>({
             name={"status" as Path<T>}
             label="Statut *"
           >
-            {(field) => (
-              <Select
-                onValueChange={field.onChange}
-                value={field.value}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(ApplicationStatus).map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {getLabel(LABELS_APPLICATION_STATUS, status)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <SmartSelect
+              disabled={isLoadingOpportunities}
+              placeholder="Statut"
+              items={Object.values(ApplicationStatus).map((status) => ({
+                value: status,
+                label: getLabel(LABELS_APPLICATION_STATUS, status),
+              }))}
+            />
           </SmartFormField>
         </div>
 
@@ -149,30 +119,17 @@ export function ApplicationFormFields<T extends FieldValues>({
           name={"resume_used_id" as Path<T>}
           label="CV utilisé"
         >
-          {(field) => (
-            <Select
-              onValueChange={field.onChange}
-              value={field.value}
-              disabled={isLoadingDocuments}
-            >
-              <SelectTrigger
-                className="w-full"
-                onClear={field.value ? () => field.onChange("") : undefined}
-              >
-                  <div className="flex items-center gap-2 truncate">
-                    <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <SelectValue placeholder="Sélectionner un CV" />
-                  </div>
-              </SelectTrigger>
-              <SelectContent>
-                {documents?.map(doc => (
-                  <SelectItem key={doc.id} value={doc.id.toString()}>
-                    {doc.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <SmartSelect
+            disabled={isLoadingDocuments}
+            isOptional
+            icon={FileText}
+            placeholder={{topic: "CV"}}
+            items={documents?.map(doc => ({
+              key: doc.id,
+              value: doc.id.toString(),
+              label: doc.name,
+            }))}
+          />
         </SmartFormField>
 
         {/* Cover Letter */}
@@ -181,30 +138,17 @@ export function ApplicationFormFields<T extends FieldValues>({
           name={"cover_letter_id" as Path<T>}
           label="Lettre de motivation"
         >
-          {(field) => (
-            <Select
-              onValueChange={field.onChange}
-              value={field.value}
-              disabled={isLoadingDocuments}
-            >
-              <SelectTrigger
-                className="w-full"
-                onClear={field.value ? () => field.onChange("") : undefined}
-              >
-                  <div className="flex items-center gap-2 truncate">
-                    <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <SelectValue placeholder="Sélectionner une lettre" />
-                  </div>
-              </SelectTrigger>
-              <SelectContent>
-                {documents?.map(doc => (
-                  <SelectItem key={doc.id} value={doc.id.toString()}>
-                    {doc.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <SmartSelect
+            disabled={isLoadingDocuments}
+            isOptional
+            icon={Mail}
+            placeholder={{topic: "lettre", suffix: "e"}}
+            items={documents?.map(doc => ({
+              key: doc.id,
+              value: doc.id.toString(),
+              label: doc.name,
+            }))}
+          />
         </SmartFormField>
       </div>
 
@@ -216,13 +160,10 @@ export function ApplicationFormFields<T extends FieldValues>({
             control={control}
             name={"is_archived" as Path<T>}
           >
-            {(field) => (
-              <FormSwitch
-                {...field}
-                label="Archiver cette candidature"
-                description="Masque la candidature des listes par défaut."
-              />
-            )}
+            <FormSwitch
+              label="Archiver cette candidature"
+              description="Masque la candidature des listes par défaut."
+            />
           </SmartFormField>
         </div>
       )}

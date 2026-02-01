@@ -7,6 +7,9 @@ import {
 import {
   ReactNode,
   ComponentType,
+  isValidElement,
+  cloneElement,
+  ReactElement, // Important pour le casting dans cloneElement
 } from "react";
 import {
   FormControl,
@@ -17,6 +20,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { SmartFieldProvider } from "@/context/smart-field-provider";
+
+type ChildElementProps<T extends FieldValues, TName extends Path<T>> =
+  ControllerRenderProps<T, TName> & {
+    className?: string;
+  } & Record<string, unknown>;
 
 interface SmartFormFieldProps<T extends FieldValues, TName extends Path<T>> {
   control: Control<T>;
@@ -25,7 +34,8 @@ interface SmartFormFieldProps<T extends FieldValues, TName extends Path<T>> {
   description?: string;
   className?: string;
   containerClassName?: string;
-  children?: (field: ControllerRenderProps<T, TName>) => ReactNode;
+  // CORRECTION ICI : On accepte ReactNode OU une Fonction
+  children?: ReactNode | ((field: ControllerRenderProps<T, TName>) => ReactNode);
   component?: ComponentType<ControllerRenderProps<T, TName> & Record<string, unknown>>;
   [key: string]: unknown;
 }
@@ -50,13 +60,32 @@ export function SmartFormField<T extends FieldValues, TName extends Path<T>>({
           {label && (
             <FormLabel className="text-white">{label}</FormLabel>
           )}
+
           <FormControl>
-            {children ? (
-              children(field)
-            ) : Component ? (
-              <Component {...field} {...props} className={className} />
-            ) : null}
+            <SmartFieldProvider field={field}>
+              {children ? (
+                typeof children === 'function' ? (
+                  children(field)
+                ) : isValidElement(children) ? (
+                  cloneElement(
+                    children as ReactElement<ChildElementProps<T, TName>>,
+                    {
+                      ...field,
+                      ...props,
+                      className: cn(
+                        className,
+                        (children as ReactElement<{ className?: string }>).props.className
+                      ),
+                    }
+                  )
+                ) : null
+              ) : Component ? (
+                // Cas 3 : Prop 'component' (Legacy / Simple)
+                <Component {...field} {...props} className={className} />
+              ) : null}
+            </SmartFieldProvider>
           </FormControl>
+
           {description && (
             <FormDescription className="text-xs text-gray-400">
               {description}

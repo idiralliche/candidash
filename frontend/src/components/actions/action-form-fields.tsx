@@ -14,14 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { FormSwitch } from '@/components/ui/form-switch';
 import { SmartFormField } from '@/components/ui/form-field-wrapper';
+import { SmartSelect } from '@/components/ui/smart-select';
 import { DatePicker } from '@/components/ui/date-picker';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Application,
   ScheduledEvent
@@ -91,27 +85,17 @@ export function ActionFormFields({
             label="Candidature liée *"
             description="À quelle candidature cette action se rapporte-t-elle ?"
           >
-            {(field) => (
-              <Select
-                onValueChange={field.onChange}
-                value={field.value}
-                disabled={isLoadingApps}
-              >
-                <SelectTrigger
-                  ref={applicationSelectRef}
-                  autoFocus={false}
-                >
-                  <SelectValue placeholder="Sélectionner une candidature" />
-                </SelectTrigger>
-                <SelectContent>
-                  {applications?.map((app) => (
-                    <SelectItem key={app.id} value={app.id.toString()}>
-                      {app.opportunity?.job_title} - {app.opportunity?.company?.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <SmartSelect
+              disabled={isLoadingApps}
+              ref={applicationSelectRef}
+              autoFocus={false}
+              placeholder={{topic: "candidature", suffix: "e"}}
+              items={applications?.map(app => ({
+                key: app.id,
+                value: app.id.toString(),
+                label: `${app.opportunity?.job_title} - ${app.opportunity?.company?.name}`,
+              }))}
+            />
           </SmartFormField>
         )}
 
@@ -121,31 +105,17 @@ export function ActionFormFields({
           name="scheduled_event_id"
           label="Événement lié (Optionnel)"
         >
-          {(field) => (
-            <Select
-              onValueChange={field.onChange}
-              value={field.value}
-              disabled={isLoadingEvents}
-            >
-              <SelectTrigger
-                className="w-full"
-                onClear={field.value ? () => field.onChange("") : undefined}
-                autoFocus={true}
-              >
-                <div className="flex items-center gap-2 truncate">
-                  <CalendarClock className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <SelectValue placeholder="Lier à un événement de l'agenda" />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                {eventsList?.map((evt) => (
-                  <SelectItem key={evt.id} value={evt.id.toString()}>
-                    {evt.title} ({new Date(evt.scheduled_date).toLocaleDateString()})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <SmartSelect
+            disabled={isLoadingEvents}
+            isOptional
+            icon={CalendarClock}
+            placeholder="Lier à un événement de l'agenda"
+            items={eventsList?.map(evt => ({
+              key: evt.id,
+              value: evt.id.toString(),
+              label: `${evt.title} (${new Date(evt.scheduled_date).toLocaleDateString()})`
+            }))}
+          />
         </SmartFormField>
       </div>
 
@@ -172,13 +142,10 @@ export function ActionFormFields({
             control={control}
             name="is_completed"
           >
-            {(field) => (
-              <FormSwitch
-                {...field}
-                label="Action terminée ?"
-                description="Cochez si vous avez déjà réalisé cette action."
-              />
-            )}
+            <FormSwitch
+              label="Action terminée ?"
+              description="Cochez si vous avez déjà réalisé cette action."
+            />
           </SmartFormField>
 
           {/* Completed Date */}
@@ -188,12 +155,7 @@ export function ActionFormFields({
               name="completed_date"
               label="Date de réalisation"
             >
-              {(field) => (
-                <DatePicker
-                  date={field.value || undefined}
-                  onSelect={field.onChange}
-                />
-              )}
+              <DatePicker />
             </SmartFormField>
           )}
         </div>
