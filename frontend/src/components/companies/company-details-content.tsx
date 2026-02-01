@@ -8,8 +8,6 @@ import { Company } from "@/api/model";
 import { DetailsBlock } from "@/components/shared/details-block";
 import { LinkCard } from "@/components/shared/link-card";
 import { Product } from "@/api/model";
-import { BasicDetails } from '@/components/shared/basic-details';
-import { DetailsList } from '@/components/shared/details-list';
 
 export function CompanyDetailsContent({
   company,
@@ -26,9 +24,7 @@ export function CompanyDetailsContent({
           icon={MapPin}
           label="Siège social"
         >
-          <BasicDetails>
-            {company.headquarters}
-          </BasicDetails>
+          {company.headquarters}
         </DetailsBlock>
       )}
 
@@ -38,7 +34,6 @@ export function CompanyDetailsContent({
           icon={Hash}
           label="SIRET"
         >
-          <BasicDetails>
             <p className="font-mono tracking-wider">{company.siret}</p>
             <a
               href={`https://www.pappers.fr/recherche?q=${company.siret}`}
@@ -48,7 +43,6 @@ export function CompanyDetailsContent({
             >
               Voir sur Pappers.fr
             </a>
-          </BasicDetails>
         </DetailsBlock>
       )}
 
@@ -58,18 +52,17 @@ export function CompanyDetailsContent({
           className="space-y-4"
           icon={Package}
           label="Produits & Services"
+          variant="list"
         >
-          <DetailsList>
-            {products.map(product => (
-              <LinkCard
-                key={product.id}
-                href="#"
-                icon={Package}
-                label={product.name}
-                value={product.description || "Pas de description"}
-              />
-            ))}
-          </DetailsList>
+          {products.map(product => (
+            <LinkCard
+              key={product.id}
+              href="#"
+              icon={Package}
+              label={product.name}
+              value={product.description || "Pas de description"}
+            />
+          ))}
         </DetailsBlock>
       )}
 
@@ -80,9 +73,7 @@ export function CompanyDetailsContent({
           icon={FileText}
           label="Notes & Informations"
         >
-          <BasicDetails>
-            {company.notes}
-          </BasicDetails>
+          {company.notes}
         </DetailsBlock>
       )}
     </>

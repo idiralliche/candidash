@@ -32,12 +32,11 @@ export function EntityDetailsAssociationBlock<T>({
 
   return (
     <DetailsBlock
-        icon={Icon}
-        label={label}
-      >
-      <div className="grid grid-cols-1 gap-3">
-        {data.map(item => renderItem(item))}
-      </div>
+      icon={Icon}
+      label={label}
+      variant="list"
+    >
+      {data.map(item => renderItem(item))}
     </DetailsBlock>
   )
 }

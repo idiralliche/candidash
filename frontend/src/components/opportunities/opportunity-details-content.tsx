@@ -9,8 +9,6 @@ import {
 } from "lucide-react";
 import { Opportunity } from "@/api/model";
 import { DetailsBlock } from "@/components/shared/details-block";
-import { BasicDetails } from '@/components/shared/basic-details';
-import { DetailsEntityCard } from '@/components/shared/details-entity-card';
 import { CompanyCard } from '@/components/companies/company-card';
 import { OpportunityProductsList } from '@/components/opportunities/opportunity-products-list';
 
@@ -30,15 +28,14 @@ export function OpportunityDetailsContent({ opportunity }: { opportunity: Opport
         <DetailsBlock
           icon={Building2}
           label="Entreprise"
+          variant="card"
         >
-          <DetailsEntityCard>
-            <CompanyCard
-              key={company.id}
-              company={company}
-              variant="minimal"
-              isHighlighted
-            />
-          </DetailsEntityCard>
+          <CompanyCard
+            key={company.id}
+            company={company}
+            variant="minimal"
+            isHighlighted
+          />
         </DetailsBlock>
       )}
 
@@ -48,12 +45,10 @@ export function OpportunityDetailsContent({ opportunity }: { opportunity: Opport
           icon={Laptop}
           label="Remote"
         >
-          <BasicDetails>
-            <p>{getLabel(LABELS_REMOTE, opportunity.remote_policy)}</p>
-            {opportunity.remote_details && (
-              <p className="text-xs text-muted-foreground mt-1">{opportunity.remote_details}</p>
-            )}
-          </BasicDetails>
+          <p>{getLabel(LABELS_REMOTE, opportunity.remote_policy)}</p>
+          {opportunity.remote_details && (
+            <p className="text-xs text-muted-foreground mt-1">{opportunity.remote_details}</p>
+          )}
         </DetailsBlock>
       )}
 
@@ -63,19 +58,17 @@ export function OpportunityDetailsContent({ opportunity }: { opportunity: Opport
           icon={Banknote}
           label="Rémunération"
         >
-          <BasicDetails>
-            {(opportunity.salary_min != null || opportunity.salary_max != null) && (
-              <p className="font-mono tracking-wider">
-                {formatSalary(opportunity.salary_min, opportunity.salary_max)}
-              </p>
-            )}
+          {(opportunity.salary_min != null || opportunity.salary_max != null) && (
+            <p className="font-mono tracking-wider">
+              {formatSalary(opportunity.salary_min, opportunity.salary_max)}
+            </p>
+          )}
 
-            {opportunity.salary_info && (
-              <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap leading-relaxed">
-                {opportunity.salary_info}
-              </p>
-            )}
-          </BasicDetails>
+          {opportunity.salary_info && (
+            <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap leading-relaxed">
+              {opportunity.salary_info}
+            </p>
+          )}
         </DetailsBlock>
       )}
 
@@ -88,9 +81,7 @@ export function OpportunityDetailsContent({ opportunity }: { opportunity: Opport
           icon={FileText}
           label="Description du poste"
         >
-          <BasicDetails>
-            {opportunity.job_description}
-          </BasicDetails>
+          {opportunity.job_description}
         </DetailsBlock>
       )}
 
@@ -100,9 +91,7 @@ export function OpportunityDetailsContent({ opportunity }: { opportunity: Opport
           icon={CodeXml}
           label="Technologies"
         >
-          <BasicDetails>
-            {opportunity.technologies}
-          </BasicDetails>
+          {opportunity.technologies}
         </DetailsBlock>
       )}
 
@@ -112,9 +101,7 @@ export function OpportunityDetailsContent({ opportunity }: { opportunity: Opport
           icon={Star}
           label="Compétences requises"
         >
-          <BasicDetails>
-            {opportunity.required_skills}
-          </BasicDetails>
+          {opportunity.required_skills}
         </DetailsBlock>
       )}
 
@@ -124,9 +111,7 @@ export function OpportunityDetailsContent({ opportunity }: { opportunity: Opport
           icon={ListCheck}
           label="Processus de recrutement"
         >
-          <BasicDetails>
-            {opportunity.recruitment_process}
-          </BasicDetails>
+          {opportunity.recruitment_process}
         </DetailsBlock>
       )}
     </>

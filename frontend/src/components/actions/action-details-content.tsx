@@ -11,8 +11,6 @@ import { Action } from '@/api/model';
 import { DetailsBlock } from '@/components/shared/details-block';
 import { ApplicationCard } from '@/components/applications/application-card';
 import { EventCard } from '@/components/events/event-card';
-import { BasicDetails } from '@/components/shared/basic-details';
-import { DetailsEntityCard } from '@/components/shared/details-entity-card';
 
 export function ActionDetailsContent({
   action,
@@ -30,14 +28,13 @@ export function ActionDetailsContent({
         <DetailsBlock
           icon={CalendarCheck}
           label="Date de réalisation"
+          itemsClassName="border-green-500/10 bg-green-500/5 text-green-300"
         >
-          <BasicDetails className="border-green-500/10 bg-green-500/5 text-green-300" >
-            {format(
-              new Date(action.completed_date!), // isCompleted is only true if completed_date is defined
-              'dd MMMM yyyy à HH:mm',
-              { locale: fr}
-            )}
-          </BasicDetails>
+          {format(
+            new Date(action.completed_date!), // isCompleted is only true if completed_date is defined
+            'dd MMMM yyyy à HH:mm',
+            { locale: fr}
+          )}
         </DetailsBlock>
       )}
 
@@ -45,15 +42,14 @@ export function ActionDetailsContent({
         <DetailsBlock
           icon={Layers}
           label="Candidature"
+          variant="card"
         >
-          <DetailsEntityCard>
-            <ApplicationCard
-              key={application.id}
-              application={application}
-              variant="minimal"
-              isHighlighted
-            />
-          </DetailsEntityCard>
+          <ApplicationCard
+            key={application.id}
+            application={application}
+            variant="minimal"
+            isHighlighted
+          />
         </DetailsBlock>
       )}
 
@@ -61,14 +57,13 @@ export function ActionDetailsContent({
         <DetailsBlock
           icon={CalendarClock}
           label="Événement Programmé"
+          variant="card"
         >
-          <DetailsEntityCard>
-            <EventCard
-              key={scheduledEvent.id}
-              event={scheduledEvent}
-              variant="minimal"
-            />
-          </DetailsEntityCard>
+          <EventCard
+            key={scheduledEvent.id}
+            event={scheduledEvent}
+            variant="minimal"
+          />
         </DetailsBlock>
       )}
 
@@ -77,9 +72,7 @@ export function ActionDetailsContent({
           icon={FileText}
           label="Notes & Commentaires"
         >
-          <BasicDetails>
-            {action.notes}
-          </BasicDetails>
+          {action.notes}
         </DetailsBlock>
       )}
     </>

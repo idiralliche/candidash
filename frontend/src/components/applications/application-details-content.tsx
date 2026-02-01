@@ -12,9 +12,6 @@ import { DetailsBlock } from "@/components/shared/details-block";
 import { OpportunityCard } from '@/components/opportunities/opportunity-card';
 import { formatSalary } from '@/lib/utils.ts';
 import { useDownloadDocument } from '@/hooks/documents/use-download-document';
-import { BasicDetails } from '@/components/shared/basic-details';
-import { DetailsList } from '@/components/shared/details-list';
-import { DetailsEntityCard } from '@/components/shared/details-entity-card';
 
 export function ApplicationDetailsContent({
   application,
@@ -43,15 +40,14 @@ export function ApplicationDetailsContent({
           <DetailsBlock
             icon={Briefcase}
             label="Opportunité"
+            variant="card"
           >
-            <DetailsEntityCard>
-              <OpportunityCard
-                key={opportunity.id}
-                opportunity={opportunity}
-                variant="minimal"
-                isHighlighted
-              />
-            </DetailsEntityCard>
+            <OpportunityCard
+              key={opportunity.id}
+              opportunity={opportunity}
+              variant="minimal"
+              isHighlighted
+            />
           </DetailsBlock>
         ) : (
           <div className="flex items-center gap-3 p-3 rounded-md bg-orange-50 border border-orange-100 text-orange-800 text-sm">
@@ -71,9 +67,7 @@ export function ApplicationDetailsContent({
           icon={Banknote}
           label="Prétentions Salariales"
         >
-          <BasicDetails>
-            {formatSalary(application.salary_expectation)}
-          </BasicDetails>
+          {formatSalary(application.salary_expectation)}
         </DetailsBlock>
       )}
 
@@ -83,32 +77,32 @@ export function ApplicationDetailsContent({
           className="space-y-4"
           icon={hasResume ? FileText : Mail}
           label={getResumeAndCoverLetterBlockLabel() || ""}
-        >
-          <DetailsList>
-            {hasResume && (
-              <LinkCard
-                icon={FileText}
-                label="Curriculum Vitae"
-                value={resume.name}
-                onClick={() => downloadDocument(resume)}
-                isLoading={isDownloading}
-                variant="blue"
-                isExternal={resume.is_external}
-              />
-            )}
+          variant="list"
 
-            {hasCoverLetter && (
-              <LinkCard
-                icon={Mail}
-                label="Lettre de Motivation"
-                value={coverLetter.name}
-                onClick={() => downloadDocument(coverLetter)}
-                isLoading={isDownloading}
-                variant="default"
-                isExternal={coverLetter.is_external}
-              />
-            )}
-          </DetailsList>
+        >
+          {hasResume && (
+            <LinkCard
+              icon={FileText}
+              label="Curriculum Vitae"
+              value={resume.name}
+              onClick={() => downloadDocument(resume)}
+              isLoading={isDownloading}
+              variant="blue"
+              isExternal={resume.is_external}
+            />
+          )}
+
+          {hasCoverLetter && (
+            <LinkCard
+              icon={Mail}
+              label="Lettre de Motivation"
+              value={coverLetter.name}
+              onClick={() => downloadDocument(coverLetter)}
+              isLoading={isDownloading}
+              variant="default"
+              isExternal={coverLetter.is_external}
+            />
+          )}
         </DetailsBlock>
       )}
     </>

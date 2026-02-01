@@ -9,8 +9,6 @@ import {
 
 import { ScheduledEvent } from "@/api/model";
 import { DetailsBlock } from "@/components/shared/details-block";
-import { BasicDetails } from '@/components/shared/basic-details';
-import { DetailsList } from '@/components/shared/details-list';
 import { LinkCard } from "@/components/shared/link-card";
 
 export function EventDetailsContent({ event }: { event: ScheduledEvent; }) {
@@ -23,31 +21,30 @@ export function EventDetailsContent({ event }: { event: ScheduledEvent; }) {
           className="space-y-4"
           icon={Info}
           label="Détails de connexion"
-          >
-          <DetailsList>
-            {/* Link */}
-            {event.event_link && (
-              <LinkCard
-                href={event.event_link}
-                icon={LinkIcon}
-                label="Lien Visio"
-                value={event.event_link}
-                isExternal
-                variant="blue"
-              />
-            )}
+          variant="list"
+        >
+          {/* Link */}
+          {event.event_link && (
+            <LinkCard
+              href={event.event_link}
+              icon={LinkIcon}
+              label="Lien Visio"
+              value={event.event_link}
+              isExternal
+              variant="blue"
+            />
+          )}
 
-            {/* Phone */}
-            {event.phone_number && (
-              <LinkCard
-                href={`tel:${event.phone_number}`}
-                icon={Phone}
-                label="Téléphone"
-                value={event.phone_number}
-                valueClassName="font-mono"
-              />
-            )}
-          </DetailsList>
+          {/* Phone */}
+          {event.phone_number && (
+            <LinkCard
+              href={`tel:${event.phone_number}`}
+              icon={Phone}
+              label="Téléphone"
+              value={event.phone_number}
+              valueClassName="font-mono"
+            />
+          )}
         </DetailsBlock>
       )}
 
@@ -57,9 +54,7 @@ export function EventDetailsContent({ event }: { event: ScheduledEvent; }) {
           icon={MapPin}
           label="Adresse / Lieu"
         >
-          <BasicDetails>
-            {event.location}
-          </BasicDetails>
+          {event.location}
         </DetailsBlock>
       )}
 
@@ -69,9 +64,7 @@ export function EventDetailsContent({ event }: { event: ScheduledEvent; }) {
           icon={Navigation}
           label="Instructions"
         >
-          <BasicDetails>
-            {event.instructions}
-          </BasicDetails>
+          {event.instructions}
         </DetailsBlock>
       )}
 
@@ -81,9 +74,7 @@ export function EventDetailsContent({ event }: { event: ScheduledEvent; }) {
           icon={FileText}
           label="Notes Personnelles"
         >
-          <BasicDetails>
-            {event.notes}
-          </BasicDetails>
+          {event.notes}
         </DetailsBlock>
       )}
     </>

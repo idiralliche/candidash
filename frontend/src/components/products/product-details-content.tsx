@@ -5,8 +5,6 @@ import {
 } from "lucide-react";
 import { Product } from "@/api/model";
 import { DetailsBlock } from "@/components/shared/details-block";
-import { BasicDetails } from '@/components/shared/basic-details';
-import { DetailsEntityCard } from '@/components/shared/details-entity-card';
 import { CompanyCard } from '@/components/companies/company-card';
 import { ProductOpportunitiesList } from '@/components/products/product-opportunities-list';
 
@@ -19,15 +17,14 @@ export function ProductDetailsContent({ product }: { product: Product; }) {
         <DetailsBlock
           icon={Building2}
           label="Entreprise"
+          variant="card"
         >
-          <DetailsEntityCard>
-            <CompanyCard
-              key={company.id}
-              company={company}
-              variant="minimal"
-              isHighlighted
-            />
-          </DetailsEntityCard>
+          <CompanyCard
+            key={company.id}
+            company={company}
+            variant="minimal"
+            isHighlighted
+          />
         </DetailsBlock>
       )}
 
@@ -40,9 +37,7 @@ export function ProductDetailsContent({ product }: { product: Product; }) {
           icon={CodeXml}
           label="Technologies / Stack"
         >
-          <BasicDetails>
-            {product.technologies_used}
-          </BasicDetails>
+          {product.technologies_used}
         </DetailsBlock>
       )}
 
@@ -52,9 +47,7 @@ export function ProductDetailsContent({ product }: { product: Product; }) {
           icon={FileText}
           label="Description"
         >
-          <BasicDetails>
-            {product.description}
-          </BasicDetails>
+          {product.description}
         </DetailsBlock>
       )}
     </>
