@@ -138,7 +138,7 @@ export function useWizardInitFormLogic({ onSuccess }: UseWizardInitFormLogicProp
 
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit),
+    onSubmit: onSubmit,
     isPending,
     error,
   };

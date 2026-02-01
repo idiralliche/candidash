@@ -170,7 +170,7 @@ export function useOpportunityFormLogic({ initialData, onSuccess }: UseOpportuni
 
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit),
+    onSubmit: onSubmit,
     isEditing,
     isPending,
     error,

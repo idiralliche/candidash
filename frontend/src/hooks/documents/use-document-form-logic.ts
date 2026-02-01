@@ -202,7 +202,7 @@ export function useDocumentFormLogic({ initialData, onSuccess }: UseDocumentForm
     externalForm,
 
     // Handlers
-    onUploadSubmit: uploadForm.handleSubmit(onUploadSubmit),
-    onExternalSubmit: externalForm.handleSubmit(onExternalSubmit),
+    onUploadSubmit: onUploadSubmit,
+    onExternalSubmit: onExternalSubmit,
   };
 }

@@ -115,7 +115,7 @@ export function useCompanyFormLogic({ initialData, onSuccess }: UseCompanyFormLo
 
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit),
+    onSubmit,
     isEditing,
     isPending,
     error,
