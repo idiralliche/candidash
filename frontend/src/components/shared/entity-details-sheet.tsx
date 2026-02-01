@@ -1,80 +1,135 @@
-import { ReactNode } from "react";
-import { Pencil } from "lucide-react";
+import {
+  ReactNode,
+  MouseEvent
+} from "react";
+
+import {
+  Pencil,
+  Trash2,
+} from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { genderMap } from "@/lib/semantic-ui";
+
+import {
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 interface EntityDetailsSheetProps {
-  /** Entity title (e.g., entity name) */
-  title: string;
-  /** Optional badge (e.g., status, format) */
-  badge?: ReactNode;
-  /** Optional subtitle (e.g., type, position) */
-  subtitle?: string;
-  /** Optional metadata (e.g., date, duration) */
-  metadata?: ReactNode;
-  /** Edit handler (displays Edit button if provided) */
-  onEdit?: () => void;
-  /** Main sheet content */
+  entityName: string;
+  onDelete: (e: MouseEvent) => void;
   children: ReactNode;
-  /** Footer actions (e.g., delete button) */
-  footer?: ReactNode;
 }
 
-export function EntityDetailsSheet({
-  title,
-  badge,
-  subtitle,
-  metadata,
-  onEdit,
+function EntityDetailsSheet({
+  entityName,
+  onDelete,
   children,
-  footer,
 }: EntityDetailsSheetProps) {
+  let { article } = (genderMap[entityName] || { article: "le "});
+  article = article.toLowerCase();
+
   return (
-    <ScrollArea className="h-full pr-4">
-      <div className="space-y-6 pb-10">
-        {/* HEADER */}
-        <div className="space-y-2">
-          {/* Optional badge */}
-          {badge && <div>{badge}</div>}
+    <>
+      <SheetHeader className="pb-4">
+        <SheetTitle>
+          Détail {article === "le " ? "du " : `de ${article}`}{entityName}
+        </SheetTitle>
+      </SheetHeader>
 
-          {/* Title + Edit Button Row */}
-          <div className="flex items-start justify-between gap-4">
-            <h2 className="text-2xl font-bold text-white leading-tight break-all">
-              {title}
-            </h2>
+      <ScrollArea className="h-full pr-4">
+        <div className="space-y-6 pb-10">
 
-            {/* EDIT BUTTON */}
-            {onEdit && (
-              <Button
-                variant="outline"
-                palette="gray"
-                size="icon"
-                onClick={onEdit}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-            )}
+          {/* CONTENT */}
+          {children}
+
+          {/* FOOTER */}
+          <div className="pt-6">
+            <Button
+              variant="ghost"
+              palette="destructive"
+              className="w-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete!(e);
+              }}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Supprimer {article}{entityName}
+            </Button>
           </div>
-
-          {/* Optional subtitle */}
-          {subtitle && (
-            <div className="text-lg text-gray-400">{subtitle}</div>
-          )}
-
-          {/* Optional metadata */}
-          {metadata && (
-            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground pt-1">
-              {metadata}
-            </div>
-          )}
         </div>
-
-        {/* CONTENT */}
-        {children}
-
-        {/* FOOTER (Delete Action, etc.) */}
-        {footer && <div className="pt-6">{footer}</div>}
-      </div>
-    </ScrollArea>
+      </ScrollArea>
+    </>
   );
 }
+
+export function Header ({ children }: { children: ReactNode; }) {
+  return (
+    <>
+      <div className="space-y-2">
+        {children}
+      </div>
+      <Separator className="bg-white-light my-4" />
+    </>
+  );
+}
+
+export function Badges ({ children }: { children: ReactNode; }) {
+  return (children && (
+    <div className="flex justify-start gap-2">
+      {children}
+    </div>
+  ));
+}
+
+interface TitleRowProps {
+  title: string;
+  onEdit: (e: MouseEvent) => void;
+}
+
+export function TitleRow ({
+  title,
+  onEdit,
+}: TitleRowProps) {
+
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <h2 className="text-2xl font-bold text-white leading-tight text-pretty first-letter:uppercase">
+        {title}
+      </h2>
+
+      {/* EDIT BUTTON */}
+      <Button
+        variant="outline"
+        palette="gray"
+        size="icon"
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit!(e);
+        }}
+      >
+        <Pencil className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+}
+
+export function Metadata ({ children, className }: { children?: ReactNode; className?: string}) {
+  return (children && (
+    <div className={cn("flex flex-wrap gap-3 text-sm text-muted-foreground pt-1 w-full", className)}>
+      {children}
+    </div>
+  ));
+}
+
+EntityDetailsSheet.Header = Header;
+EntityDetailsSheet.Badges = Badges;
+EntityDetailsSheet.TitleRow = TitleRow;
+EntityDetailsSheet.Metadata = Metadata;
+
+export { EntityDetailsSheet };
