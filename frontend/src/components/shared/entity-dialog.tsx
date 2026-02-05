@@ -1,4 +1,9 @@
-import { ReactNode, useState } from 'react';
+import {
+  ReactNode,
+  useState,
+  useEffect,
+  useCallback
+} from 'react';
 import {
   Dialog,
   DialogContent,
@@ -7,29 +12,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { cn } from "@/lib/utils";
 
-interface FormDialogProps {
+export interface EntityDialogProps {
   title?: ReactNode | string;
   trigger?: ReactNode;
   description?: string;
   className?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /**
-   * Form content.
-   * This is a function that receives 'close' as a parameter to close the modal on success.
-   */
-  children: (close: () => void) => ReactNode;
+  children: ReactNode;
+  onFormsOpen: (close: () => void) => void;
 }
 
-export function FormDialog({
+export function EntityDialog({
   trigger,
   title,
   description,
   children,
+  className,
   open: controlledOpen,
-  onOpenChange: setControlledOpen
-}: FormDialogProps) {
+  onOpenChange: setControlledOpen,
+  onFormsOpen,
+}: EntityDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
 
   // Determine if we are in controlled mode (props provided) or uncontrolled (internal state)
@@ -38,17 +43,20 @@ export function FormDialog({
   const isOpen = isControlled ? controlledOpen : internalOpen;
 
   // If controlled, use external setter (if provided), otherwise use internal setter
-  const setOpen = (value: boolean) => {
+  const setOpen = useCallback((value: boolean) => {
     if (isControlled && setControlledOpen) {
       setControlledOpen(value);
     } else {
       setInternalOpen(value);
     }
-  };
+  },[isControlled,setControlledOpen]);
 
-  function close() {
-    setOpen(false);
-  }
+  useEffect(() => {
+    function close() {
+      setOpen(false);
+    }
+    onFormsOpen(close);
+  }, [onFormsOpen, setOpen]);
 
   return (
     <div onClick={(e) => e.stopPropagation()}>
@@ -59,7 +67,10 @@ export function FormDialog({
           </DialogTrigger>
         )}
         <DialogContent
-          className="sm:max-w-[600px] bg-surface-modal border-white-light text-white"
+          className={cn(
+            "sm:max-w-[600px] bg-surface-modal border-white-light text-white pt-15",
+            className
+          )}
           aria-describedby={description}
         >
           <DialogHeader>
@@ -70,10 +81,10 @@ export function FormDialog({
               </DialogDescription>
             )}
           </DialogHeader>
-          {/* Execute the render prop passing the close function */}
-          {children(close)}
+          {children}
+
         </DialogContent>
-      </Dialog>
+    </Dialog>
     </div>
   );
 }

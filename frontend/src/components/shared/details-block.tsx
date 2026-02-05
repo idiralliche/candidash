@@ -22,28 +22,34 @@ const detailsBlockVariants = cva(
   }
 );
 
-interface DetailsBlockProps extends VariantProps<typeof detailsBlockVariants> {
-  icon: LucideIcon;
+export interface DetailsBlockTitleProps {
   label: string;
+  icon: LucideIcon
+  action?: ReactNode;
+}
+
+type DetailsBlockPropsComponent = {
   children: ReactNode;
   className?: string;
   itemsClassName?: string;
 }
 
-export function DetailsBlock({
-  icon: Icon,
-  label,
-  children,
-  className,
-  itemsClassName,
-  variant = "textField",
-}: DetailsBlockProps) {
+type DetailsBlockProps =
+  DetailsBlockTitleProps &
+  VariantProps<typeof detailsBlockVariants> &
+  DetailsBlockPropsComponent;
+
+export function DetailsBlock(props: DetailsBlockProps) {
+  const variant = props.variant || 'textField';
+  const { ...titleProps } = props as DetailsBlockTitleProps;
+  const { children, className, itemsClassName } = props as DetailsBlockProps;
+
   return (
     <div className={cn("mb-6", className)}>
-      <h3 className="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-2 select-none">
-        <Icon className="h-3.5 w-3.5" />
-        {label}
-      </h3>
+      <div className="flex items-center justify-between mb-2">
+        <DetailsBlockTitle { ...titleProps }/>
+      </div>
+
       <div
         className={cn(detailsBlockVariants({ variant }), itemsClassName)}
       >
@@ -51,4 +57,20 @@ export function DetailsBlock({
       </div>
     </div>
   );
+}
+
+export function DetailsBlockTitle ({
+  label,
+  icon: Icon,
+  action,
+} : DetailsBlockTitleProps) {
+  return (
+    <>
+      <h3 className="text-xs font-bold text-gray-500 uppercase flex items-center gap-2 select-none">
+        <Icon className="h-3.5 w-3.5" />
+        <span className="first-letter:uppercase">{label}</span>
+      </h3>
+      {action && <div>{action}</div>}
+    </>
+  )
 }
