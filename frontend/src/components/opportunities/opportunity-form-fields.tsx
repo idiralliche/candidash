@@ -24,7 +24,7 @@ import {
   LABELS_APPLICATION,
   LABELS_REMOTE,
   getLabel,
-} from '@/lib/dictionaries.ts';
+} from '@/lib/dictionaries';
 
 export type OpportunityFormData = {
   job_title: string;
@@ -136,7 +136,6 @@ export function OpportunityFormFields<T extends OpportunityFormData>({
             label="Type de Contrat"
           >
             <SmartSelect
-              disabled={isLoadingCompanies}
               placeholder="Non spécifié"
               isOptional
               items={Object.keys(LABELS_CONTRACT).map((key) => ({

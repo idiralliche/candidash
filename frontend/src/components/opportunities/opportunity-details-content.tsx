@@ -11,6 +11,7 @@ import { Opportunity } from "@/api/model";
 import { DetailsBlock } from "@/components/shared/details-block";
 import { CompanyCard } from '@/components/companies/company-card';
 import { OpportunityProductsList } from '@/components/opportunities/opportunity-products-list';
+import { OpportunitiesContactsList } from '@/components/opportunities-contacts/opportunities-contacts-list';
 
 import {
   LABELS_REMOTE,
@@ -74,6 +75,12 @@ export function OpportunityDetailsContent({ opportunity }: { opportunity: Opport
 
       {/* PRODUCTS SECTION (ASYNC) */}
       <OpportunityProductsList opportunityId={opportunity.id} />
+
+      {/* CONTACTS SECTION (ASYNC) */}
+      <OpportunitiesContactsList
+        opportunityId={opportunity.id}
+        integrationContext="details"
+      />
 
       {/* Job Description */}
       {opportunity.job_description && (

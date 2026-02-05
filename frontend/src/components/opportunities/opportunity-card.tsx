@@ -1,6 +1,7 @@
 import {
   Briefcase,
   Building2,
+  Users,
   MapPin,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -12,8 +13,10 @@ import {
   getLabel,
 } from "@/lib/dictionaries";
 import { getApplicationTypePalette } from '@/lib/semantic-ui';
+import { OpportunitiesContactsList } from '@/components/opportunities-contacts/opportunities-contacts-list';
+import { Button } from "@/components/ui/button";
 
-interface OpportunityCardProps {
+export interface OpportunityCardProps {
   opportunity: Opportunity;
   onClick?: (opportunity: Opportunity) => void;
   onEdit?: (opportunity: Opportunity) => void;
@@ -33,6 +36,19 @@ export function OpportunityCard({
   const company = opportunity.company;
   const isCompact = variant === "compact";
   const isMinimal = variant === "minimal";
+  const trigger = (
+    <Button
+      variant="outline"
+      palette={isHighlighted ? "blue" : "gray"}
+      size="icon"
+      className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-white-subtle"
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
+      <Users className="h-4 w-4" />
+    </Button>
+  );
 
   return (
     <EntityCard
@@ -42,7 +58,7 @@ export function OpportunityCard({
     >
       {/* IDENTITY ZONE */}
       <EntityCard.Identity
-        iconBoxProps={{ palette: "emerald" }} //  isHighlighted -> palette: "blue"!
+        iconBoxProps={{ palette: "emerald" }} // isHighlighted -> palette: "blue"!
         icon={Briefcase}
       >
         <EntityCard.Info
@@ -85,11 +101,19 @@ export function OpportunityCard({
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
-      {/*null if variant === "minimal"*/}
+      {/*null if variant === "minimal" & not onEdit & not onDelete */}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(opportunity))}
         onDelete={onDelete && (() => onDelete(opportunity))}
-      />
+      >
+        {!isMinimal && (
+          <OpportunitiesContactsList
+            opportunityId={opportunity.id}
+            integrationContext="card"
+            trigger={trigger}
+          />
+        )}
+      </EntityCard.Actions>
     </EntityCard>
   );
 }
