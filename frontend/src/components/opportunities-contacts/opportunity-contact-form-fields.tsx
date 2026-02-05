@@ -6,6 +6,7 @@ import {
   Contact,
   Briefcase
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -48,7 +49,10 @@ export function OpportunityContactFormFields<T extends FieldValues>({
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-primary">Association</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={cn(
+              "grid grid-cols-1 gap-4 w-full",
+              (!hideContactSelect && !hideOpportunitySelect) && "md:grid-cols-2"
+          )}>
              {/* Select Contact */}
             {!hideContactSelect && (
               <SmartFormField

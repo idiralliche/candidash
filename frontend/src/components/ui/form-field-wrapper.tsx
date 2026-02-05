@@ -9,7 +9,7 @@ import {
   ComponentType,
   isValidElement,
   cloneElement,
-  ReactElement, // Important pour le casting dans cloneElement
+  ReactElement,
 } from "react";
 import {
   FormControl,
@@ -34,7 +34,6 @@ interface SmartFormFieldProps<T extends FieldValues, TName extends Path<T>> {
   description?: string;
   className?: string;
   containerClassName?: string;
-  // CORRECTION ICI : On accepte ReactNode OU une Fonction
   children?: ReactNode | ((field: ControllerRenderProps<T, TName>) => ReactNode);
   component?: ComponentType<ControllerRenderProps<T, TName> & Record<string, unknown>>;
   [key: string]: unknown;

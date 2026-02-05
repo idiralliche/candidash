@@ -35,7 +35,6 @@ interface SmartSelectProps<T extends FieldValues, TName extends Path<T>>
   disabled?: boolean;
   ref?: RefObject<HTMLButtonElement | null>;
   autoFocus?: boolean;
-  isFullW?: boolean;
   isOptional?: boolean;
   icon?: LucideIcon;
   placeholder?: string | {topic: string, suffix?: string} | undefined;
@@ -47,7 +46,6 @@ export function SmartSelect<T extends FieldValues, TName extends Path<T>> ({
   disabled = false,
   ref,
   autoFocus=true,
-  isFullW = false,
   isOptional = false,
   variant,
   icon: Icon,
@@ -82,7 +80,6 @@ export function SmartSelect<T extends FieldValues, TName extends Path<T>> ({
       disabled={disabled}
     >
       <SelectTrigger
-        className={isFullW ? "w-full" : ""}
         onClear={onClear}
         ref={ref}
         autoFocus={autoFocus}
