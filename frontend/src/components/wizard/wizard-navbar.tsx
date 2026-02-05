@@ -4,7 +4,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { WizardStepId } from "@/pages/wizards/application-wizard-page.tsx";
+import { WizardStepId } from "@/config/wizard.config";
 
 interface WizardNavbarProps {
   currentStep: WizardStepId;
