@@ -2,7 +2,6 @@ import { Control, Path, FieldValues } from 'react-hook-form';
 import {
   Pin,
   Unplug,
-  FileText,
   Contact,
   Briefcase
 } from 'lucide-react';
@@ -142,7 +141,6 @@ export function OpportunityContactFormFields<T extends FieldValues>({
           label="Notes contextuelles"
           component={Textarea}
           placeholder="Détails spécifiques à cette relation..."
-          leadingIcon={FileText}
           maxLength={5000}
         />
       </div>
