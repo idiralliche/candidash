@@ -6,12 +6,15 @@ import {
   Link as LinkIcon,
   Contact as ContactIcon,
   Award,
+  Briefcase,
 } from 'lucide-react';
 import { Contact } from '@/api/model';
 import { EntityCard } from '@/components/shared/entity-card';
 import { CardInfoBlock } from '@/components/shared/card-info-block';
+import { OpportunitiesContactsList } from '@/components/opportunities-contacts/opportunities-contacts-list';
+import { Button } from "@/components/ui/button";
 
-interface ContactCardProps {
+export interface ContactCardProps {
   contact: Contact;
   onClick?: (contact: Contact) => void;
   onEdit?: (contact: Contact) => void;
@@ -30,6 +33,19 @@ export function ContactCard({
 }: ContactCardProps) {
   const company = contact.company;
   const isMinimal = variant === "minimal";
+  const trigger = (
+    <Button
+      variant="outline"
+      palette={isHighlighted ? "blue" : "gray"}
+      size="icon"
+      className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-white-subtle"
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
+      <Briefcase className="h-4 w-4" />
+    </Button>
+  );
 
   return (
     <EntityCard
@@ -81,11 +97,19 @@ export function ContactCard({
       </EntityCard.Meta>
 
       {/* ACTIONS ZONE */}
-      {/*null if variant === "minimal"*/}
+      {/*null if variant === "minimal" & not onEdit & not onDelete */}
       <EntityCard.Actions
         onEdit={onEdit && (() => onEdit(contact))}
         onDelete={onDelete && (() => onDelete(contact))}
-      />
+      >
+        {!isMinimal && (
+          <OpportunitiesContactsList
+            contactId={contact.id}
+            integrationContext="card"
+            trigger={trigger}
+          />
+        )}
+      </EntityCard.Actions>
     </EntityCard>
   );
 }

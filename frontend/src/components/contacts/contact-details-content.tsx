@@ -11,6 +11,7 @@ import { Contact } from "@/api/model";
 import { DetailsBlock } from "@/components/shared/details-block";
 import { LinkCard } from "@/components/shared/link-card";
 import { CompanyCard } from '@/components/companies/company-card';
+import { OpportunitiesContactsList } from '@/components/opportunities-contacts/opportunities-contacts-list';
 
 export function ContactDetailsContent({ contact }: { contact: Contact; }) {
   const company = contact.company;
@@ -71,6 +72,12 @@ export function ContactDetailsContent({ contact }: { contact: Contact; }) {
           )}
         </DetailsBlock>
       )}
+
+      {/* OPPORTUNITIES SECTION (ASYNC) */}
+      <OpportunitiesContactsList
+        contactId={contact.id}
+        integrationContext="details"
+      />
 
       {/* RELATIONSHIP NOTES */}
       {contact.relationship_notes && (
