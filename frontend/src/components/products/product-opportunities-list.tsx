@@ -1,6 +1,6 @@
 import { Briefcase } from "lucide-react";
 import { useOpportunityProducts } from '@/hooks/opportunity-products/use-opportunity-products';
-import { EntityDetailsAssociationBlock } from "@/components/shared/entity-details-association-block";
+import { EntityAssociationDetailsComponent } from "@/components/shared/entity-association-details-component";
 import { OpportunityCard } from '@/components/opportunities/opportunity-card';
 import { OpportunityProduct } from "@/api/model/opportunityProduct";
 
@@ -20,13 +20,12 @@ export function ProductOpportunitiesList({ productId }: ProductOpportunitiesList
         key={assoc.opportunity.id}
         opportunity={assoc.opportunity}
         variant="minimal"
-        isHighlighted
       />
     ) : null
   );
 
   return (
-    <EntityDetailsAssociationBlock
+    <EntityAssociationDetailsComponent
       isLoading={isLoading}
       data={opportunityProducts}
       renderItem={renderItem}

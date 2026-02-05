@@ -94,7 +94,7 @@ export const genderMap: Record<string, { article: string; suffix: string; demons
   opportunité: { article: "L'", suffix: "e", demonstrative: "cette" },
   candidature: { article: "La ", suffix: "e", demonstrative: "cette" },
   entreprise: { article: "L'", suffix: "e", demonstrative: "cette" },
-  contacte: { article: "Le ", suffix: "", demonstrative: "ce" },
+  contact: { article: "Le ", suffix: "", demonstrative: "ce" },
   document: { article: "Le ", suffix: "", demonstrative: "ce" },
   produit: { article: "Le ", suffix: "", demonstrative: "ce" },
   événement: { article: "L'", suffix: "", demonstrative: "cet" },

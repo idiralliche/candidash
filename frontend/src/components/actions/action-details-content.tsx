@@ -63,6 +63,7 @@ export function ActionDetailsContent({
             key={scheduledEvent.id}
             event={scheduledEvent}
             variant="minimal"
+            isHighlighted
           />
         </DetailsBlock>
       )}

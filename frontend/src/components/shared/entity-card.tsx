@@ -4,9 +4,11 @@ import {
   createContext,
   useContext,
   MouseEvent,
+  MouseEventHandler,
 } from 'react';
 
 import {
+  Star,
   MoreHorizontal,
   Pencil,
   Trash2,
@@ -16,11 +18,12 @@ import {
 import {
   cva,
   type VariantProps,
-} from "class-variance-authority"
+} from "class-variance-authority";
 
 import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,7 +67,7 @@ const cardVariants = cva(
 
 // Title Hover Text Colors
 const infoVariants = cva(
-  "text-base font-bold text-white truncate transition-colors",
+  "text-left text-base font-bold text-white truncate transition-colors",
   {
     variants: {
       hoverPalette: {
@@ -80,10 +83,12 @@ const infoVariants = cva(
 
 interface EntityCardProps extends VariantProps<typeof cardVariants> {
   children: ReactNode;
-  onClick?: () => void;
+  onClick?: () => void | MouseEventHandler<HTMLButtonElement> | undefined;
   className?: string;
   isHighlighted?: boolean;
   isMinimal?: boolean;
+  isClickable?: boolean;
+  isOpenAssoc?: boolean;
 }
 
 /**
@@ -98,7 +103,7 @@ function EntityCard({
   isHighlighted = false,
   isMinimal = false,
 }: EntityCardProps) {
-  const isClickable=!!onClick;
+  const hasPointer=!!onClick;
   const smartHoverPalette=isHighlighted ? "blue" : hoverPalette;
 
   return (
@@ -107,10 +112,19 @@ function EntityCard({
         onClick={onClick}
         className={
           cn(cardVariants({ hoverPalette: smartHoverPalette }),
-            isClickable ? "cursor-pointer" : "cursor-default",
+            hasPointer ? "cursor-pointer" : "cursor-default",
             className
           )}
       >
+        {isHighlighted && (
+          <Badge
+            variant="ghost"
+            palette="blue"
+            className='absolute -top-1.5 -left-1.5 h-5 min-w-5 px-1'
+          >
+            <Star className="h-3 w-3"/>
+          </Badge>
+        )}
         {children}
       </div>
     </EntityCardContext.Provider>
@@ -242,12 +256,12 @@ function Actions({
   className,
 }: ActionsProps) {
   const context = useContext(EntityCardContext);
-  if (context?.isMinimal) return null;
-
   const showDropdown = !!onEdit && !!onDelete;
   const showSingleEdit = !!onEdit && !onDelete;
   const showSingleDelete = !!onDelete && !onEdit;
   const showStandard = showDropdown || showSingleEdit || showSingleDelete;
+
+  if (context?.isMinimal && !showStandard) return null;
 
   return (
     // MAIN CONTAINER

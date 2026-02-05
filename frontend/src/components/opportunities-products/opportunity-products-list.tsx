@@ -2,14 +2,15 @@ import { Package } from "lucide-react";
 import { useOpportunityProducts } from '@/hooks/opportunity-products/use-opportunity-products';
 import { EntityAssociationDetailsComponent } from "@/components/shared/entity-association-details-component";
 import { ProductCard } from '@/components/products/product-card';
-import { OpportunityProduct } from "@/api/model/opportunityProduct"
+import { OpportunityProduct } from "@/api/model/opportunityProduct";
 
 
-interface OpportunityProductsListProps {
+interface OpportunitiesProductsListProps {
   opportunityId: number;
+  productId: number;
 }
 
-export function OpportunityProductsList({ opportunityId }: OpportunityProductsListProps) {
+export function OpportunitiesProductsList({ opportunityId }: OpportunitiesProductsListProps) {
   const { opportunityProducts, isLoading } = useOpportunityProducts({
     opportunity_id: opportunityId
   });

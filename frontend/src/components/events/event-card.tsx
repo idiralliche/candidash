@@ -26,6 +26,7 @@ interface EventCardProps {
   onEdit?: (event: ScheduledEvent) => void;
   onDelete?: (event: ScheduledEvent) => void;
   variant?: "default" | "minimal";
+  isHighlighted?: boolean;
 }
 
 export function EventCard({
@@ -33,7 +34,8 @@ export function EventCard({
   onClick,
   onEdit,
   onDelete,
-  variant ="default",
+  variant = "default",
+  isHighlighted = false,
 }: EventCardProps) {
   const date = new Date(event.scheduled_date);
   const isMinimal = variant === "minimal";
@@ -52,6 +54,7 @@ export function EventCard({
     <EntityCard
       onClick={onClick && (() => onClick(event))}
       hoverPalette="blue"
+      isHighlighted={isHighlighted}
       isMinimal={isMinimal}
     >
       {/* IDENTITY: Date Box as Icon + Title */}
