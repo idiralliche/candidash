@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { genderMap } from '@/lib/semantic-ui.ts';
+import { genderMap } from '@/lib/semantic-ui';
 
 interface FormSubmitButtonProps {
   isPending: boolean;

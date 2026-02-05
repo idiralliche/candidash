@@ -2,7 +2,7 @@ import { Briefcase, Plus, Wand2 } from 'lucide-react';
 
 import { useOpportunitiesPage } from '@/hooks/opportunities/use-opportunities-page';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@/components/ui/button';
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EmptyState } from '@/components/shared/empty-state';
@@ -39,7 +39,11 @@ export function OpportunitiesPage() {
             <FormDialog
               title="Nouvelle Opportunité"
               description="Ajoutez une nouvelle opportunité à votre pipeline."
-              trigger={<Fab><Plus className="h-5 w-5" /></Fab>}
+              trigger={
+                <Fab>
+                  <Plus className="h-5 w-5" />
+                </Fab>
+              }
             >
               {(close) => <OpportunityForm onSuccess={close} />}
             </FormDialog>

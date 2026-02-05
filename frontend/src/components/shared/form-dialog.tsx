@@ -19,7 +19,8 @@ interface FormDialogProps {
   open?: boolean;
   /** External state setter (Optional) */
   onOpenChange?: (open: boolean) => void;
-  /** * Form content.
+  /**
+   * Form content.
    * This is a function that receives 'close' as a parameter to close the modal on success.
    */
   children: (close: () => void) => ReactNode;

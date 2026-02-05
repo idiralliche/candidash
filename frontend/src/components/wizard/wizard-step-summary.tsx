@@ -28,8 +28,8 @@ import {
 } from '@/api/model';
 import { useGetOpportunityApiV1OpportunitiesOpportunityIdGet } from '@/api/opportunities/opportunities';
 import { useGetApplicationApiV1ApplicationsApplicationIdGet } from '@/api/applications/applications';
-import { OpportunityCard } from '@/components/opportunities/opportunity-card.tsx';
-import { ApplicationCard } from '@/components/applications/application-card.tsx';
+import { OpportunityCard } from '@/components/opportunities/opportunity-card';
+import { ApplicationCard } from '@/components/applications/application-card';
 import { CompanyCard } from '@/components/companies/company-card';
 import { ContactCard } from '@/components/contacts/contact-card';
 import { DocumentCard } from '@/components/documents/document-card';

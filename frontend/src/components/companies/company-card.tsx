@@ -8,7 +8,7 @@ import {
 import { Company } from "@/api/model";
 import { CardInfoBlock } from '@/components/shared/card-info-block';
 import { EntityCard } from "@/components/shared/entity-card";
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@/components/ui/button';
 
 interface CompanyCardProps {
   company: Company;

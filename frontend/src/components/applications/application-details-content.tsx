@@ -10,7 +10,7 @@ import { LinkCard } from "@/components/shared/link-card";
 import { Application, Opportunity } from "@/api/model";
 import { DetailsBlock } from "@/components/shared/details-block";
 import { OpportunityCard } from '@/components/opportunities/opportunity-card';
-import { formatSalary } from '@/lib/utils.ts';
+import { formatSalary } from '@/lib/utils';
 import { useDownloadDocument } from '@/hooks/documents/use-download-document';
 
 export function ApplicationDetailsContent({

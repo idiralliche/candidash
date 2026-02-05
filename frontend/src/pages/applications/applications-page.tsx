@@ -2,7 +2,7 @@ import { Briefcase, Plus, Wand2 } from 'lucide-react';
 
 import { useApplicationsPage } from '@/hooks/applications/use-applications-page';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@/components/ui/button';
 import { Fab } from '@/components/ui/fab';
 import { CardListSkeleton } from "@/components/shared/card-list-skeleton";
 import { EmptyState } from '@/components/shared/empty-state';
