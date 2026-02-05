@@ -111,7 +111,7 @@ export function ContactsPage() {
       <EntityDeleteDialog
         open={!!logic.contactToDelete}
         onOpenChange={logic.closeDeleteDialog}
-        entityType="contacte"
+        entityType="contact"
         entityLabel={logic.contactToDelete ? `${logic.contactToDelete.first_name} ${logic.contactToDelete.last_name}` : ''}
         onConfirm={logic.handleDelete}
         isDeleting={logic.isDeleting}

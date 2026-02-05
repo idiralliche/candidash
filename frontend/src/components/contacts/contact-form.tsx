@@ -9,8 +9,16 @@ interface ContactFormProps {
   initialData?: Contact;
 }
 
-export function ContactForm({ onSuccess, className, initialData }: ContactFormProps) {
-  const logic = useContactFormLogic({ initialData, onSuccess });
+export function ContactForm({
+  onSuccess,
+  className,
+  initialData
+}: ContactFormProps) {
+
+  const logic = useContactFormLogic({
+    initialData,
+    onSuccess
+  });
 
   return (
     <SmartForm
@@ -20,7 +28,7 @@ export function ContactForm({ onSuccess, className, initialData }: ContactFormPr
       className={className}
       error={logic.error}
       isEditing={logic.isEditing}
-      entityType="contacte"
+      entityType="contact"
     >
       <ContactFormFields control={logic.form.control} />
     </SmartForm>

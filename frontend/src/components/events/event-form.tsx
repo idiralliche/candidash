@@ -10,8 +10,17 @@ interface EventFormProps {
   defaultDate?: Date;
 }
 
-export function EventForm({ onSuccess, className, initialData, defaultDate }: EventFormProps) {
-  const logic = useEventFormLogic({ initialData, defaultDate, onSuccess });
+export function EventForm({
+  onSuccess,
+  className,
+  initialData,
+  defaultDate,
+}: EventFormProps) {
+  const logic = useEventFormLogic({
+    initialData,
+    defaultDate,
+    onSuccess
+  });
 
   return (
     <SmartForm

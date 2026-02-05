@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Loader2 } from 'lucide-react';
 import { ReactNode } from 'react';
-import { genderMap } from '@/lib/semantic-ui.ts';
+import { genderMap } from '@/lib/semantic-ui';
 
 interface EntityDeleteDialogProps {
   /**

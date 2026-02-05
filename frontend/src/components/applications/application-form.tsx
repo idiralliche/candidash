@@ -15,7 +15,10 @@ export function ApplicationForm({
   initialData,
 }: ApplicationFormProps) {
 
-  const logic = useApplicationFormLogic({ initialData, onSuccess });
+  const logic = useApplicationFormLogic({
+    initialData,
+    onSuccess
+  });
 
   return (
     <SmartForm

@@ -20,7 +20,7 @@ export function ContactDetails({
 }: ContactDetailsProps) {
   return (
     <EntityDetailsSheet
-      entityName="contacte"
+      entityName="contact"
       onDelete={() => onDelete(contact)}
     >
       <EntityDetailsSheet.Header>

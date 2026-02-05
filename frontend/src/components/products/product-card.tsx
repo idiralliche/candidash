@@ -4,7 +4,7 @@ import {
   Code2,
   Building2,
 } from "lucide-react";
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@/components/ui/button';
 import { Product } from "@/api/model";
 import { EntityCard } from "@/components/shared/entity-card";
 import { CardInfoBlock } from '@/components/shared/card-info-block';
