@@ -1,6 +1,6 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
 /**
  * Badge Component Architecture
@@ -22,6 +22,7 @@ const badgeVariants = cva(
         default: "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
         solid: "border-transparent shadow text-white hover:opacity-90",
         subtle: "border-transparent bg-opacity-10 hover:bg-opacity-20", // Base for tinted backgrounds
+        ghost: "border-none bg-transparent",
         outline: "text-foreground",
         destructive: "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
       },
@@ -55,6 +56,7 @@ const badgeVariants = cva(
       // Blue
       { variant: "subtle", palette: "blue", class: "bg-blue-500/10 text-blue-400" },
       { variant: "solid", palette: "blue", class: "bg-blue-500 text-white" },
+      { variant: "ghost", palette: "blue", class: "text-blue-500" },
 
       // Emerald
       { variant: "subtle", palette: "emerald", class: "bg-emerald-500/10 text-emerald-400" },
