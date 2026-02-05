@@ -58,7 +58,7 @@ export function OpportunityContactFormFields<T extends FieldValues>({
                 control={control}
                 name={"contact_id" as Path<T>}
                 label="Contact *"
-                description="La personne à lier."
+                description="La personne à associer."
               >
                 <SmartSelect
                   disabled={isLoadingContacts}
@@ -98,7 +98,7 @@ export function OpportunityContactFormFields<T extends FieldValues>({
       )}
 
       {/* --- DETAILS DE LA RELATION --- */}
-      <div className="space-y-4">
+      <div className="space-y-4 pb-6">
         <h3 className="text-lg font-semibold text-primary">Détails de la relation</h3>
 
         {/* Primary Contact Switch */}
