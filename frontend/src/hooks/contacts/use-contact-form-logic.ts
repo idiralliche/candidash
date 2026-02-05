@@ -118,7 +118,7 @@ export function useContactFormLogic({ initialData, onSuccess }: UseContactFormLo
 
   return {
     form,
-    onSubmit: onSubmit,
+    onSubmit,
     companies,
     isLoadingCompanies,
     isEditing,

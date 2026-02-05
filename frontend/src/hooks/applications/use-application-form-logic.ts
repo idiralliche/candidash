@@ -114,7 +114,7 @@ export function useApplicationFormLogic({ initialData, onSuccess }: UseApplicati
 
   return {
     form,
-    onSubmit: onSubmit,
+    onSubmit,
     isEditing,
     isPending,
     error,

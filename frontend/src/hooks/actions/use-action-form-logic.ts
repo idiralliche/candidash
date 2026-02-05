@@ -170,7 +170,7 @@ export function useActionFormLogic({
   return {
     // Form
     form,
-    onSubmit: onSubmit,
+    onSubmit,
 
     // State
     isCompleted,

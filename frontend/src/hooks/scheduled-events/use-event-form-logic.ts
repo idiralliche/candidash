@@ -172,7 +172,7 @@ export function useEventFormLogic({ initialData, defaultDate, onSuccess }: UseEv
 
   return {
     form,
-    onSubmit: onSubmit,
+    onSubmit,
     isEditing,
     isPending,
     error,

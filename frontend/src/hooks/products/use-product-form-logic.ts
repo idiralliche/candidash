@@ -165,7 +165,7 @@ export function useProductFormLogic({
 
   return {
     form,
-    onSubmit: onSubmit,
+    onSubmit,
     companies,
     isLoadingCompanies,
     opportunities,
